@@ -16,17 +16,18 @@ export const MOCK_BOOKABLE_ASSETS = [
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Fetch bookable assets
-// TODO [MEMBER 2]: Replace MOCK_BOOKABLE_ASSETS with live call when GET /assets is ready
+// Tries live GET /assets?isBookable=true first — falls back to mock if not ready.
+// TODO [MEMBER 2]: Remove MOCK_BOOKABLE_ASSETS and the try/catch once /assets is live.
 // ─────────────────────────────────────────────────────────────────────────────
 export async function getBookableAssets() {
   try {
-    // TODO [MEMBER 2]: Uncomment when asset endpoint is live
-    // const response = await apiClient.get('/assets', { params: { isBookable: true } });
-    // return response.data.data;
+    const response = await apiClient.get('/assets', { params: { isBookable: true } });
+    const assets = response.data?.data ?? [];
+    // If the endpoint returns an empty array and the mock has data, prefer mock for demo
+    return assets.length > 0 ? assets : MOCK_BOOKABLE_ASSETS;
+  } catch {
+    // Member 2's /assets endpoint not yet live — use mock data
     return MOCK_BOOKABLE_ASSETS;
-  } catch (err) {
-    console.error('[bookingApi] getBookableAssets error:', err);
-    return MOCK_BOOKABLE_ASSETS; // fallback to mock
   }
 }
 

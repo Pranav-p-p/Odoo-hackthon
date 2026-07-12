@@ -68,7 +68,7 @@
 ### TODOs remaining
 - [ ] `// TODO [MEMBER 2]` — swap MOCK_BOOKABLE_ASSETS with `GET /assets?isBookable=true`
 - [ ] `// TODO [MEMBER 1]` — wrap page in `<DashboardLayout>` once delivered
-- [ ] Add `/booking` route to `App.jsx` via PR to Member 1
+- [x] Add `/bookings` route to `App.jsx` — registered under `ProtectedRoute + DashboardLayout`
 
 ---
 
@@ -91,7 +91,7 @@
 ### TODOs remaining
 - [ ] `// TODO [MEMBER 2]` — swap MOCK_ASSETS with `GET /assets`
 - [ ] `// TODO [MEMBER 1]` — swap MOCK_USERS with `GET /users` + wrap in DashboardLayout
-- [ ] Add `/maintenance` route to `App.jsx` via PR to Member 1
+- [x] `// TODO [MEMBER 1]` — wrap page in `<DashboardLayout>` — done via App.jsx route nesting
 
 ---
 
@@ -141,7 +141,7 @@ const prisma                      = require('../config/prisma');
 | Replace mock assets with live `GET /assets` | Member 2's asset endpoint | ❌ Blocked |
 | Swap MOCK_USERS with live `GET /users` | Note: `GET /users` is Admin-only — keep mock | ⚠️ Design issue |
 | Wrap pages in `DashboardLayout` | Member 1's DashboardLayout.jsx | ❌ Pending |
-| Add /booking + /maintenance to App.jsx | Phase 8 | ✅ Done |
+| Add /bookings + /maintenance to App.jsx | Phase 8 | ✅ Done |
 
 ---
 
@@ -151,12 +151,12 @@ const prisma                      = require('../config/prisma');
 |------|--------|-------|
 | Import `ResourceBookingPage` into `App.jsx` | ✅ Done | `import ResourceBookingPage from './pages/ResourceBooking/ResourceBookingPage'` |
 | Import `MaintenancePage` into `App.jsx` | ✅ Done | `import MaintenancePage from './pages/Maintenance/MaintenancePage'` |
-| Add `<Route path="/booking" ...>` | ✅ Done | Screen 6 accessible at `/booking` |
+| Add `<Route path="/bookings" ...>` | ✅ Done | Screen 6 accessible at `/bookings` |
 | Add `<Route path="/maintenance" ...>` | ✅ Done | Screen 7 accessible at `/maintenance` |
 
 ### TODOs remaining
-- [ ] `// TODO [MEMBER 1]` — Wrap `<ResourceBookingPage />` in `<DashboardLayout>` in `App.jsx`
-- [ ] `// TODO [MEMBER 1]` — Wrap `<MaintenancePage />` in `<DashboardLayout>` in `App.jsx`
+- [x] `// TODO [MEMBER 1]` — `<ResourceBookingPage />` wrapped in `<DashboardLayout>` via App.jsx route nesting
+- [x] `// TODO [MEMBER 1]` — `<MaintenancePage />` wrapped in `<DashboardLayout>` via App.jsx route nesting
 - [ ] `// TODO [MEMBER 2]` — Replace `MOCK_BOOKABLE_ASSETS` in `bookingApi.js` with live `GET /assets?isBookable=true`
 - [ ] `// TODO [MEMBER 2]` — Replace `MOCK_ASSETS` in `maintenanceApi.js` with live `GET /assets`
 - [x] `// TODO [MEMBER 4]` — Uncomment all `createLog()` + `createNotification()` calls in both controllers

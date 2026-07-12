@@ -21,15 +21,16 @@ export const MOCK_USERS = [
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Fetch assets for the raise-request dropdown
-// TODO [MEMBER 2]: Swap to live GET /assets when ready
+// Tries live GET /assets first — falls back to mock if Member 2 hasn’t merged yet.
+// TODO [MEMBER 2]: Remove MOCK_ASSETS and try/catch once /assets is live.
 // ─────────────────────────────────────────────────────────────────────────────
 export async function getAssets() {
   try {
-    // TODO [MEMBER 2]: Uncomment when asset endpoint is live
-    // const response = await apiClient.get('/assets');
-    // return response.data.data;
-    return MOCK_ASSETS;
+    const response = await apiClient.get('/assets');
+    const assets = response.data?.data ?? [];
+    return assets.length > 0 ? assets : MOCK_ASSETS;
   } catch {
+    // Member 2's /assets endpoint not yet live — use mock data
     return MOCK_ASSETS;
   }
 }

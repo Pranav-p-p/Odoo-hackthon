@@ -627,9 +627,7 @@ export default function MaintenancePage() {
   // Render
   // ─────────────────────────────────────────────────────────────────────────
   return (
-    // TODO [MEMBER 1]: Replace outer div with <DashboardLayout> once it's delivered
-    <div className="min-h-screen bg-gray-50">
-      <div className="p-6 space-y-5">
+    <div className="p-6 space-y-5">
 
         {/* ── Header ─────────────────────────────────────────────────────── */}
         <div className="flex items-center justify-between flex-wrap gap-3">
