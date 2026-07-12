@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, Mail, Loader2, AlertCircle, Building2 } from 'lucide-react';
+import { User, Mail, Loader2, AlertCircle } from 'lucide-react';
 import apiClient from '../../api/authApi';
 import PasswordInput from '../../components/PasswordInput/PasswordInput';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function validateForm({ name, email, password, departmentId }) {
+function validateForm({ name, email, password }) {
   const errors = {};
   if (!name.trim()) {
     errors.name = 'Full name is required.';
@@ -21,9 +21,6 @@ function validateForm({ name, email, password, departmentId }) {
   } else if (password.length < 8) {
     errors.password = 'Password must be at least 8 characters.';
   }
-  if (!departmentId) {
-    errors.departmentId = 'Department is required.';
-  }
   return errors;
 }
 
@@ -34,35 +31,10 @@ export default function RegisterPage() {
     name: '',
     email: '',
     password: '',
-    departmentId: '',
   });
-  const [departments, setDepartments] = useState([]);
   const [fieldErrors, setFieldErrors] = useState({});
   const [serverError, setServerError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isFetchingDepts, setIsFetchingDepts] = useState(false);
-
-  // Fetch departments for the select dropdown
-  useEffect(() => {
-    async function fetchDepartments() {
-      setIsFetchingDepts(true);
-      try {
-        const response = await apiClient.get('/departments');
-        // Standard shape: { success: true, data: [...] }
-        if (response.data?.success && Array.isArray(response.data.data)) {
-          setDepartments(response.data.data);
-        } else if (Array.isArray(response.data)) {
-          setDepartments(response.data);
-        }
-      } catch (err) {
-        console.error('Failed to load departments:', err);
-      } finally {
-        setIsFetchingDepts(false);
-      }
-    }
-
-    fetchDepartments();
-  }, []);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -90,7 +62,6 @@ export default function RegisterPage() {
         name: fields.name.trim(),
         email: fields.email.trim(),
         password: fields.password,
-        departmentId: fields.departmentId,
       });
 
       // Redirect to login page on success
@@ -206,45 +177,6 @@ export default function RegisterPage() {
                   error={fieldErrors.password}
                   autoComplete="new-password"
                 />
-              </div>
-
-              {/* Department Select */}
-              <div className="space-y-1">
-                <label htmlFor="departmentId" className="block text-sm font-medium text-slate-700">
-                  Department
-                </label>
-                <div className="relative">
-                  <select
-                    id="departmentId"
-                    name="departmentId"
-                    value={fields.departmentId}
-                    onChange={handleChange}
-                    aria-invalid={Boolean(fieldErrors.departmentId)}
-                    aria-describedby={fieldErrors.departmentId ? 'dept-error' : undefined}
-                    className={[
-                      'block w-full rounded-md border px-3 py-2 text-sm text-slate-900 pl-9 outline-none bg-white appearance-none pr-10',
-                      'focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-150',
-                      fieldErrors.departmentId ? 'border-red-400 bg-red-50' : 'border-slate-300 bg-white hover:border-slate-400',
-                    ].join(' ')}
-                  >
-                    <option value="">Select a department</option>
-                    {departments.map((dept) => (
-                      <option key={dept.id} value={dept.id}>
-                        {dept.name}
-                      </option>
-                    ))}
-                  </select>
-                  <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" aria-hidden="true" />
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
-                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                    </svg>
-                  </div>
-                </div>
-                {isFetchingDepts && <p className="text-xs text-slate-500">Loading departments...</p>}
-                {fieldErrors.departmentId && (
-                  <p id="dept-error" className="text-xs text-red-600 mt-0.5">{fieldErrors.departmentId}</p>
-                )}
               </div>
 
               {/* Server Error */}
