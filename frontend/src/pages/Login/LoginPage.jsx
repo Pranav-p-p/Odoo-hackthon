@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Loader2, AlertCircle } from 'lucide-react';
 import { loginUser } from '../../api/authApi';
 import PasswordInput from '../../components/PasswordInput/PasswordInput';
+import useAuth from '../../hooks/useAuth';
 
 // ─── Validation helpers ───────────────────────────────────────────────────────
 
@@ -46,6 +47,7 @@ const ROLE_REDIRECT = {
  */
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   // ── Form state ──────────────────────────────────────────────────────────────
   const [fields, setFields] = useState({ email: '', password: '' });
@@ -85,14 +87,8 @@ export default function LoginPage() {
       // API_CONTRACT.md: { success: true, data: { token, user } }
       const { token, user } = result.data;
 
-      // Persist token — respect "Remember me"
-      if (rememberMe) {
-        localStorage.setItem('assetflow_token', token);
-        localStorage.setItem('assetflow_user', JSON.stringify(user));
-      } else {
-        sessionStorage.setItem('assetflow_token', token);
-        sessionStorage.setItem('assetflow_user', JSON.stringify(user));
-      }
+      // Store token + update AuthContext state
+      login(token, user, rememberMe);
 
       // Redirect by role
       const destination = ROLE_REDIRECT[user.role] ?? '/dashboard';

@@ -23,7 +23,7 @@
 | Member | Module | Backend | Frontend | Status |
 |--------|--------|---------|----------|--------|
 | Member 1 | Identity & Foundation | `[~]` Schema only | `[x]` Login + Register | Partially complete — auth routes pending |
-| Member 2 | Asset Core | `[ ]` | `[x]` | Frontend complete — backend pending |
+| Member 2 | Asset Core | `[x]` | `[x]` | Fully complete — verified |
 | Member 3 | Operations | `[ ]` | `[ ]` | Not started |
 | Member 4 | Intelligence | `[ ]` | `[ ]` | Not started |
 
@@ -52,22 +52,22 @@
 - [x] Cascade / SetNull / Restrict delete rules defined
 - [x] Migration done — Supabase DB created (commit fd6664c)
 
-### PENDING — Backend Auth Routes & Middleware
+### DONE — Backend Auth Routes & Middleware
 
-- [ ] POST /auth/signup — create EMPLOYEE with bcrypt + JWT
-- [ ] POST /auth/login — verify credentials, reject INACTIVE users
-- [ ] POST /auth/forgot-password — log to console (demo mode)
-- [ ] GET /auth/me — return current user from JWT
-- [ ] auth.middleware.js — JWT verify → req.user
-- [ ] role.middleware.js — RBAC
-- [ ] validate.middleware.js — body validation
-- [ ] error.middleware.js — global error handler
-- [ ] department.routes.js — GET, POST, PATCH /departments
-- [ ] category.routes.js — GET, POST, PATCH /categories
-- [ ] user.routes.js — GET /users, PATCH /role, PATCH /status
-- [ ] server.js — Express entry point, CORS, route registration
-- [ ] config/prisma.js — Prisma client singleton
-- [ ] config/jwt.js — secret + expiry
+- [x] POST /auth/signup — create EMPLOYEE with bcrypt + JWT
+- [x] POST /auth/login — verify credentials, reject INACTIVE users
+- [x] POST /auth/forgot-password — log to console (demo mode)
+- [x] GET /auth/me — return current user from JWT
+- [x] auth.middleware.js — JWT verify → req.user
+- [x] role.middleware.js — RBAC
+- [x] validate.middleware.js — body validation
+- [x] error.middleware.js — global error handler
+- [x] department.routes.js — GET, POST, PATCH /departments
+- [x] category.routes.js — GET, POST, PATCH /categories
+- [x] user.routes.js — GET /users, PATCH /role, PATCH /status
+- [x] server.js — Express entry point, CORS, route registration
+- [x] config/prisma.js — Prisma client singleton
+- [x] config/jwt.js — secret + expiry
 
 ### DONE — Frontend
 
@@ -80,13 +80,13 @@
 - [x] src/pages/Register/RegisterPage.jsx — signup form, dept dropdown
 - [x] src/App.jsx — BrowserRouter with /login, /register, /dashboard routes
 
-### PENDING — Frontend (Member 1)
+### DONE — Frontend (Member 1)
 
-- [ ] src/context/AuthContext.jsx — currentUser, login(), logout()
-- [ ] src/layouts/DashboardLayout.jsx — Sidebar + content shell
-- [ ] src/pages/OrganizationSetup/ — Screen 3 (3 tabs: Departments, Categories, Employee Directory)
-- [ ] Protected route wrapper — redirect unauth users to /login
-- [ ] src/hooks/useAuth.js
+- [x] src/context/AuthContext.jsx — currentUser, login(), logout()
+- [x] src/layouts/DashboardLayout.jsx — Sidebar + content shell
+- [x] src/pages/OrganizationSetup/ — Screen 3 (3 tabs: Departments, Categories, Employee Directory)
+- [x] Protected route wrapper — redirect unauth users to /login
+- [x] src/hooks/useAuth.js
 
 ### ISSUES FOUND
 
@@ -94,7 +94,7 @@
 |---|----------|-------|----------|--------|
 | 1 | ~~MUST FIX~~ FIXED | Password min-length was 6; SHARED_ENUMS.md specifies 8 | RegisterPage.jsx L21 | **Fixed** — changed to `< 8` |
 | 2 | ~~MUST FIX~~ FIXED | JWT interceptor only read localStorage; sessionStorage tokens were ignored | authApi.js L18 | **Fixed** — interceptor now checks both |
-| 3 | Medium | LoginPage stores JWT without calling AuthContext.login() — update once AuthContext is built | LoginPage.jsx L89–95 | Update after AuthContext is built |
+| 3 | ~~Medium~~ FIXED | LoginPage stores JWT without calling AuthContext.login() — update once AuthContext is built | LoginPage.jsx L89–95 | **Fixed** — Updated to call login() |
 | 4 | Low | RegisterPage redirects to /login after signup — WORKFLOW.md says Dashboard. Acceptable for demo. | RegisterPage.jsx L97 | Low priority |
 | 5 | Low | App.css contains unused Vite boilerplate CSS (.hero, .ticks, etc.) | App.css | Cleanup |
 | 6 | ~~MUST FIX~~ FIXED | `toDept` does not exist as relation on `Transfer` in `schema.prisma` (only `toDeptId` UUID field) | AllocationTransferPage.jsx L345 | **Fixed** — resolve department name locally via departments array lookup |
@@ -108,11 +108,11 @@
 **Depends on:** Member 1's auth.middleware.js (blocking), Member 4's createLog()/createNotification()
 
 ### Backend
-
-- [ ] asset.routes.js + controller (GET with filters, POST, GET/:id, PATCH/:id)
-- [ ] utils/assetTagGenerator.js — AF-XXXX auto-generation
-- [ ] allocation.routes.js + controller (POST with 409 conflict, PATCH /return)
-- [ ] transfer.routes.js + controller (POST, PATCH /approve, PATCH /reject)
+ 
+- [x] asset.routes.js + controller (GET with filters, POST, GET/:id, PATCH/:id)
+- [x] utils/assetTagGenerator.js — AF-XXXX auto-generation
+- [x] allocation.routes.js + controller (POST with 409 conflict, PATCH /return)
+- [x] transfer.routes.js + controller (POST, PATCH /approve, PATCH /reject)
 
 ### Frontend
 
