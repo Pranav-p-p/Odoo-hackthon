@@ -146,8 +146,8 @@
 - [x] `src/api/maintenanceApi.js` — all 7 API functions, mock assets + users
 - [x] `pages/ResourceBooking/ResourceBookingPage.jsx` — asset selector, CalendarTimeline (8AM–8PM), booking form, ConflictBanner on 409, cancel action
 - [x] `pages/Maintenance/MaintenancePage.jsx` — 5-column Kanban, MaintenanceCard, RaiseRequestModal, AssignTechnicianModal, ResolveModal, RejectModal
+- [x] App.jsx — `/booking` (Screen 6) and `/maintenance` (Screen 7) routes registered (Phase 8)
 - [~] DashboardLayout wrap pending — TODO [MEMBER 1]
-- [~] App.jsx route registration pending — PR to Member 1
 - [~] Live asset dropdown pending — TODO [MEMBER 2]
 
 ### TODOS Remaining (Blocked)
@@ -157,7 +157,7 @@
 | 1 | ~~Member 1~~ DONE | ✅ Auth middleware wired, req.user.id live, CommonJS conversion done |
 | 2 | ~~Self — Phase 5~~ DONE | ✅ Routes registered in `server.js` — `/api/v1/bookings` + `/api/v1/maintenance-requests` live |
 | 3 | Member 1 Pending | Wrap ResourceBookingPage + MaintenancePage in DashboardLayout |
-| 4 | Self — Phase 8 | Add /booking + /maintenance to App.jsx |
+| 4 | ~~Self — Phase 8~~ DONE | ✅ /booking + /maintenance routes added to App.jsx |
 | 5 | Member 2 | Replace MOCK_BOOKABLE_ASSETS + MOCK_ASSETS with live GET /assets |
 | 6 | Member 4 | Replace all createLog() + createNotification() TODO placeholders |
 
@@ -198,7 +198,7 @@
 | 0.5 | Schema Freeze — Member 1 pushes schema, all pull + npx prisma generate | [x] Done | Schema merged, Supabase DB created |
 | 2.0 | Auth Ready — Member 1 auth middleware live; Member 4 delivers utilities | [x] Done | Auth wired in Member 3's routes + controllers (Phase 4 complete) |
 | 4.0 | Core APIs — Members 1–3 backend endpoints working | [~] Partial | Member 3 backend fully live — Members 2 & 4 pending |
-| 5.5 | UI Integration — Frontend wired to live APIs | [ ] Pending | — |
+| 5.5 | UI Integration — Frontend wired to live APIs | [~] Partial | Member 3 pages routed at /booking and /maintenance. Awaiting DashboardLayout + live assets |
 | 7.0 | Feature Freeze | [ ] Pending | — |
 | 7.5 | Final merge to main, demo rehearsal | [ ] Pending | — |
 

@@ -141,11 +141,26 @@ const prisma                      = require('../config/prisma');
 | Replace mock assets with live `GET /assets` | Member 2's asset endpoint | ❌ Blocked |
 | Swap MOCK_USERS with live `GET /users` | Note: `GET /users` is Admin-only — keep mock | ⚠️ Design issue |
 | Wrap pages in `DashboardLayout` | Member 1's DashboardLayout.jsx | ❌ Pending |
-| Add /booking + /maintenance to App.jsx | Phase 8 | ⏳ After Phase 5 |
+| Add /booking + /maintenance to App.jsx | Phase 8 | ✅ Done |
 
 ---
 
-## Acceptance Criteria Checklist (from ACCEPTANCE_CRITERIA.md)
+## Phase 8 — Frontend Route Registration ✅ COMPLETE
+
+| Task | Status | Notes |
+|------|--------|-------|
+| Import `ResourceBookingPage` into `App.jsx` | ✅ Done | `import ResourceBookingPage from './pages/ResourceBooking/ResourceBookingPage'` |
+| Import `MaintenancePage` into `App.jsx` | ✅ Done | `import MaintenancePage from './pages/Maintenance/MaintenancePage'` |
+| Add `<Route path="/booking" ...>` | ✅ Done | Screen 6 accessible at `/booking` |
+| Add `<Route path="/maintenance" ...>` | ✅ Done | Screen 7 accessible at `/maintenance` |
+
+### TODOs remaining
+- [ ] `// TODO [MEMBER 1]` — Wrap `<ResourceBookingPage />` in `<DashboardLayout>` in `App.jsx`
+- [ ] `// TODO [MEMBER 1]` — Wrap `<MaintenancePage />` in `<DashboardLayout>` in `App.jsx`
+- [ ] `// TODO [MEMBER 2]` — Replace `MOCK_BOOKABLE_ASSETS` in `bookingApi.js` with live `GET /assets?isBookable=true`
+- [ ] `// TODO [MEMBER 2]` — Replace `MOCK_ASSETS` in `maintenanceApi.js` with live `GET /assets`
+- [ ] `// TODO [MEMBER 4]` — Uncomment all `createLog()` + `createNotification()` calls in both controllers
+
 
 ### Screen 6 — Resource Booking
 - [x] Employee can book a shared resource (isBookable: true) — form + API implemented
