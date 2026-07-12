@@ -4,9 +4,9 @@
  */
 
 const { Router } = require('express');
-const { authenticate } = require('../../middleware/auth.middleware');
-const { assetManagerOrAbove } = require('../../middleware/role.middleware');
-const { validate, schemas } = require('../../middleware/validate.middleware');
+const { authenticate } = require('../middleware/auth.middleware');
+const { assetManagerOrAbove } = require('../middleware/role.middleware');
+const { validate, schemas } = require('../middleware/validate.middleware');
 const {
   getAudits,
   createAudit,
@@ -14,7 +14,7 @@ const {
   verifyItem,
   getDiscrepancyReport,
   closeAudit,
-} = require('./audit.controller');
+} = require('../controllers/audit.controller');
 
 const router = Router();
 

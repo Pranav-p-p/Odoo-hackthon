@@ -1,4 +1,5 @@
 /**
+ * createNotification.js (formerly notificationService.js)
  * Creates a notification for a user.
  * 
  * @param {Object} params

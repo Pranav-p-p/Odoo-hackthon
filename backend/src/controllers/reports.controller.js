@@ -8,7 +8,7 @@
  *   Error:   { success: false, error: { code, message, details } }
  */
 
-const { createError } = require('../../middleware/error.middleware');
+const { createError } = require('../middleware/error.middleware');
 const {
   fetchUtilization,
   fetchMaintenanceFrequency,
@@ -18,7 +18,7 @@ const {
   fetchDepartmentBreakdown,
   fetchBookingHeatmap,
   exportToCsv,
-} = require('./reports.service');
+} = require('../services/reports.service');
 
 /**
  * GET /api/v1/reports/utilization

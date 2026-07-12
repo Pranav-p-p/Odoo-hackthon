@@ -1,10 +1,10 @@
 /**
  * dashboard.repository.js
  * Raw Prisma queries only — no business logic.
- * Uses the shared Prisma singleton from config/prisma.js (Option A).
+ * Uses the shared Prisma singleton from config/prisma.js.
  */
 
-const prisma = require('../../config/prisma');
+const prisma = require('../config/prisma');
 
 /**
  * Fetches all raw counts needed to build the KPI payload.

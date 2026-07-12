@@ -4,10 +4,10 @@
  * Manages side effects like logging, admin notifications, and updating missing assets to LOST.
  */
 
-const prisma = require('../../config/prisma');
-const { createLog } = require('../../shared/activityLogger');
-const { createNotification } = require('../../shared/notificationService');
-const { createError } = require('../../middleware/error.middleware');
+const prisma = require('../config/prisma');
+const { createLog } = require('../utils/createLog');
+const { createNotification } = require('../utils/createNotification');
+const { createError } = require('../middleware/error.middleware');
 const {
   findAudits,
   createAuditCycle,

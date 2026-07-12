@@ -21,11 +21,11 @@ const allocationRoutes = require('./src/routes/allocation.routes');
 const transferRoutes = require('./src/routes/transfer.routes');
 
 // ── Module 4 Routes (Member 4) ───────────────────────────────────────────────
-const dashboardRoutes = require('./src/modules/dashboard/dashboard.routes');
-const notificationRoutes = require('./src/modules/notification/notification.routes');
-const auditRoutes = require('./src/modules/audit/audit.routes');
-const reportsRoutes = require('./src/modules/reports/reports.routes');
-const activityLogRoutes = require('./src/modules/activity-log/activityLog.routes');
+const dashboardRoutes = require('./src/routes/dashboard.routes');
+const notificationRoutes = require('./src/routes/notification.routes');
+const auditRoutes = require('./src/routes/audit.routes');
+const reportsRoutes = require('./src/routes/report.routes');
+const activityLogRoutes = require('./src/routes/activityLog.routes');
 
 const { errorHandler, notFoundHandler } = require('./src/middleware/error.middleware');
 
@@ -49,17 +49,14 @@ app.use('/api/v1/departments', departmentRoutes);
 app.use('/api/v1/categories', categoryRoutes);
 app.use('/api/v1/users', userRoutes);
 
-<<<<<<< HEAD
 // ── API Routes — Module 2 (Member 2) ─────────────────────────────────────────
 app.use('/api/v1/assets', assetRoutes);
 app.use('/api/v1/allocations', allocationRoutes);
 app.use('/api/v1/transfers', transferRoutes);
 
-=======
 // ── API Routes (Module 3 — Operations) ─────────────────────────────────────
 app.use('/api/v1/bookings', bookingRoutes);
 app.use('/api/v1/maintenance-requests', maintenanceRoutes);
->>>>>>> origin/main
 // ── API Routes — Module 4 (Member 4) ─────────────────────────────────────────
 app.use('/api/v1/dashboard', dashboardRoutes);
 app.use('/api/v1/notifications', notificationRoutes);

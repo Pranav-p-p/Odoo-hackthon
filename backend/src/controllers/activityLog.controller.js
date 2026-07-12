@@ -8,7 +8,7 @@
  *   Error:     { success: false, error: { code, message, details } }
  */
 
-const { fetchLogs } = require('./activityLog.service');
+const { fetchLogs } = require('../services/activityLog.service');
 
 /**
  * GET /api/v1/activity-logs
