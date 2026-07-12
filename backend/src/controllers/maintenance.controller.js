@@ -10,9 +10,8 @@
 
 const prisma = require('../config/prisma');
 
-// TODO [MEMBER 4]: Uncomment when utilities are delivered
-// const { createLog }          = require('../utils/createLog');
-// const { createNotification } = require('../utils/createNotification');
+const { createLog }          = require('../shared/activityLogger');
+const { createNotification } = require('../shared/notificationService');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GET /api/v1/maintenance-requests
@@ -114,14 +113,14 @@ const createMaintenanceRequest = async (req, res, next) => {
     });
 
     // ── 5. Side effects ───────────────────────────────────────────────────────
-    // TODO [MEMBER 4]:
-    // await createLog(
-    //   requestedById,
-    //   'MAINTENANCE_REQUEST_CREATED',
-    //   'MaintenanceRequest',
-    //   request.id,
-    //   { assetId, priority, issueDescription },
-    // );
+    await createLog({
+      prisma,
+      userId: requestedById,
+      action: 'MAINTENANCE_REQUEST_CREATED',
+      entityType: 'MaintenanceRequest',
+      entityId: request.id,
+      details: { assetId, priority, issueDescription },
+    });
 
     return res.status(201).json({
       success: true,
@@ -190,23 +189,23 @@ const approveRequest = async (req, res, next) => {
     ]);
 
     // ── 4. Side effects ───────────────────────────────────────────────────────
-    // TODO [MEMBER 4]: Uncomment when utilities are delivered
-    // await createNotification(
-    //   request.requestedById,
-    //   'Maintenance Request Approved',
-    //   `Your maintenance request for ${request.asset.name} (${request.asset.assetTag}) has been approved.`,
-    //   'MAINTENANCE_APPROVED',  // SHARED_ENUMS.md Notification Types
-    //   'APPROVALS',             // SHARED_ENUMS.md Notification Categories
-    // );
+    await createNotification({
+      prisma,
+      userId: request.requestedById,
+      title: 'Maintenance Request Approved',
+      message: `Your maintenance request for ${request.asset.name} (${request.asset.assetTag}) has been approved.`,
+      type: 'MAINTENANCE_APPROVED',
+      category: 'APPROVALS',
+    });
 
-    // TODO [MEMBER 4]:
-    // await createLog(
-    //   req.user.id,
-    //   'MAINTENANCE_APPROVED',
-    //   'MaintenanceRequest',
-    //   id,
-    //   { assetId: request.assetId, previousStatus: 'PENDING_APPROVAL' },
-    // );
+    await createLog({
+      prisma,
+      userId: req.user.id,
+      action: 'MAINTENANCE_APPROVED',
+      entityType: 'MaintenanceRequest',
+      entityId: id,
+      details: { assetId: request.assetId, previousStatus: 'PENDING_APPROVAL' },
+    });
 
     return res.status(200).json({
       success: true,
@@ -266,17 +265,23 @@ const rejectRequest = async (req, res, next) => {
       },
     });
 
-    // TODO [MEMBER 4]: Uncomment when utilities are delivered
-    // await createNotification(
-    //   request.requestedById,
-    //   'Maintenance Request Rejected',
-    //   `Your maintenance request for ${request.asset.name} has been rejected. Reason: ${reason ?? 'No reason provided.'}`,
-    //   'MAINTENANCE_REJECTED',  // SHARED_ENUMS.md
-    //   'APPROVALS',
-    // );
+    await createNotification({
+      prisma,
+      userId: request.requestedById,
+      title: 'Maintenance Request Rejected',
+      message: `Your maintenance request for ${request.asset.name} has been rejected. Reason: ${reason ?? 'No reason provided.'}`,
+      type: 'MAINTENANCE_REJECTED',
+      category: 'APPROVALS',
+    });
 
-    // TODO [MEMBER 4]:
-    // await createLog(req.user.id, 'MAINTENANCE_REJECTED', 'MaintenanceRequest', id, { reason });
+    await createLog({
+      prisma,
+      userId: req.user.id,
+      action: 'MAINTENANCE_REJECTED',
+      entityType: 'MaintenanceRequest',
+      entityId: id,
+      details: { reason },
+    });
 
     return res.status(200).json({
       success: true,
@@ -349,8 +354,14 @@ const assignTechnician = async (req, res, next) => {
       },
     });
 
-    // TODO [MEMBER 4]:
-    // await createLog(req.user.id, 'TECHNICIAN_ASSIGNED', 'MaintenanceRequest', id, { technicianId });
+    await createLog({
+      prisma,
+      userId: req.user.id,
+      action: 'TECHNICIAN_ASSIGNED',
+      entityType: 'MaintenanceRequest',
+      entityId: id,
+      details: { technicianId },
+    });
 
     return res.status(200).json({
       success: true,
@@ -399,8 +410,14 @@ const startWork = async (req, res, next) => {
       },
     });
 
-    // TODO [MEMBER 4]:
-    // await createLog(req.user.id, 'MAINTENANCE_STARTED', 'MaintenanceRequest', id, {});
+    await createLog({
+      prisma,
+      userId: req.user.id,
+      action: 'MAINTENANCE_STARTED',
+      entityType: 'MaintenanceRequest',
+      entityId: id,
+      details: {},
+    });
 
     return res.status(200).json({
       success: true,
@@ -475,14 +492,14 @@ const resolveRequest = async (req, res, next) => {
       }),
     ]);
 
-    // TODO [MEMBER 4]: Uncomment when utilities are delivered
-    // await createLog(
-    //   req.user.id,
-    //   'MAINTENANCE_RESOLVED',
-    //   'MaintenanceRequest',
-    //   id,
-    //   { assetId: request.assetId, resolvedNotes },
-    // );
+    await createLog({
+      prisma,
+      userId: req.user.id,
+      action: 'MAINTENANCE_RESOLVED',
+      entityType: 'MaintenanceRequest',
+      entityId: id,
+      details: { assetId: request.assetId, resolvedNotes },
+    });
 
     return res.status(200).json({
       success: true,

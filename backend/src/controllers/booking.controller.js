@@ -7,9 +7,8 @@
 
 const prisma = require('../config/prisma');
 
-// TODO [MEMBER 4]: Uncomment when utilities are delivered
-// const { createLog }          = require('../utils/createLog');
-// const { createNotification } = require('../utils/createNotification');
+const { createLog }          = require('../shared/activityLogger');
+const { createNotification } = require('../shared/notificationService');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
@@ -217,23 +216,23 @@ const createBooking = async (req, res, next) => {
     });
 
     // ── 5. Side effects ───────────────────────────────────────────────────────
-    // TODO [MEMBER 4]: Uncomment when createNotification is delivered
-    // await createNotification(
-    //   userId,
-    //   'Booking Confirmed',
-    //   `Your booking for ${asset.name} from ${start.toISOString()} to ${end.toISOString()} is confirmed.`,
-    //   'BOOKING_CONFIRMED',   // from SHARED_ENUMS.md Notification Types
-    //   'BOOKINGS',            // from SHARED_ENUMS.md Notification Categories
-    // );
+    await createNotification({
+      prisma,
+      userId,
+      title: 'Booking Confirmed',
+      message: `Your booking for ${asset.name} from ${start.toISOString()} to ${end.toISOString()} is confirmed.`,
+      type: 'BOOKING_CONFIRMED',
+      category: 'BOOKINGS',
+    });
 
-    // TODO [MEMBER 4]: Uncomment when createLog is delivered
-    // await createLog(
-    //   userId,
-    //   'BOOKING_CREATED',
-    //   'Booking',
-    //   booking.id,
-    //   { assetId, startTime: start, endTime: end, purpose },
-    // );
+    await createLog({
+      prisma,
+      userId,
+      action: 'BOOKING_CREATED',
+      entityType: 'Booking',
+      entityId: booking.id,
+      details: { assetId, startTime: start, endTime: end, purpose },
+    });
 
     return res.status(201).json({
       success: true,
@@ -306,23 +305,23 @@ const cancelBooking = async (req, res, next) => {
     });
 
     // ── 5. Side effects ───────────────────────────────────────────────────────
-    // TODO [MEMBER 4]: Uncomment when utilities are delivered
-    // await createNotification(
-    //   booking.userId,
-    //   'Booking Cancelled',
-    //   `Your booking for ${booking.asset.name} has been cancelled.`,
-    //   'BOOKING_CANCELLED',  // SHARED_ENUMS.md
-    //   'BOOKINGS',
-    // );
+    await createNotification({
+      prisma,
+      userId: booking.userId,
+      title: 'Booking Cancelled',
+      message: `Your booking for ${booking.asset.name} has been cancelled.`,
+      type: 'BOOKING_CANCELLED',
+      category: 'BOOKINGS',
+    });
 
-    // TODO [MEMBER 4]:
-    // await createLog(
-    //   req.user.id,
-    //   'BOOKING_CANCELLED',
-    //   'Booking',
-    //   id,
-    //   { assetId: booking.assetId, startTime: booking.startTime, endTime: booking.endTime },
-    // );
+    await createLog({
+      prisma,
+      userId: req.user.id,
+      action: 'BOOKING_CANCELLED',
+      entityType: 'Booking',
+      entityId: id,
+      details: { assetId: booking.assetId, startTime: booking.startTime, endTime: booking.endTime },
+    });
 
     return res.status(200).json({
       success: true,

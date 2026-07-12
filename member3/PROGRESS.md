@@ -23,7 +23,7 @@
 - [x] `// TODO [MEMBER 1]` — `req.user.id` now live (auth middleware wired)
 - [x] `// TODO [MEMBER 1]` — `authenticate` + `anyAuthenticatedUser` imported and active
 - [x] `// TODO [MEMBER 1]` — owner/manager permission check in `cancelBooking` now live
-- [ ] `// TODO [MEMBER 4]` — `createNotification(BOOKING_CONFIRMED)` + `createLog()` still pending
+- [x] `// TODO [MEMBER 4]` — `createNotification(BOOKING_CONFIRMED)` + `createLog()` now wired
 
 ---
 
@@ -46,7 +46,7 @@
 ### Phase 4 completions for Phase 3
 - [x] `// TODO [MEMBER 1]` — auth middleware wired (`authenticate` + `assetManagerOrAbove`)
 - [x] `// TODO [MEMBER 1]` — `req.user.id` now live in all 5 controller functions
-- [ ] `// TODO [MEMBER 4]` — `createNotification(MAINTENANCE_APPROVED/REJECTED)` + `createLog()` still pending
+- [x] `// TODO [MEMBER 4]` — `createNotification(MAINTENANCE_APPROVED/REJECTED)` + `createLog()` now wired
 
 ---
 
@@ -114,7 +114,7 @@ const prisma                      = require('../config/prisma');
 ```
 
 ### TODOs remaining
-- [ ] `// TODO [MEMBER 4]` — all `createLog()` + `createNotification()` placeholders still pending
+- [x] `// TODO [MEMBER 4]` — all `createLog()` + `createNotification()` placeholders now wired
 - [ ] Phase 5 — Register routes in `server.js` (next step)
 
 ---
@@ -137,7 +137,7 @@ const prisma                      = require('../config/prisma');
 |------|------------|--------|
 | Register `booking.routes.js` in `server.js` | Add 2 lines to server.js | ⏳ Phase 5 — next |
 | Register `maintenance.routes.js` in `server.js` | Add 2 lines to server.js | ⏳ Phase 5 — next |
-| Wire `createLog()` + `createNotification()` | Member 4's utilities | ❌ Blocked |
+| Wire `createLog()` + `createNotification()` | Member 4's utilities | ✅ Done |
 | Replace mock assets with live `GET /assets` | Member 2's asset endpoint | ❌ Blocked |
 | Swap MOCK_USERS with live `GET /users` | Note: `GET /users` is Admin-only — keep mock | ⚠️ Design issue |
 | Wrap pages in `DashboardLayout` | Member 1's DashboardLayout.jsx | ❌ Pending |
@@ -159,7 +159,7 @@ const prisma                      = require('../config/prisma');
 - [ ] `// TODO [MEMBER 1]` — Wrap `<MaintenancePage />` in `<DashboardLayout>` in `App.jsx`
 - [ ] `// TODO [MEMBER 2]` — Replace `MOCK_BOOKABLE_ASSETS` in `bookingApi.js` with live `GET /assets?isBookable=true`
 - [ ] `// TODO [MEMBER 2]` — Replace `MOCK_ASSETS` in `maintenanceApi.js` with live `GET /assets`
-- [ ] `// TODO [MEMBER 4]` — Uncomment all `createLog()` + `createNotification()` calls in both controllers
+- [x] `// TODO [MEMBER 4]` — Uncomment all `createLog()` + `createNotification()` calls in both controllers
 
 
 ### Screen 6 — Resource Booking
