@@ -10,6 +10,7 @@ import {
   Loader2,
   AlertCircle,
   X,
+  Edit2,
 } from 'lucide-react';
 
 // ── Tab definitions ─────────────────────────────────────────────────────────
@@ -262,6 +263,43 @@ function EmployeesTab() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
+  
+  // Edit Modal State
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [editForm, setEditForm] = useState({ role: '', status: '' });
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  function openEditModal(user) {
+    setSelectedUser(user);
+    setEditForm({ role: user.role, status: user.status });
+    setShowEditModal(true);
+  }
+
+  async function handleUpdateUser(e) {
+    e.preventDefault();
+    if (!selectedUser) return;
+    setIsUpdating(true);
+    setError('');
+    
+    try {
+      // Update role if changed
+      if (editForm.role !== selectedUser.role) {
+        await apiClient.patch(`/users/${selectedUser.id}/role`, { role: editForm.role });
+      }
+      // Update status if changed
+      if (editForm.status !== selectedUser.status) {
+        await apiClient.patch(`/users/${selectedUser.id}/status`, { status: editForm.status });
+      }
+      
+      setShowEditModal(false);
+      fetchUsers(); // refresh the list
+    } catch (err) {
+      setError(err?.response?.data?.error?.message || 'Failed to update user.');
+    } finally {
+      setIsUpdating(false);
+    }
+  }
 
   async function fetchUsers() {
     try {
@@ -314,6 +352,7 @@ function EmployeesTab() {
               <th className="text-left px-4 py-3 font-medium text-slate-600">Department</th>
               <th className="text-left px-4 py-3 font-medium text-slate-600">Role</th>
               <th className="text-left px-4 py-3 font-medium text-slate-600">Status</th>
+              {isAdmin && <th className="text-right px-4 py-3 font-medium text-slate-600">Actions</th>}
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -328,14 +367,72 @@ function EmployeesTab() {
                 <td className="px-4 py-3">
                   <StatusBadge status={user.status} />
                 </td>
+                {isAdmin && (
+                  <td className="px-4 py-3 text-right">
+                    {/* Don't allow admin to demote themselves easily here to prevent lockout */}
+                    {user.id !== currentUser?.id && (
+                      <button
+                        onClick={() => openEditModal(user)}
+                        className="text-slate-400 hover:text-indigo-600 transition-colors"
+                        title="Edit Role & Status"
+                      >
+                        <Edit2 className="h-4 w-4 inline-block" />
+                      </button>
+                    )}
+                  </td>
+                )}
               </tr>
             ))}
             {filteredUsers.length === 0 && (
-              <tr><td colSpan={5} className="px-4 py-8 text-center text-slate-400">No users found.</td></tr>
+              <tr><td colSpan={isAdmin ? 6 : 5} className="px-4 py-8 text-center text-slate-400">No users found.</td></tr>
             )}
           </tbody>
         </table>
       </div>
+
+      {/* Edit Employee Modal */}
+      <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} title="Edit Employee">
+        {selectedUser && (
+          <form onSubmit={handleUpdateUser} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Name</label>
+              <input type="text" value={selectedUser.name} disabled className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm bg-slate-50 text-slate-500 outline-none cursor-not-allowed" />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Role</label>
+              <select
+                value={editForm.role}
+                onChange={(e) => setEditForm({ ...editForm, role: e.target.value })}
+                className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white"
+              >
+                <option value="EMPLOYEE">Employee</option>
+                <option value="ASSET_MANAGER">Asset Manager</option>
+                <option value="DEPARTMENT_HEAD">Department Head</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Status</label>
+              <select
+                value={editForm.status}
+                onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
+                className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white"
+              >
+                <option value="ACTIVE">Active</option>
+                <option value="INACTIVE">Inactive</option>
+              </select>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-2">
+              <button type="button" onClick={() => setShowEditModal(false)} className="btn-secondary">Cancel</button>
+              <button type="submit" disabled={isUpdating || (editForm.role === selectedUser.role && editForm.status === selectedUser.status)} className="btn-primary">
+                {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Save Changes'}
+              </button>
+            </div>
+          </form>
+        )}
+      </Modal>
     </div>
   );
 }
