@@ -3,9 +3,6 @@
  * Receives requests, calls service, returns responses.
  * No business logic here.
  *
- * Assumes req.prisma is attached by app.js middleware (coordinate with Member 1).
- * Assumes req.user is attached by auth.middleware.js (coordinate with Member 1).
- *
  * Standard response envelope per API_CONTRACT.md:
  *   Success:   { success: true, data: {...}, message?: "..." }
  *   Paginated: { success: true, data: [...], pagination: { page, limit, total } }
@@ -17,18 +14,17 @@ const {
   fetchUnreadCount,
   markNotificationRead,
   markAllNotificationsRead,
-} = require('./notification.service');
+} = require('../services/notification.service');
 
 /**
  * GET /api/v1/notifications
  * Query params: category (ALL|ALERTS|APPROVALS|BOOKINGS), isRead (true|false), page, limit
  * Returns a paginated list of the current user's notifications, newest first.
  */
-const getNotifications = async (req, res) => {
+const getNotifications = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const { notifications, total, page, limit } = await listNotifications(
-      req.prisma,
       userId,
       req.query
     );
@@ -42,16 +38,8 @@ const getNotifications = async (req, res) => {
         total,
       },
     });
-  } catch (error) {
-    console.error('[Notification] getNotifications error:', error);
-    return res.status(500).json({
-      success: false,
-      error: {
-        code: 'NOTIFICATION_LIST_ERROR',
-        message: 'Failed to fetch notifications.',
-        details: {},
-      },
-    });
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -60,25 +48,17 @@ const getNotifications = async (req, res) => {
  * Returns the count of unread notifications for the current user.
  * Response: { count: N }
  */
-const getUnreadCount = async (req, res) => {
+const getUnreadCount = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    const count = await fetchUnreadCount(req.prisma, userId);
+    const count = await fetchUnreadCount(userId);
 
     return res.status(200).json({
       success: true,
       data: { count },
     });
-  } catch (error) {
-    console.error('[Notification] getUnreadCount error:', error);
-    return res.status(500).json({
-      success: false,
-      error: {
-        code: 'NOTIFICATION_COUNT_ERROR',
-        message: 'Failed to fetch unread count.',
-        details: {},
-      },
-    });
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -87,12 +67,12 @@ const getUnreadCount = async (req, res) => {
  * Marks a specific notification as read.
  * Scoped to the current user — cannot mark another user's notification.
  */
-const markRead = async (req, res) => {
+const markRead = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const { id } = req.params;
 
-    const updated = await markNotificationRead(req.prisma, id, userId);
+    const updated = await markNotificationRead(id, userId);
 
     if (!updated) {
       return res.status(404).json({
@@ -110,16 +90,8 @@ const markRead = async (req, res) => {
       data: updated,
       message: 'Notification marked as read.',
     });
-  } catch (error) {
-    console.error('[Notification] markRead error:', error);
-    return res.status(500).json({
-      success: false,
-      error: {
-        code: 'NOTIFICATION_MARK_READ_ERROR',
-        message: 'Failed to mark notification as read.',
-        details: {},
-      },
-    });
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -127,26 +99,18 @@ const markRead = async (req, res) => {
  * PATCH /api/v1/notifications/read-all
  * Marks all notifications as read for the current user.
  */
-const markAllRead = async (req, res) => {
+const markAllRead = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    const result = await markAllNotificationsRead(req.prisma, userId);
+    const result = await markAllNotificationsRead(userId);
 
     return res.status(200).json({
       success: true,
       data: { updatedCount: result.count },
       message: 'All notifications marked as read.',
     });
-  } catch (error) {
-    console.error('[Notification] markAllRead error:', error);
-    return res.status(500).json({
-      success: false,
-      error: {
-        code: 'NOTIFICATION_MARK_ALL_READ_ERROR',
-        message: 'Failed to mark all notifications as read.',
-        details: {},
-      },
-    });
+  } catch (err) {
+    next(err);
   }
 };
 

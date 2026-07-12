@@ -17,12 +17,11 @@ const VALID_CATEGORIES = ['ALL', 'ALERTS', 'APPROVALS', 'BOOKINGS'];
 /**
  * Returns a paginated list of notifications for the current user.
  *
- * @param {import('@prisma/client').PrismaClient} prisma
  * @param {string} userId - from req.user.id
  * @param {Object} query - from req.query
  * @returns {Promise<{ notifications: Array, total: number, page: number, limit: number }>}
  */
-const listNotifications = async (prisma, userId, query) => {
+const listNotifications = async (userId, query) => {
   const page = Math.max(1, parseInt(query.page) || 1);
   const limit = Math.min(100, Math.max(1, parseInt(query.limit) || 20));
 
@@ -37,7 +36,7 @@ const listNotifications = async (prisma, userId, query) => {
   if (query.isRead === 'true') isRead = true;
   else if (query.isRead === 'false') isRead = false;
 
-  const { notifications, total } = await findNotifications(prisma, userId, {
+  const { notifications, total } = await findNotifications(userId, {
     category,
     isRead,
     page,
@@ -50,36 +49,33 @@ const listNotifications = async (prisma, userId, query) => {
 /**
  * Returns the count of unread notifications for the current user.
  *
- * @param {import('@prisma/client').PrismaClient} prisma
  * @param {string} userId
  * @returns {Promise<number>}
  */
-const fetchUnreadCount = async (prisma, userId) => {
-  return getUnreadCount(prisma, userId);
+const fetchUnreadCount = async (userId) => {
+  return getUnreadCount(userId);
 };
 
 /**
  * Marks a single notification as read.
  * Returns null if the notification does not exist or belongs to another user.
  *
- * @param {import('@prisma/client').PrismaClient} prisma
  * @param {string} notificationId
  * @param {string} userId
  * @returns {Promise<Object|null>}
  */
-const markNotificationRead = async (prisma, notificationId, userId) => {
-  return markOneRead(prisma, notificationId, userId);
+const markNotificationRead = async (notificationId, userId) => {
+  return markOneRead(notificationId, userId);
 };
 
 /**
  * Marks all notifications as read for the current user.
  *
- * @param {import('@prisma/client').PrismaClient} prisma
  * @param {string} userId
  * @returns {Promise<{ count: number }>}
  */
-const markAllNotificationsRead = async (prisma, userId) => {
-  return markAllRead(prisma, userId);
+const markAllNotificationsRead = async (userId) => {
+  return markAllRead(userId);
 };
 
 module.exports = {

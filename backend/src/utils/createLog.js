@@ -1,4 +1,5 @@
 /**
+ * createLog.js (formerly activityLogger.js)
  * Creates an activity log entry.
  * 
  * @param {Object} params

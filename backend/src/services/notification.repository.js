@@ -1,22 +1,23 @@
 /**
  * notification.repository.js
  * Raw Prisma queries only — no business logic.
- * All functions receive prisma as a parameter (injected from service layer).
+ * Uses the shared Prisma singleton from config/prisma.js.
  *
  * Notification schema fields:
  *   id, userId, title, message, type, category, isRead, createdAt
  */
 
+const prisma = require('../config/prisma');
+
 /**
  * Fetches a paginated list of notifications for a user.
  * Optionally filters by category and/or isRead status.
  *
- * @param {import('@prisma/client').PrismaClient} prisma
  * @param {string} userId
  * @param {{ category?: string, isRead?: boolean, page: number, limit: number }} filters
  * @returns {Promise<{ notifications: Array, total: number }>}
  */
-const findNotifications = async (prisma, userId, { category, isRead, page, limit }) => {
+const findNotifications = async (userId, { category, isRead, page, limit }) => {
   const where = { userId };
 
   // Apply category filter — skip if 'ALL' or not provided
@@ -47,11 +48,10 @@ const findNotifications = async (prisma, userId, { category, isRead, page, limit
 /**
  * Returns the count of unread notifications for a user.
  *
- * @param {import('@prisma/client').PrismaClient} prisma
  * @param {string} userId
  * @returns {Promise<number>}
  */
-const getUnreadCount = async (prisma, userId) => {
+const getUnreadCount = async (userId) => {
   return prisma.notification.count({
     where: { userId, isRead: false },
   });
@@ -61,12 +61,11 @@ const getUnreadCount = async (prisma, userId) => {
  * Marks a single notification as read.
  * Scoped to the userId to prevent users from marking others' notifications.
  *
- * @param {import('@prisma/client').PrismaClient} prisma
  * @param {string} notificationId
  * @param {string} userId
  * @returns {Promise<Object|null>} Updated notification, or null if not found/unauthorized
  */
-const markOneRead = async (prisma, notificationId, userId) => {
+const markOneRead = async (notificationId, userId) => {
   // Verify ownership before updating
   const existing = await prisma.notification.findFirst({
     where: { id: notificationId, userId },
@@ -83,11 +82,10 @@ const markOneRead = async (prisma, notificationId, userId) => {
 /**
  * Marks all notifications as read for a given user.
  *
- * @param {import('@prisma/client').PrismaClient} prisma
  * @param {string} userId
  * @returns {Promise<{ count: number }>}
  */
-const markAllRead = async (prisma, userId) => {
+const markAllRead = async (userId) => {
   return prisma.notification.updateMany({
     where: { userId, isRead: false },
     data: { isRead: true },

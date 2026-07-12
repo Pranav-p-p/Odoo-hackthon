@@ -4,7 +4,7 @@
  * Uses the shared Prisma singleton from config/prisma.js.
  */
 
-const prisma = require('../../config/prisma');
+const prisma = require('../config/prisma');
 
 /**
  * Fetches all audit cycles matching the given filters.

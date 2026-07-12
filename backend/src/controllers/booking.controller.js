@@ -7,8 +7,8 @@
 
 const prisma = require('../config/prisma');
 
-const { createLog }          = require('../shared/activityLogger');
-const { createNotification } = require('../shared/notificationService');
+const { createLog }          = require('../utils/createLog');
+const { createNotification } = require('../utils/createNotification');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers

@@ -10,7 +10,6 @@ const { getKpiCounts, getRecentActivityLogs } = require('./dashboard.repository'
  * Returns the KPI payload for the dashboard.
  * All seven fields are guaranteed to be present in the response.
  *
- * @param {import('@prisma/client').PrismaClient} prisma
  * @returns {Promise<{
  *   assetsAvailable: number,
  *   assetsAllocated: number,
@@ -21,19 +20,18 @@ const { getKpiCounts, getRecentActivityLogs } = require('./dashboard.repository'
  *   overdueReturns: number
  * }>}
  */
-const fetchKpi = async (prisma) => {
-  const kpi = await getKpiCounts(prisma);
+const fetchKpi = async () => {
+  const kpi = await getKpiCounts();
   return kpi;
 };
 
 /**
  * Returns the 10 most recent activity log entries.
  *
- * @param {import('@prisma/client').PrismaClient} prisma
  * @returns {Promise<Array>}
  */
-const fetchRecentActivity = async (prisma) => {
-  const logs = await getRecentActivityLogs(prisma);
+const fetchRecentActivity = async () => {
+  const logs = await getRecentActivityLogs();
   return logs;
 };
 

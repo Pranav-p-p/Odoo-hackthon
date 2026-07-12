@@ -1,10 +1,10 @@
 /**
- * reports.routes.js
+ * report.routes.js
  * Mounts Reports & Analytics endpoints under /api/v1/reports.
  */
 
 const { Router } = require('express');
-const { authenticate } = require('../../middleware/auth.middleware');
+const { authenticate } = require('../middleware/auth.middleware');
 const {
   getUtilization,
   getMaintenanceFrequency,
@@ -14,7 +14,7 @@ const {
   getDepartmentAllocation,
   getBookingHeatmap,
   exportReport,
-} = require('./reports.controller');
+} = require('../controllers/reports.controller');
 
 const router = Router();
 

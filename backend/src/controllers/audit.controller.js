@@ -15,7 +15,7 @@ const {
   verifyItemService,
   fetchDiscrepancyReportService,
   closeAuditCycleService,
-} = require('./audit.service');
+} = require('../services/audit.service');
 
 /**
  * GET /api/v1/audits
