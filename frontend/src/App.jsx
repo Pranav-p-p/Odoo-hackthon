@@ -8,7 +8,6 @@ import LoginPage from './pages/Login/LoginPage';
 import RegisterPage from './pages/Register/RegisterPage';
 import OrganizationSetupPage from './pages/OrganizationSetup/OrganizationSetupPage';
 
-<<<<<<< HEAD
 // Member 2: Asset Core (Screen 4 & 5)
 import AssetDirectory from './pages/Assets/AssetDirectory';
 import AssetRegistrationForm from './pages/Assets/AssetRegistrationForm';
@@ -27,7 +26,6 @@ function DashboardPage() {
 }
 
 // Temporary placeholder component for routes not yet built
-=======
 // ── Member 3: Operations Module (Screen 6 & 7) ───────────────────────────────
 import ResourceBookingPage from './pages/ResourceBooking/ResourceBookingPage';
 import MaintenancePage from './pages/Maintenance/MaintenancePage';
@@ -107,7 +105,6 @@ export default function App() {
 }
 
 // ── Temporary placeholder for routes not yet built ───────────────────────────
->>>>>>> origin/main
 function Placeholder({ label }) {
   return (
     <div className="flex flex-col items-center justify-center h-64 text-center">
@@ -134,15 +131,15 @@ export default function App() {
 
           {/* Asset Core (Member 2 - Screen 4) - unprotected for now */}
           {/* TODO Member 1: wrap these in <ProtectedRoute> + <DashboardLayout> once auth is stable */}
-          <Route path="/assets"          element={<AssetDirectory />} />
+          <Route path="/assets" element={<AssetDirectory />} />
           <Route path="/assets/register" element={<AssetRegistrationForm />} />
-          <Route path="/assets/new"      element={<AssetRegistrationForm />} />
-          <Route path="/assets/:id"      element={<AssetDetail />} />
+          <Route path="/assets/new" element={<AssetRegistrationForm />} />
+          <Route path="/assets/:id" element={<AssetDetail />} />
 
           {/* Allocation & Transfer (Member 2 - Screen 5) */}
           {/* TODO Member 1: wrap in <ProtectedRoute> + <DashboardLayout> */}
           <Route path="/allocation-transfer" element={<AllocationTransferPage />} />
-          <Route path="/allocations"         element={<AllocationTransferPage />} />
+          <Route path="/allocations" element={<AllocationTransferPage />} />
 
           {/* Components Test */}
           <Route path="/components-test" element={<TestComponents />} />
@@ -155,14 +152,14 @@ export default function App() {
               </ProtectedRoute>
             }
           >
-            <Route path="/dashboard"    element={<DashboardPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/organization" element={<OrganizationSetupPage />} />
 
             {/* Placeholders - other members fill these in */}
-            <Route path="/bookings"      element={<Placeholder label="Resource Bookings" />} />
-            <Route path="/maintenance"   element={<Placeholder label="Maintenance" />} />
-            <Route path="/audits"        element={<Placeholder label="Audits" />} />
-            <Route path="/reports"       element={<Placeholder label="Reports" />} />
+            <Route path="/bookings" element={<Placeholder label="Resource Bookings" />} />
+            <Route path="/maintenance" element={<Placeholder label="Maintenance" />} />
+            <Route path="/audits" element={<Placeholder label="Audits" />} />
+            <Route path="/reports" element={<Placeholder label="Reports" />} />
             <Route path="/notifications" element={<Placeholder label="Notifications" />} />
           </Route>
 
