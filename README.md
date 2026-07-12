@@ -138,6 +138,3 @@ For deeper technical context, check the `/docs` directory:
 - [Workflow definitions](./docs/WORKFLOW.md)
 
 ---
-<div align="center">
-  <i>Built with ❤️ during the Hackathon</i>
-</div>
