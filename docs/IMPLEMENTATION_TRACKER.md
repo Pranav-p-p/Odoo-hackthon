@@ -58,13 +58,13 @@
 - [ ] POST /auth/login — verify credentials, reject INACTIVE users
 - [ ] POST /auth/forgot-password — log to console (demo mode)
 - [ ] GET /auth/me — return current user from JWT
-- [ ] auth.middleware.js — JWT verify → req.user
-- [ ] role.middleware.js — RBAC
-- [ ] validate.middleware.js — body validation
-- [ ] error.middleware.js — global error handler
-- [ ] department.routes.js — GET, POST, PATCH /departments
-- [ ] category.routes.js — GET, POST, PATCH /categories
-- [ ] user.routes.js — GET /users, PATCH /role, PATCH /status
+- [x] auth.middleware.js — JWT verify → req.user
+- [x] role.middleware.js — RBAC
+- [x] validate.middleware.js — body validation
+- [x] error.middleware.js — global error handler
+- [] department.routes.js — GET, POST, PATCH /departments
+- [] category.routes.js — GET, POST, PATCH /categories
+- [] user.routes.js — GET /users, PATCH /role, PATCH /status
 - [ ] server.js — Express entry point, CORS, route registration
 - [ ] config/prisma.js — Prisma client singleton
 - [ ] config/jwt.js — secret + expiry
