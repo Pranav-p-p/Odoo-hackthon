@@ -94,12 +94,33 @@ export default function LoginPage() {
     <div style={{
       minHeight:       '100vh',
       backgroundColor: '#010102',       /* canvas */
+      position:        'relative',
+      overflow:        'hidden',
       display:         'flex',
       alignItems:      'center',
       justifyContent:  'center',
       padding:         '48px 16px',
     }}>
-      <div style={{ width: '100%', maxWidth: 380 }}>
+      {/* ── Ambient Glow & Grid ────────────────────────────────────────────── */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        pointerEvents: 'none',
+        zIndex: 0,
+        background: 'radial-gradient(circle at 50% -20%, rgba(94, 106, 210, 0.15), transparent 70%)',
+      }} />
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        pointerEvents: 'none',
+        zIndex: 0,
+        opacity: 0.04,
+        backgroundImage: 'linear-gradient(#c9d1d9 1px, transparent 1px), linear-gradient(90deg, #c9d1d9 1px, transparent 1px)',
+        backgroundSize: '40px 40px',
+        maskImage: 'radial-gradient(ellipse at 50% 30%, black 20%, transparent 70%)',
+        WebkitMaskImage: 'radial-gradient(ellipse at 50% 30%, black 20%, transparent 70%)'
+      }} />
+      <div style={{ width: '100%', maxWidth: 380, position: 'relative', zIndex: 1 }}>
 
         {/* ── Brand mark + heading ─────────────────────────────────────────── */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
@@ -203,26 +224,37 @@ export default function LoginPage() {
               </div>
 
               {/* ── Remember me ────────────────────────────────────────────── */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <input
-                  id="remember-me"
-                  name="rememberMe"
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={e => setRememberMe(e.target.checked)}
-                  style={{
-                    width:       16,
-                    height:      16,
-                    accentColor: '#5e6ad2',
-                    cursor:      'pointer',
-                  }}
-                />
-                <label
-                  htmlFor="remember-me"
-                  className="type-body-sm"
-                  style={{ color: '#8a8f98', cursor: 'pointer', userSelect: 'none' }}
-                >
-                  Remember me
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <label style={{ display: 'inline-flex', alignItems: 'center', cursor: 'pointer', userSelect: 'none' }}>
+                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <input
+                      id="remember-me"
+                      name="rememberMe"
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={e => setRememberMe(e.target.checked)}
+                      style={{
+                        appearance: 'none',
+                        WebkitAppearance: 'none',
+                        width: 16,
+                        height: 16,
+                        backgroundColor: rememberMe ? '#5e6ad2' : '#141516',
+                        border: rememberMe ? '1px solid #5e6ad2' : '1px solid #30363d',
+                        borderRadius: 4,
+                        margin: 0,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                      }}
+                    />
+                    {rememberMe && (
+                      <svg viewBox="0 0 14 14" fill="none" style={{ position: 'absolute', pointerEvents: 'none', width: 10, height: 10 }}>
+                        <path d="M11.6666 3.5L5.24992 9.91667L2.33325 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </div>
+                  <span className="type-body-sm" style={{ color: '#8a8f98', marginLeft: 8 }}>
+                    Remember me
+                  </span>
                 </label>
               </div>
 

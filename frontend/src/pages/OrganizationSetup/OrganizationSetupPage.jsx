@@ -23,23 +23,22 @@ const TABS = [
 
 // ── Reusable Modal ──────────────────────────────────────────────────────────
 
+/* Dark-canvas ModalOverlay replaces the old white Modal */
 function Modal({ isOpen, onClose, title, children }) {
   if (!isOpen) return null;
   return (
     <>
-      <div className="fixed inset-0 bg-black/30 z-40" onClick={onClose} />
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
-            <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
-            <button
-              onClick={onClose}
-              className="p-1 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100"
-            >
-              <X className="h-5 w-5" />
-            </button>
+      <div
+        style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.70)', backdropFilter: 'blur(4px)', zIndex: 40 }}
+        onClick={onClose}
+      />
+      <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+        <div style={{ backgroundColor: '#18191a', border: '1px solid #34343a', borderRadius: 12, boxShadow: '0 24px 64px rgba(0,0,0,0.60)', width: '100%', maxWidth: 440, maxHeight: '90vh', overflowY: 'auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #23252a' }}>
+            <h2 style={{ fontSize: 15, fontWeight: 600, color: '#f7f8f8', margin: 0 }}>{title}</h2>
+            <button onClick={onClose} className="btn-icon-row" aria-label="Close"><X size={16} /></button>
           </div>
-          <div className="px-6 py-4">{children}</div>
+          <div style={{ padding: '20px' }}>{children}</div>
         </div>
       </div>
     </>
@@ -96,40 +95,35 @@ function DepartmentsTab() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-slate-500">{departments.length} department(s)</p>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+        <p className="type-body-sm" style={{ color: '#8a8f98' }}>{departments.length} department(s)</p>
         {isAdmin && (
           <button onClick={() => setShowModal(true)} className="btn-primary">
-            <Plus className="h-4 w-4" /> Add Department
+            <Plus size={14} /> Add Department
           </button>
         )}
       </div>
 
       {error && <ErrorBanner message={error} onDismiss={() => setError('')} />}
 
-      <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="data-table">
+        <table style={{ minWidth: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr className="bg-slate-50 border-b border-slate-200">
-              <th className="text-left px-4 py-3 font-medium text-slate-600">Name</th>
-              <th className="text-left px-4 py-3 font-medium text-slate-600">Head</th>
-              <th className="text-left px-4 py-3 font-medium text-slate-600">Parent</th>
-              <th className="text-left px-4 py-3 font-medium text-slate-600">Status</th>
+            <tr style={{ backgroundColor: '#141516' }}>
+              {['Name','Head','Parent','Status'].map(h => <th key={h} className="data-table-header">{h}</th>)}
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
-            {departments.map((dept) => (
-              <tr key={dept.id} className="hover:bg-slate-50 transition-colors">
-                <td className="px-4 py-3 font-medium text-slate-900">{dept.name}</td>
-                <td className="px-4 py-3 text-slate-600">{dept.head?.name || '—'}</td>
-                <td className="px-4 py-3 text-slate-600">{dept.parentDepartment?.name || '—'}</td>
-                <td className="px-4 py-3">
-                  <StatusBadge status={dept.status} />
-                </td>
+          <tbody>
+            {departments.map(dept => (
+              <tr key={dept.id} className="data-table-row">
+                <td style={{ padding: '10px 14px', fontSize: 13, fontWeight: 500, color: '#f7f8f8' }}>{dept.name}</td>
+                <td style={{ padding: '10px 14px', fontSize: 13, color: '#8a8f98' }}>{dept.head?.name || '—'}</td>
+                <td style={{ padding: '10px 14px', fontSize: 13, color: '#8a8f98' }}>{dept.parentDepartment?.name || '—'}</td>
+                <td style={{ padding: '10px 14px' }}><StatusBadge status={dept.status} /></td>
               </tr>
             ))}
             {departments.length === 0 && (
-              <tr><td colSpan={4} className="px-4 py-8 text-center text-slate-400">No departments yet.</td></tr>
+              <tr><td colSpan={4} style={{ padding: '32px', textAlign: 'center', color: '#62666d', fontSize: 13 }}>No departments yet.</td></tr>
             )}
           </tbody>
         </table>
@@ -137,14 +131,14 @@ function DepartmentsTab() {
 
       {/* Create Department Modal */}
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="New Department">
-        <form onSubmit={handleCreate} className="space-y-4">
+        <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <InputField label="Department Name *" value={form.name} onChange={(v) => setForm({ ...form, name: v })} required />
           <InputField label="Head User ID" value={form.headId} onChange={(v) => setForm({ ...form, headId: v })} placeholder="UUID (optional)" />
           <InputField label="Parent Dept ID" value={form.parentDepartmentId} onChange={(v) => setForm({ ...form, parentDepartmentId: v })} placeholder="UUID (optional)" />
-          <div className="flex justify-end gap-3 pt-2">
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 8, borderTop: '1px solid #23252a' }}>
             <button type="button" onClick={() => setShowModal(false)} className="btn-secondary">Cancel</button>
             <button type="submit" disabled={submitting} className="btn-primary">
-              {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Create'}
+              {submitting ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : 'Create'}
             </button>
           </div>
         </form>
@@ -199,52 +193,55 @@ function CategoriesTab() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-slate-500">{categories.length} category(ies)</p>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+        <p className="type-body-sm" style={{ color: '#8a8f98' }}>{categories.length} category(ies)</p>
         {isAdmin && (
           <button onClick={() => setShowModal(true)} className="btn-primary">
-            <Plus className="h-4 w-4" /> Add Category
+            <Plus size={14} /> Add Category
           </button>
         )}
       </div>
 
       {error && <ErrorBanner message={error} onDismiss={() => setError('')} />}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {categories.map((cat) => (
-          <div key={cat.id} className="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-indigo-50 text-indigo-600">
-                <FolderOpen className="h-5 w-5" />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
+        {categories.map(cat => (
+          <div key={cat.id} className="feature-card" style={{ padding: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: 8, backgroundColor: 'rgba(94,106,210,0.16)' }}>
+                <FolderOpen size={16} color="#828fff" />
               </div>
-              <h3 className="font-medium text-slate-900">{cat.name}</h3>
+              <h3 style={{ fontSize: 13, fontWeight: 600, color: '#f7f8f8', margin: 0 }}>{cat.name}</h3>
             </div>
-            <p className="text-sm text-slate-500 line-clamp-2">{cat.description || 'No description'}</p>
+            <p className="type-body-sm" style={{ color: '#8a8f98', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+              {cat.description || 'No description'}
+            </p>
           </div>
         ))}
         {categories.length === 0 && (
-          <p className="col-span-full text-center text-slate-400 py-8">No categories yet.</p>
+          <p style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#62666d', padding: '32px 0', fontSize: 13 }}>No categories yet.</p>
         )}
       </div>
 
       {/* Create Category Modal */}
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="New Category">
-        <form onSubmit={handleCreate} className="space-y-4">
+        <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <InputField label="Category Name *" value={form.name} onChange={(v) => setForm({ ...form, name: v })} required />
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+            <label className="field-label">Description</label>
             <textarea
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               rows={3}
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+              className="input-field"
+              style={{ resize: 'none', height: 'auto' }}
               placeholder="Optional description…"
             />
           </div>
-          <div className="flex justify-end gap-3 pt-2">
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 8, borderTop: '1px solid #23252a' }}>
             <button type="button" onClick={() => setShowModal(false)} className="btn-secondary">Cancel</button>
             <button type="submit" disabled={submitting} className="btn-primary">
-              {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Create'}
+              {submitting ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : 'Create'}
             </button>
           </div>
         </form>
@@ -329,54 +326,41 @@ function EmployeesTab() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
-        <div className="relative flex-1 min-w-[200px] max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, gap: 12, flexWrap: 'wrap' }}>
+        <div style={{ position: 'relative', flex: 1, minWidth: 200, maxWidth: 360 }}>
+          <Search size={14} color="#62666d" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
           <input
             type="text"
             placeholder="Search by name or email…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+            className="input-field"
+            style={{ paddingLeft: 32 }}
           />
         </div>
-        <p className="text-sm text-slate-500">{filteredUsers.length} user(s)</p>
+        <p className="type-body-sm" style={{ color: '#8a8f98' }}>{filteredUsers.length} user(s)</p>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="data-table">
+        <table style={{ minWidth: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr className="bg-slate-50 border-b border-slate-200">
-              <th className="text-left px-4 py-3 font-medium text-slate-600">Name</th>
-              <th className="text-left px-4 py-3 font-medium text-slate-600">Email</th>
-              <th className="text-left px-4 py-3 font-medium text-slate-600">Department</th>
-              <th className="text-left px-4 py-3 font-medium text-slate-600">Role</th>
-              <th className="text-left px-4 py-3 font-medium text-slate-600">Status</th>
-              {isAdmin && <th className="text-right px-4 py-3 font-medium text-slate-600">Actions</th>}
+            <tr style={{ backgroundColor: '#141516' }}>
+              {['Name','Email','Department','Role','Status', isAdmin ? 'Actions' : null].filter(Boolean).map(h => <th key={h} className="data-table-header">{h}</th>)}
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
-            {filteredUsers.map((user) => (
-              <tr key={user.id} className="hover:bg-slate-50 transition-colors">
-                <td className="px-4 py-3 font-medium text-slate-900">{user.name}</td>
-                <td className="px-4 py-3 text-slate-600">{user.email}</td>
-                <td className="px-4 py-3 text-slate-600">{user.department?.name || '—'}</td>
-                <td className="px-4 py-3">
-                  <RoleBadge role={user.role} />
-                </td>
-                <td className="px-4 py-3">
-                  <StatusBadge status={user.status} />
-                </td>
+          <tbody>
+            {filteredUsers.map(user => (
+              <tr key={user.id} className="data-table-row">
+                <td style={{ padding: '10px 14px', fontSize: 13, fontWeight: 500, color: '#f7f8f8' }}>{user.name}</td>
+                <td style={{ padding: '10px 14px', fontSize: 13, color: '#8a8f98' }}>{user.email}</td>
+                <td style={{ padding: '10px 14px', fontSize: 13, color: '#8a8f98' }}>{user.department?.name || '—'}</td>
+                <td style={{ padding: '10px 14px' }}><RoleBadge role={user.role} /></td>
+                <td style={{ padding: '10px 14px' }}><StatusBadge status={user.status} /></td>
                 {isAdmin && (
-                  <td className="px-4 py-3 text-right">
-                    {/* Don't allow admin to demote themselves easily here to prevent lockout */}
+                  <td style={{ padding: '10px 14px', textAlign: 'right' }}>
                     {user.id !== currentUser?.id && (
-                      <button
-                        onClick={() => openEditModal(user)}
-                        className="text-slate-400 hover:text-indigo-600 transition-colors"
-                        title="Edit Role & Status"
-                      >
-                        <Edit2 className="h-4 w-4 inline-block" />
+                      <button onClick={() => openEditModal(user)} className="btn-icon-row" title="Edit Role & Status">
+                        <Edit2 size={13} />
                       </button>
                     )}
                   </td>
@@ -384,7 +368,7 @@ function EmployeesTab() {
               </tr>
             ))}
             {filteredUsers.length === 0 && (
-              <tr><td colSpan={isAdmin ? 6 : 5} className="px-4 py-8 text-center text-slate-400">No users found.</td></tr>
+              <tr><td colSpan={isAdmin ? 6 : 5} style={{ padding: '32px', textAlign: 'center', color: '#62666d', fontSize: 13 }}>No users found.</td></tr>
             )}
           </tbody>
         </table>
@@ -393,41 +377,30 @@ function EmployeesTab() {
       {/* Edit Employee Modal */}
       <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} title="Edit Employee">
         {selectedUser && (
-          <form onSubmit={handleUpdateUser} className="space-y-4">
+          <form onSubmit={handleUpdateUser} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Name</label>
-              <input type="text" value={selectedUser.name} disabled className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm bg-slate-50 text-slate-500 outline-none cursor-not-allowed" />
+              <label className="field-label">Name</label>
+              <input type="text" value={selectedUser.name} disabled className="input-field" style={{ opacity: 0.5, cursor: 'not-allowed' }} />
             </div>
-            
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Role</label>
-              <select
-                value={editForm.role}
-                onChange={(e) => setEditForm({ ...editForm, role: e.target.value })}
-                className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white"
-              >
+              <label className="field-label">Role</label>
+              <select value={editForm.role} onChange={(e) => setEditForm({ ...editForm, role: e.target.value })} className="input-field">
                 <option value="EMPLOYEE">Employee</option>
                 <option value="ASSET_MANAGER">Asset Manager</option>
                 <option value="DEPARTMENT_HEAD">Department Head</option>
               </select>
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Status</label>
-              <select
-                value={editForm.status}
-                onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
-                className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white"
-              >
+              <label className="field-label">Status</label>
+              <select value={editForm.status} onChange={(e) => setEditForm({ ...editForm, status: e.target.value })} className="input-field">
                 <option value="ACTIVE">Active</option>
                 <option value="INACTIVE">Inactive</option>
               </select>
             </div>
-
-            <div className="flex justify-end gap-3 pt-2">
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 8, borderTop: '1px solid #23252a' }}>
               <button type="button" onClick={() => setShowEditModal(false)} className="btn-secondary">Cancel</button>
               <button type="submit" disabled={isUpdating || (editForm.role === selectedUser.role && editForm.status === selectedUser.status)} className="btn-primary">
-                {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Save Changes'}
+                {isUpdating ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : 'Save Changes'}
               </button>
             </div>
           </form>
@@ -441,20 +414,21 @@ function EmployeesTab() {
 
 function LoadingSpinner() {
   return (
-    <div className="flex items-center justify-center py-12">
-      <Loader2 className="h-6 w-6 text-indigo-600 animate-spin" />
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 0' }}>
+      <Loader2 size={22} color="#5e6ad2" style={{ animation: 'spin 1s linear infinite' }} />
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
     </div>
   );
 }
 
 function ErrorBanner({ message, onDismiss }) {
   return (
-    <div className="flex items-start gap-2 rounded-md border border-red-200 bg-red-50 px-4 py-3 mb-4 text-sm text-red-700">
-      <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-      <span className="flex-1">{message}</span>
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, borderRadius: 8, border: '1px solid rgba(248,81,73,0.25)', backgroundColor: 'rgba(248,81,73,0.10)', padding: '10px 12px', marginBottom: 16, color: '#f85149', fontSize: 13 }}>
+      <AlertCircle size={13} style={{ flexShrink: 0, marginTop: 1 }} />
+      <span style={{ flex: 1 }}>{message}</span>
       {onDismiss && (
-        <button onClick={onDismiss} className="text-red-400 hover:text-red-600">
-          <X className="h-4 w-4" />
+        <button onClick={onDismiss} style={{ color: '#f85149', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+          <X size={13} />
         </button>
       )}
     </div>
@@ -462,33 +436,34 @@ function ErrorBanner({ message, onDismiss }) {
 }
 
 function StatusBadge({ status }) {
-  const colors = status === 'ACTIVE'
-    ? 'bg-green-100 text-green-700'
-    : 'bg-slate-100 text-slate-600';
-  return <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${colors}`}>{status}</span>;
+  const cfg = status === 'ACTIVE'
+    ? { bg: 'rgba(63,185,80,0.14)', color: '#3fb950' }
+    : { bg: 'rgba(139,148,158,0.16)', color: '#8b949e' };
+  return <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 9999, backgroundColor: cfg.bg, color: cfg.color }}>{status}</span>;
 }
 
 function RoleBadge({ role }) {
-  const colors = {
-    ADMIN: 'bg-red-100 text-red-700',
-    ASSET_MANAGER: 'bg-blue-100 text-blue-700',
-    DEPARTMENT_HEAD: 'bg-amber-100 text-amber-700',
-    EMPLOYEE: 'bg-green-100 text-green-700',
+  const map = {
+    ADMIN:           { bg: 'rgba(248,81,73,0.14)',    color: '#f85149' },
+    ASSET_MANAGER:   { bg: 'rgba(88,166,255,0.14)',   color: '#58a6ff' },
+    DEPARTMENT_HEAD: { bg: 'rgba(210,153,34,0.16)',   color: '#d29922' },
+    EMPLOYEE:        { bg: 'rgba(63,185,80,0.14)',    color: '#3fb950' },
   };
-  return <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${colors[role] || 'bg-slate-100 text-slate-600'}`}>{role?.replace('_', ' ')}</span>;
+  const cfg = map[role] || { bg: 'rgba(139,148,158,0.16)', color: '#8b949e' };
+  return <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 9999, backgroundColor: cfg.bg, color: cfg.color }}>{role?.replace('_', ' ')}</span>;
 }
 
 function InputField({ label, value, onChange, placeholder, required }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-slate-700 mb-1">{label}</label>
+      <label className="field-label">{label}</label>
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         required={required}
         placeholder={placeholder}
-        className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+        className="input-field"
       />
     </div>
   );
@@ -500,38 +475,44 @@ export default function OrganizationSetupPage() {
   const [activeTab, setActiveTab] = useState('departments');
 
   return (
-    <div>
-      {/* Page Title */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-slate-900">Organization Setup</h1>
-        <p className="mt-1 text-sm text-slate-500">Manage departments, asset categories, and the employee directory.</p>
+    <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+      {/* Page header */}
+      <div style={{ marginBottom: 24 }}>
+        <h1 className="type-display-md" style={{ color: '#f7f8f8', margin: 0 }}>Organization Setup</h1>
+        <p className="type-body-sm" style={{ color: '#8a8f98', marginTop: 6 }}>Manage departments, asset categories, and the employee directory.</p>
       </div>
 
-      {/* Tabs */}
-      <div className="border-b border-slate-200 mb-6">
-        <nav className="flex gap-6">
+      {/* Tab bar */}
+      <div style={{ borderBottom: '1px solid #23252a', marginBottom: 24 }}>
+        <nav style={{ display: 'flex', gap: 0 }}>
           {TABS.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
               onClick={() => setActiveTab(id)}
-              className={[
-                'flex items-center gap-2 pb-3 text-sm font-medium border-b-2 transition-colors',
-                activeTab === id
-                  ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300',
-              ].join(' ')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '10px 16px',
+                fontSize: 13, fontWeight: activeTab === id ? 600 : 400,
+                color: activeTab === id ? '#f7f8f8' : '#8a8f98',
+                background: 'transparent', border: 'none',
+                borderBottom: `2px solid ${activeTab === id ? '#5e6ad2' : 'transparent'}`,
+                cursor: 'pointer',
+                transition: 'color var(--duration-fast) var(--ease-standard)',
+              }}
+              aria-selected={activeTab === id}
             >
-              <Icon className="h-4 w-4" />
-              {label}
+              <Icon size={14} />{label}
             </button>
           ))}
         </nav>
       </div>
 
-      {/* Tab Content */}
+      {/* Tab content */}
       {activeTab === 'departments' && <DepartmentsTab />}
-      {activeTab === 'categories' && <CategoriesTab />}
-      {activeTab === 'employees' && <EmployeesTab />}
+      {activeTab === 'categories'  && <CategoriesTab />}
+      {activeTab === 'employees'   && <EmployeesTab />}
+
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
     </div>
   );
 }

@@ -20,7 +20,7 @@ export default function AssetSelector({ value, onChange, filterBookable = false 
         // API_CONTRACT paginated shape: { success, data: [...], pagination }
         const raw = res.data?.data ?? res.data ?? [];
         setAssets(Array.isArray(raw) ? raw : raw.items ?? []);
-      } catch (e) {
+      } catch (_e) {
         setAssets([]);
       } finally {
         setLoading(false);

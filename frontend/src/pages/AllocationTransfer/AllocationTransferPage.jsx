@@ -751,119 +751,91 @@ export default function AllocationTransferPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Page header */}
-      <div className="bg-white border-b border-slate-200 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center gap-3">
-          <ArrowLeftRight className="h-5 w-5 text-indigo-600 flex-shrink-0" />
+    <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+      {/* ── Page Header ──────────────────────────────────────────────────────── */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 28, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <ArrowLeftRight size={18} color="#5e6ad2" style={{ flexShrink: 0 }} />
           <div>
-            <h1 className="text-lg font-semibold text-slate-900">Allocation & Transfers</h1>
-            <p className="text-xs text-slate-500">Manage asset allocation, returns, and transfer requests</p>
+            <h1 className="type-display-md" style={{ color: '#f7f8f8', margin: 0 }}>Allocation & Transfers</h1>
+            <p className="type-body-sm" style={{ color: '#8a8f98', marginTop: 6 }}>Manage asset allocation, returns, and transfer requests</p>
           </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-6 space-y-4">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         {/* Flash messages */}
         {successMsg && <SuccessAlert message={successMsg} onDismiss={() => setSuccessMsg('')} />}
         {errorMsg && <ErrorAlert message={errorMsg} />}
 
-        {/* Tab bar */}
-        <div className="bg-white border border-slate-200 rounded-xl">
-          <div className="flex border-b border-slate-200" role="tablist">
-            {tabs.map(tab => (
-              <button
-                key={tab.key}
-                role="tab"
-                aria-selected={activeTab === tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={[
-                  'flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500',
-                  activeTab === tab.key
-                    ? 'border-indigo-600 text-indigo-600'
-                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300',
-                ].join(' ')}
-              >
-                <tab.icon className="h-4 w-4" aria-hidden="true" />
-                {tab.label}
-                {tab.count > 0 && (
-                  <span className={`text-xs rounded-full px-2 py-0.5 font-medium ${
-                    activeTab === tab.key
-                      ? 'bg-indigo-100 text-indigo-700'
-                      : 'bg-slate-100 text-slate-500'
-                  }`}>
-                    {tab.count}
-                  </span>
-                )}
-              </button>
-            ))}
+        {/* Tab bar container */}
+        <div style={{ backgroundColor: '#0f1011', border: '1px solid #23252a', borderRadius: 12, overflow: 'hidden' }}>
+          <div style={{ display: 'flex', borderBottom: '1px solid #23252a' }} role="tablist">
+            {tabs.map(tab => {
+              const isActive = activeTab === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => setActiveTab(tab.key)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', fontSize: 14, fontWeight: 500,
+                    backgroundColor: 'transparent', border: 'none', cursor: 'pointer',
+                    borderBottom: isActive ? '2px solid #5e6ad2' : '2px solid transparent',
+                    color: isActive ? '#f7f8f8' : '#8a8f98',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <tab.icon size={16} aria-hidden="true" />
+                  {tab.label}
+                  {tab.count > 0 && (
+                    <span style={{ fontSize: 11, fontWeight: 600, borderRadius: 9999, padding: '2px 6px', backgroundColor: isActive ? 'rgba(94,106,210,0.15)' : '#23252a', color: isActive ? '#5e6ad2' : '#8a8f98' }}>
+                      {tab.count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
 
-          {/* ── Tab: Allocate / Transfer ──────────────────────────────── */}
+          {/* Tab contents */}
           {activeTab === 'allocate' && (
-            <div className="p-6">
+            <div style={{ padding: 24 }}>
               {loadingData ? (
-                <div className="py-10 text-center">
-                  <Loader2 className="h-7 w-7 animate-spin text-indigo-400 mx-auto mb-3" />
-                  <p className="text-sm text-slate-500">Loading assets and users…</p>
+                <div style={{ padding: '40px 0', textAlign: 'center' }}>
+                  <Loader2 size={28} color="#5e6ad2" style={{ margin: '0 auto 12px', animation: 'spin 1s linear infinite' }} />
+                  <p style={{ fontSize: 14, color: '#8a8f98', margin: 0 }}>Loading assets and users…</p>
                 </div>
               ) : (
-                <AllocatePanel
-                  assets={assets}
-                  users={users}
-                  departments={departments}
-                  onSuccess={showSuccess}
-                />
+                <AllocatePanel assets={assets} users={users} departments={departments} onSuccess={showSuccess} />
               )}
             </div>
           )}
 
-          {/* ── Tab: Active Allocations ───────────────────────────────── */}
           {activeTab === 'active' && (
-            <div className="px-6 py-4">
-              <SectionTitle
-                icon={ClipboardList}
-                title="Active Allocations"
-                subtitle="Assets currently assigned to employees"
-              />
-              <ActiveAllocationsList
-                allocations={activeAllocations}
-                loading={loadingData}
-                onReturnSuccess={showSuccess}
-              />
+            <div style={{ padding: '16px 24px' }}>
+              <SectionTitle icon={ClipboardList} title="Active Allocations" subtitle="Assets currently assigned to employees" />
+              <ActiveAllocationsList allocations={activeAllocations} loading={loadingData} onReturnSuccess={showSuccess} />
             </div>
           )}
 
-          {/* ── Tab: Pending Transfers (Manager/Admin only) ───────────── */}
           {activeTab === 'transfers' && isManager && (
-            <div className="px-6 py-4">
-              <div className="flex items-center justify-between mb-4">
-                <SectionTitle
-                  icon={RefreshCw}
-                  title="Pending Transfer Requests"
-                  subtitle="Approve or reject queued asset transfers"
-                />
-                <button
-                  onClick={fetchTransfers}
-                  className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-700 border border-slate-200 hover:border-slate-300 px-2.5 py-1.5 rounded-md transition-colors"
-                >
-                  <RefreshCw className="h-3.5 w-3.5" />
-                  Refresh
+            <div style={{ padding: '16px 24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                <SectionTitle icon={RefreshCw} title="Pending Transfer Requests" subtitle="Approve or reject queued asset transfers" />
+                <button onClick={fetchTransfers} className="btn-tertiary" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <RefreshCw size={14} /> Refresh
                 </button>
               </div>
-              <PendingTransfersList
-                transfers={pendingTransfers}
-                departments={departments}
-                loading={loadingTransfers}
-                onAction={handleTransferAction}
-              />
+              <PendingTransfersList transfers={pendingTransfers} departments={departments} loading={loadingTransfers} onAction={handleTransferAction} />
             </div>
           )}
         </div>
 
-        {/* Role notice for non-managers */}
+        {/* Role notice */}
         {!isManager && (
-          <p className="text-xs text-slate-400 text-center">
+          <p style={{ fontSize: 12, color: '#62666d', textAlign: 'center' }}>
             Transfer approvals and allocations are restricted to Asset Managers and Admins.
           </p>
         )}

@@ -58,7 +58,7 @@ function formatLabel(status) {
  * @param {'asset'|'allocation'|'transfer'|'maintenance'} [props.type]  — unused but kept for API compat
  * @param {string} props.status — The raw enum value
  */
-export default function StatusBadge({ type = 'asset', status }) {
+export default function StatusBadge({ status }) {
   const style = STYLES[status] ?? FALLBACK;
 
   return (

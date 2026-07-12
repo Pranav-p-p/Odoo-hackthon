@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import {
   ClipboardCheck,
   PlusCircle,
-  AlertTriangle,
+  AlertCircle,
   RefreshCw,
   FolderOpen,
   Calendar,
   User,
-  ArrowRight,
   Filter,
   CheckCircle,
+  X,
 } from 'lucide-react';
 import {
   getAudits,
@@ -183,199 +183,144 @@ export default function AuditPage() {
   };
 
   const getStatusBadge = (status) => {
-    switch (status) {
-      case 'OPEN':
-        return (
-          <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-700 ring-1 ring-inset ring-blue-700/10">
-            Open
-          </span>
-        );
-      case 'IN_PROGRESS':
-        return (
-          <span className="inline-flex items-center rounded-md bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-700 ring-1 ring-inset ring-amber-700/10 animate-pulse">
-            In Progress
-          </span>
-        );
-      case 'CLOSED':
-        return (
-          <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-700/10">
-            Closed
-          </span>
-        );
-      default:
-        return null;
-    }
+    const map = {
+      OPEN:        { bg: 'rgba(88,166,255,0.14)', color: '#58a6ff',  label: 'Open' },
+      IN_PROGRESS: { bg: 'rgba(210,153,34,0.16)', color: '#d29922',  label: 'In Progress' },
+      CLOSED:      { bg: 'rgba(63,185,80,0.14)',  color: '#3fb950',  label: 'Closed' },
+    };
+    const cfg = map[status];
+    if (!cfg) return null;
+    return (
+      <span style={{ display: 'inline-flex', alignItems: 'center', borderRadius: 9999, padding: '2px 10px', fontSize: 11, fontWeight: 600, backgroundColor: cfg.bg, color: cfg.color }}>
+        {cfg.label}
+      </span>
+    );
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 sm:p-8">
-      {/* Header */}
-      <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
-            <ClipboardCheck className="h-8 w-8 text-indigo-600" />
-            Audit Cycles
-          </h1>
-          <p className="mt-1 text-sm text-gray-500 font-medium">
-            Schedule physical audits, verify assets, and compile discrepancy logs.
-          </p>
+    <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+      {/* ── Header ─────────────────────────────────────────────────────────── */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 28, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <ClipboardCheck size={18} color="#5e6ad2" />
+          <div>
+            <h1 className="type-display-md" style={{ color: '#f7f8f8', margin: 0 }}>Audit Cycles</h1>
+            <p className="type-body-sm" style={{ color: '#8a8f98', marginTop: 6 }}>Schedule physical audits, verify assets, and compile discrepancy logs.</p>
+          </div>
         </div>
-        <button
-          onClick={() => setShowCreateModal(true)}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition-colors"
-        >
-          <PlusCircle className="h-4.5 w-4.5" />
-          New Audit Cycle
+        <button onClick={() => setShowCreateModal(true)} className="btn-primary">
+          <PlusCircle size={14} /> New Audit Cycle
         </button>
       </div>
 
-      {/* Main Split Layout */}
-      <div className="grid gap-8 lg:grid-cols-3">
-        {/* Left Side: Audit Cycles List */}
-        <div className="lg:col-span-1 space-y-6">
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between pb-4 border-b border-gray-50">
-              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <FolderOpen className="h-5 w-5 text-gray-500" />
-                Active Cycles
-              </h2>
-              <button
-                onClick={fetchCycles}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <RefreshCw className="h-4 w-4" />
-              </button>
-            </div>
+      {/* ── Main split layout ─────────────────────────────────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 20 }}>
 
-            {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <RefreshCw className="h-6 w-6 animate-spin text-gray-300" />
-              </div>
-            ) : cycles.length === 0 ? (
-              <div className="py-12 text-center text-sm text-gray-400">
-                No audit cycles registered yet.
-              </div>
-            ) : (
-              <div className="mt-4 divide-y divide-gray-50">
-                {cycles.map((cycle) => (
-                  <button
-                    key={cycle.id}
-                    onClick={() => handleSelectCycle(cycle.id)}
-                    className={`w-full py-4 text-left flex items-start justify-between group transition-all duration-200 border-l-4 pl-3 ${
-                      selectedCycle?.id === cycle.id
-                        ? 'border-indigo-600 bg-indigo-50/10'
-                        : 'border-transparent hover:bg-gray-50/50'
-                    }`}
-                  >
-                    <div>
-                      <h4 className="font-bold text-gray-900 group-hover:text-indigo-600">
-                        {cycle.name}
-                      </h4>
-                      <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
-                        <User className="h-3 w-3" />
-                        {cycle.auditor.name}
+        {/* Left: Cycle list */}
+        <div className="feature-card" style={{ alignSelf: 'start' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 14, borderBottom: '1px solid #23252a', marginBottom: 14 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <FolderOpen size={15} color="#8a8f98" />
+              <h2 className="type-card-title" style={{ margin: 0, color: '#f7f8f8' }}>Active Cycles</h2>
+            </div>
+            <button onClick={fetchCycles} className="btn-icon-row" aria-label="Refresh cycles">
+              <RefreshCw size={13} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
+            </button>
+          </div>
+
+          {loading ? (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 0' }}>
+              <RefreshCw size={18} color="#3e3e44" style={{ animation: 'spin 1s linear infinite' }} />
+            </div>
+          ) : cycles.length === 0 ? (
+            <div style={{ padding: '32px 0', textAlign: 'center', color: '#62666d', fontSize: 13 }}>No audit cycles registered yet.</div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+              {cycles.map(cycle => (
+                <button
+                  key={cycle.id}
+                  onClick={() => handleSelectCycle(cycle.id)}
+                  style={{ width: '100%', textAlign: 'left', padding: '12px 0 12px 10px', borderLeft: `3px solid ${selectedCycle?.id === cycle.id ? '#5e6ad2' : 'transparent'}`, borderTop: 'none', borderRight: 'none', borderBottom: '1px solid #23252a', background: selectedCycle?.id === cycle.id ? 'rgba(94,106,210,0.06)' : 'transparent', cursor: 'pointer', transition: 'background-color var(--duration-fast) var(--ease-standard)' }}
+                  onMouseEnter={e => { if (selectedCycle?.id !== cycle.id) e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)'; }}
+                  onMouseLeave={e => { if (selectedCycle?.id !== cycle.id) e.currentTarget.style.backgroundColor = 'transparent'; }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{ fontSize: 13, fontWeight: 600, color: '#f7f8f8', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cycle.name}</p>
+                      <p style={{ fontSize: 11, color: '#62666d', margin: '3px 0 0', display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <User size={10} />{cycle.auditor.name}
                       </p>
-                      <p className="text-[10px] text-gray-400 mt-0.5 flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {new Date(cycle.startDate).toLocaleDateString()} -{' '}
-                        {new Date(cycle.endDate).toLocaleDateString()}
+                      <p className="type-mono" style={{ color: '#62666d', marginTop: 2 }}>
+                        {new Date(cycle.startDate).toLocaleDateString()} – {new Date(cycle.endDate).toLocaleDateString()}
                       </p>
                     </div>
-                    <div>{getStatusBadge(cycle.status)}</div>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+                    <div style={{ flexShrink: 0 }}>{getStatusBadge(cycle.status)}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Right Side: Verification Checklist Details */}
-        <div className="lg:col-span-2">
+        {/* Right: checklist details */}
+        <div>
           {!selectedCycle ? (
-            <div className="flex flex-col items-center justify-center py-32 bg-white border border-gray-100 rounded-2xl shadow-sm text-center">
-              <ClipboardCheck className="h-16 w-16 text-gray-200" />
-              <h3 className="mt-4 text-lg font-bold text-gray-900">No Cycle Selected</h3>
-              <p className="mt-1 text-sm text-gray-400">
-                Select an audit cycle from the panel on the left to verify items.
-              </p>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 16px', backgroundColor: '#0f1011', border: '1px solid #23252a', borderRadius: 12, textAlign: 'center' }}>
+              <ClipboardCheck size={40} color="#3e3e44" style={{ marginBottom: 16 }} />
+              <h3 style={{ fontSize: 16, fontWeight: 600, color: '#f7f8f8', margin: 0 }}>No Cycle Selected</h3>
+              <p className="type-body-sm" style={{ color: '#8a8f98', marginTop: 6 }}>Select an audit cycle from the panel on the left to verify items.</p>
             </div>
           ) : (
-            <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm space-y-6">
-              {/* Cycle Detail Header */}
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pb-6 border-b border-gray-150">
+            <div className="feature-card">
+              {/* Cycle detail header */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, paddingBottom: 16, borderBottom: '1px solid #23252a', marginBottom: 16, flexWrap: 'wrap' }}>
                 <div>
-                  <div className="flex items-center gap-3">
-                    <h2 className="text-xl font-bold text-gray-900">{selectedCycle.name}</h2>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <h2 style={{ fontSize: 17, fontWeight: 700, color: '#f7f8f8', margin: 0 }}>{selectedCycle.name}</h2>
                     {getStatusBadge(selectedCycle.status)}
                   </div>
-                  <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500 font-medium">
-                    <span className="flex items-center gap-1">
-                      <User className="h-3.5 w-3.5" /> Auditor: {selectedCycle.auditor.name}
+                  <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: 8 }}>
+                    <span style={{ fontSize: 11, color: '#8a8f98', display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <User size={11} /> Auditor: {selectedCycle.auditor.name}
                     </span>
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3.5 w-3.5" /> Deadline:{' '}
-                      {new Date(selectedCycle.endDate).toLocaleDateString()}
+                    <span style={{ fontSize: 11, color: '#8a8f98', display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <Calendar size={11} /> Deadline: {new Date(selectedCycle.endDate).toLocaleDateString()}
                     </span>
                   </div>
                 </div>
-
                 {selectedCycle.status !== 'CLOSED' && (
-                  <button
-                    onClick={handleCloseCycle}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 transition-colors"
-                  >
-                    <CheckCircle className="h-4 w-4" />
-                    Close Audit Cycle
+                  <button onClick={handleCloseCycle} className="btn-danger">
+                    <CheckCircle size={13} /> Close Audit Cycle
                   </button>
                 )}
               </div>
 
-              {/* Checklist Action Filters */}
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold text-gray-900">
+              {/* Checklist filters */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                <h3 style={{ fontSize: 13, fontWeight: 600, color: '#f7f8f8', margin: 0 }}>
                   Verification Checklist ({checklist.length} items)
                 </h3>
                 <button
                   onClick={handleToggleDiscrepancies}
-                  className={`inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
-                    filterDiscrepancies
-                      ? 'bg-amber-50 border-amber-200 text-amber-700'
-                      : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
-                  }`}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 12px', borderRadius: 8, fontSize: 12, fontWeight: 500, cursor: 'pointer', border: '1px solid', transition: 'background-color var(--duration-fast) var(--ease-standard)', ...(filterDiscrepancies ? { backgroundColor: 'rgba(210,153,34,0.12)', borderColor: 'rgba(210,153,34,0.30)', color: '#d29922' } : { backgroundColor: 'transparent', borderColor: '#23252a', color: '#8a8f98' }) }}
                 >
-                  <Filter className="h-3.5 w-3.5" />
+                  <Filter size={11} />
                   {filterDiscrepancies ? 'Show Full Checklist' : 'Show Discrepancies Only'}
                 </button>
               </div>
 
-              {/* Checklist Table */}
-              <div className="overflow-x-auto border border-gray-100 rounded-xl shadow-sm">
-                <table className="min-w-full divide-y divide-gray-200 text-left">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3.5 text-xs font-bold uppercase text-gray-500 tracking-wider">
-                        Asset Tag
-                      </th>
-                      <th className="px-6 py-3.5 text-xs font-bold uppercase text-gray-500 tracking-wider">
-                        Asset Name
-                      </th>
-                      <th className="px-6 py-3.5 text-xs font-bold uppercase text-gray-500 tracking-wider">
-                        Expected Location
-                      </th>
-                      <th className="px-6 py-3.5 text-xs font-bold uppercase text-gray-500 tracking-wider">
-                        Snapshot Status
-                      </th>
-                      <th className="px-6 py-3.5 text-xs font-bold uppercase text-gray-500 tracking-wider">
-                        Actual Status
-                      </th>
-                      <th className="px-6 py-3.5 text-xs font-bold uppercase text-gray-500 tracking-wider">
-                        Notes
-                      </th>
-                      {selectedCycle.status !== 'CLOSED' && <th className="relative px-6 py-3.5" />}
+              {/* Checklist data table */}
+              <div className="data-table">
+                <table style={{ minWidth: '100%', borderCollapse: 'collapse' }}>
+                  <thead>
+                    <tr style={{ backgroundColor: '#141516' }}>
+                      {['Asset Tag','Asset Name','Expected Location','Snapshot Status','Actual Status','Notes', selectedCycle.status !== 'CLOSED' ? '' : null].filter(Boolean).map(h => (
+                        <th key={h} className="data-table-header">{h}</th>
+                      ))}
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-100">
-                    {checklist.map((item) => (
+                  <tbody>
+                    {checklist.map(item => (
                       <AuditItemRow
                         key={item.id}
                         item={item}
@@ -391,132 +336,70 @@ export default function AuditPage() {
         </div>
       </div>
 
-      {/* Create Cycle Modal */}
+      {/* ── Create Audit Cycle Modal ─────────────────────────────────── */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-550/40 backdrop-blur-sm p-4">
-          <div className="w-full max-w-lg rounded-2xl border border-gray-100 bg-white p-6 shadow-xl space-y-6">
-            <h3 className="text-xl font-bold text-gray-900">Initiate Audit Cycle</h3>
-
-            {formError && (
-              <div className="rounded-xl bg-red-50 border border-red-100 p-3 text-xs text-red-700">
-                {formError}
-              </div>
-            )}
-
-            <form onSubmit={handleCreateSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold uppercase text-gray-500 mb-1">
-                  Audit Cycle Name *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Q3 2026 Bengaluru HQ Audit"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none"
-                />
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
+        <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.70)', backdropFilter: 'blur(4px)', padding: 16 }}>
+          <div style={{ position: 'absolute', inset: 0 }} onClick={() => setShowCreateModal(false)} aria-hidden="true" />
+          <div style={{ position: 'relative', backgroundColor: '#18191a', border: '1px solid #34343a', borderRadius: 12, boxShadow: '0 24px 64px rgba(0,0,0,0.60)', width: '100%', maxWidth: 480, maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #23252a' }}>
+              <h3 style={{ fontSize: 15, fontWeight: 600, color: '#f7f8f8', margin: 0 }}>Initiate Audit Cycle</h3>
+              <button onClick={() => setShowCreateModal(false)} className="btn-icon-row" aria-label="Close"><X size={16} /></button>
+            </div>
+            <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: 0 }}>
+              {formError && (
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, backgroundColor: 'rgba(248,81,73,0.10)', border: '1px solid rgba(248,81,73,0.25)', borderRadius: 8, padding: '8px 12px', color: '#f85149', fontSize: 13, marginBottom: 16 }}>
+                  <AlertCircle size={13} style={{ flexShrink: 0, marginTop: 1 }} /><span>{formError}</span>
+                </div>
+              )}
+              <form onSubmit={handleCreateSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <div>
-                  <label className="block text-xs font-bold uppercase text-gray-500 mb-1">
-                    Auditor *
-                  </label>
-                  <select
-                    required
-                    value={formData.auditorId}
-                    onChange={(e) => setFormData({ ...formData, auditorId: e.target.value })}
-                    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none"
-                  >
-                    <option value="">Select Auditor...</option>
-                    {users.map((u) => (
-                      <option key={u.id} value={u.id}>
-                        {u.name} ({u.role})
-                      </option>
-                    ))}
-                  </select>
+                  <label className="field-label">Audit Cycle Name *</label>
+                  <input type="text" required placeholder="e.g. Q3 2026 Bengaluru HQ Audit" value={formData.name}
+                    onChange={e => setFormData({ ...formData, name: e.target.value })} className="input-field" />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <div>
+                    <label className="field-label">Auditor *</label>
+                    <select required value={formData.auditorId} onChange={e => setFormData({ ...formData, auditorId: e.target.value })} className="input-field">
+                      <option value="">Select Auditor…</option>
+                      {users.map(u => <option key={u.id} value={u.id}>{u.name} ({u.role})</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="field-label">Department Scope</label>
+                    <select value={formData.departmentId} onChange={e => setFormData({ ...formData, departmentId: e.target.value })} className="input-field">
+                      <option value="">All Departments</option>
+                      {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+                    </select>
+                  </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase text-gray-500 mb-1">
-                    Department Scope
-                  </label>
-                  <select
-                    value={formData.departmentId}
-                    onChange={(e) =>
-                      setFormData({ ...formData, departmentId: e.target.value })
-                    }
-                    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none"
-                  >
-                    <option value="">All Departments</option>
-                    {departments.map((d) => (
-                      <option key={d.id} value={d.id}>
-                        {d.name}
-                      </option>
-                    ))}
-                  </select>
+                  <label className="field-label">Location Scope (optional)</label>
+                  <input type="text" placeholder="e.g. Floor 2" value={formData.locationScope}
+                    onChange={e => setFormData({ ...formData, locationScope: e.target.value })} className="input-field" />
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold uppercase text-gray-500 mb-1">
-                  Location Scope Scope (e.g. "Bengaluru")
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Floor 2"
-                  value={formData.locationScope}
-                  onChange={(e) => setFormData({ ...formData, locationScope: e.target.value })}
-                  className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none"
-                />
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="block text-xs font-bold uppercase text-gray-500 mb-1">
-                    Start Date *
-                  </label>
-                  <input
-                    type="date"
-                    required
-                    value={formData.startDate}
-                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none"
-                  />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <div>
+                    <label className="field-label">Start Date *</label>
+                    <input type="date" required value={formData.startDate}
+                      onChange={e => setFormData({ ...formData, startDate: e.target.value })} className="input-field" />
+                  </div>
+                  <div>
+                    <label className="field-label">End Date *</label>
+                    <input type="date" required value={formData.endDate}
+                      onChange={e => setFormData({ ...formData, endDate: e.target.value })} className="input-field" />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-xs font-bold uppercase text-gray-500 mb-1">
-                    End Date *
-                  </label>
-                  <input
-                    type="date"
-                    required
-                    value={formData.endDate}
-                    onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none"
-                  />
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 8, borderTop: '1px solid #23252a' }}>
+                  <button type="button" onClick={() => setShowCreateModal(false)} className="btn-secondary">Cancel</button>
+                  <button type="submit" className="btn-primary">Create Cycle</button>
                 </div>
-              </div>
-
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-50">
-                <button
-                  type="button"
-                  onClick={() => setShowCreateModal(false)}
-                  className="rounded-xl border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors shadow-sm"
-                >
-                  Create Cycle
-                </button>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
         </div>
       )}
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
     </div>
   );
 }

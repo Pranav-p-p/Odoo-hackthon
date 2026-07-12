@@ -6,9 +6,7 @@ import {
   RefreshCw,
   Clock,
   CheckCircle,
-  Database,
   BarChart,
-  HelpCircle,
 } from 'lucide-react';
 import {
   getUtilization,
@@ -27,11 +25,11 @@ export default function ReportsPage() {
 
   // Report States
   const [utilization, setUtilization] = useState([]);
-  const [maintenance, setMaintenance] = useState([]);
+  const [_maintenance, setMaintenance] = useState([]);
   const [idleAssets, setIdleAssets] = useState([]);
   const [mostUsed, setMostUsed] = useState([]);
   const [dueMaintenance, setDueMaintenance] = useState([]);
-  const [breakdown, setBreakdown] = useState([]);
+  const [_breakdown, setBreakdown] = useState([]);
   const [heatmap, setHeatmap] = useState([]);
 
   const fetchData = async () => {
@@ -91,237 +89,221 @@ export default function ReportsPage() {
     }
   };
 
-  const getHeatmapColor = (count) => {
-    if (count === 0) return 'bg-gray-100';
-    if (count < 3) return 'bg-indigo-100 text-indigo-800';
-    if (count < 6) return 'bg-indigo-300 text-indigo-900';
-    return 'bg-indigo-500 text-white font-bold';
+  const getHeatmapStyle = (count) => {
+    if (count === 0) return { backgroundColor: '#141516', color: 'transparent' };
+    if (count < 3)  return { backgroundColor: 'rgba(94,106,210,0.14)', color: '#828fff' };
+    if (count < 6)  return { backgroundColor: 'rgba(94,106,210,0.30)', color: '#828fff' };
+    return { backgroundColor: '#5e6ad2', color: '#ffffff', fontWeight: 700 };
   };
 
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="flex flex-col items-center gap-4">
-          <RefreshCw className="h-10 w-10 animate-spin text-indigo-600" />
-          <p className="text-sm font-medium text-gray-500">Compiling analytics dashboards...</p>
-        </div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', flexDirection: 'column', gap: 16 }}>
+        <RefreshCw size={28} color="#5e6ad2" style={{ animation: 'spin 1s linear infinite' }} />
+        <p className="type-body-sm" style={{ color: '#8a8f98' }}>Compiling analytics dashboards…</p>
+        <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 sm:p-8 space-y-8">
-      {/* Header */}
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
-            <FileBarChart2 className="h-8 w-8 text-indigo-600" />
-            Reports & Analytics
-          </h1>
-          <p className="mt-1 text-sm text-gray-500 font-medium">
-            Export system data and visualize resource allocation patterns.
-          </p>
+    <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+      {/* ── Header ─────────────────────────────────────────────────────────── */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 28, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <FileBarChart2 size={18} color="#5e6ad2" />
+          <div>
+            <h1 className="type-display-md" style={{ color: '#f7f8f8', margin: 0 }}>Reports &amp; Analytics</h1>
+            <p className="type-body-sm" style={{ color: '#8a8f98', marginTop: 6 }}>Export system data and visualize resource allocation patterns.</p>
+          </div>
         </div>
-        <button
-          onClick={fetchData}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-white border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
-        >
-          <RefreshCw className="h-4 w-4" />
+        <button onClick={fetchData} className="btn-secondary">
+          <RefreshCw size={13} />
           Refresh Data
         </button>
       </div>
 
-      {/* CSV Export Quick Action Cards */}
-      <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-        <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 mb-4">
-          Export Raw Data Logs (CSV)
-        </h3>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+      {/* ── CSV Export cards ──────────────────────────────────────────────── */}
+      <div className="feature-card">
+        <p className="type-eyebrow" style={{ color: '#8a8f98', marginBottom: 16 }}>Export Raw Data Logs (CSV)</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 10 }}>
           {[
             { type: 'utilization', label: 'Utilization Stats' },
             { type: 'maintenance', label: 'Maintenance Log' },
             { type: 'allocation', label: 'Allocation History' },
-            { type: 'booking', label: 'Shared Bookings' },
-          ].map((item) => (
+            { type: 'booking',    label: 'Shared Bookings' },
+          ].map(item => (
             <button
               key={item.type}
               onClick={() => handleExport(item.type)}
               disabled={downloading}
-              className="flex items-center justify-between rounded-xl border border-gray-150 p-4 hover:bg-indigo-50/10 hover:border-indigo-200 transition-all duration-200 cursor-pointer"
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', backgroundColor: '#141516', border: '1px solid #23252a', borderRadius: 8, cursor: 'pointer', transition: 'background-color var(--duration-fast) var(--ease-standard)' }}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = '#1a1b1c'}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = '#141516'}
             >
-              <span className="text-sm font-bold text-gray-900">{item.label}</span>
-              <Download className="h-4.5 w-4.5 text-indigo-600" />
+              <span style={{ fontSize: 13, fontWeight: 500, color: '#f7f8f8' }}>{item.label}</span>
+              <Download size={14} color="#5e6ad2" />
             </button>
           ))}
         </div>
       </div>
 
-      {/* Main Reports Grid Layout */}
-      <div className="grid gap-8 lg:grid-cols-2">
-        {/* Utilization by Department progress bars */}
-        <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm space-y-4">
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-            <BarChart className="h-5 w-5 text-gray-500" />
-            Department Utilization Rates
-          </h2>
-          <div className="space-y-4 pt-2">
-            {utilization.map((item) => (
-              <div key={item.departmentId} className="space-y-1.5">
-                <div className="flex justify-between text-xs font-semibold text-gray-700">
+      {/* ── Main grid ────────────────────────────────────────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(480px, 1fr))', gap: 20 }}>
+
+        {/* Utilization by Department */}
+        <div className="feature-card">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+            <BarChart size={16} color="#8a8f98" />
+            <h2 className="type-card-title" style={{ margin: 0, color: '#f7f8f8' }}>Department Utilization</h2>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {utilization.map(item => (
+              <div key={item.departmentId}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, fontWeight: 500, color: '#d0d6e0', marginBottom: 6 }}>
                   <span>{item.departmentName}</span>
-                  <span>{item.utilizationRate}%</span>
+                  <span style={{ color: '#5e6ad2' }}>{item.utilizationRate}%</span>
                 </div>
-                <div className="w-full bg-gray-100 rounded-full h-2.5">
-                  <div
-                    className="bg-indigo-600 h-2.5 rounded-full transition-all duration-500"
-                    style={{ width: `${item.utilizationRate}%` }}
-                  />
+                <div style={{ width: '100%', backgroundColor: '#23252a', borderRadius: 9999, height: 6 }}>
+                  <div style={{ width: `${item.utilizationRate}%`, backgroundColor: '#5e6ad2', height: 6, borderRadius: 9999, transition: 'width 0.5s var(--ease-standard)' }} />
                 </div>
-                <div className="text-[10px] text-gray-400">
-                  {item.allocatedAssets} / {item.totalAssets} Assets Assigned
-                </div>
+                <p style={{ fontSize: 11, color: '#62666d', marginTop: 4 }}>{item.allocatedAssets} / {item.totalAssets} assets assigned</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Most Used Assets */}
-        <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm space-y-4">
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-gray-500" />
-            Top 5 High-Demand Assets
-          </h2>
-          <div className="pt-2">
-            <div className="overflow-hidden border border-gray-100 rounded-xl">
-              <table className="min-w-full divide-y divide-gray-250 text-left">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-xs font-bold text-gray-500 uppercase">Tag</th>
-                    <th className="px-4 py-3 text-xs font-bold text-gray-500 uppercase">Name</th>
-                    <th className="px-4 py-3 text-xs font-bold text-gray-500 uppercase">Usage Count</th>
+        <div className="feature-card">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+            <CheckCircle size={16} color="#8a8f98" />
+            <h2 className="type-card-title" style={{ margin: 0, color: '#f7f8f8' }}>Top High-Demand Assets</h2>
+          </div>
+          <div className="data-table">
+            <table style={{ minWidth: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ backgroundColor: '#141516' }}>
+                  {['Tag','Name','Usage'].map(h => <th key={h} className="data-table-header">{h}</th>)}
+                </tr>
+              </thead>
+              <tbody>
+                {mostUsed.slice(0, 5).map(asset => (
+                  <tr key={asset.id} className="data-table-row">
+                    <td style={{ padding: '10px 14px' }}>
+                      <span className="type-mono" style={{ color: '#8a8f98', backgroundColor: '#141516', padding: '2px 6px', borderRadius: 4 }}>{asset.assetTag}</span>
+                    </td>
+                    <td style={{ padding: '10px 14px', fontSize: 13, color: '#d0d6e0' }}>{asset.name}</td>
+                    <td style={{ padding: '10px 14px', fontSize: 12, color: '#8a8f98', fontFamily: 'var(--font-mono)' }}>
+                      {asset.totalUsage}× (A:{asset.allocationCount} B:{asset.bookingCount})
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100 bg-white">
-                  {mostUsed.slice(0, 5).map((asset) => (
-                    <tr key={asset.id} className="hover:bg-gray-50/50">
-                      <td className="px-4 py-3 text-xs font-bold text-gray-900">{asset.assetTag}</td>
-                      <td className="px-4 py-3 text-xs text-gray-600 font-medium">{asset.name}</td>
-                      <td className="px-4 py-3 text-xs text-gray-900 font-semibold">
-                        {asset.totalUsage} times (Alloc: {asset.allocationCount}, Book: {asset.bookingCount})
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
-        {/* Idle Assets (30+ Days AVAILABLE) */}
-        <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm space-y-4">
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-            <Clock className="h-5 w-5 text-gray-500" />
-            Idle Assets (30+ Days Available)
-          </h2>
-          <div className="pt-2 max-h-72 overflow-y-auto divide-y divide-gray-50">
+        {/* Idle Assets */}
+        <div className="feature-card">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+            <Clock size={16} color="#8a8f98" />
+            <h2 className="type-card-title" style={{ margin: 0, color: '#f7f8f8' }}>Idle Assets (30+ Days)</h2>
+          </div>
+          <div style={{ maxHeight: 260, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 0 }}>
             {idleAssets.length === 0 ? (
-              <p className="text-sm text-gray-400 py-4 text-center">No idle assets flagged.</p>
-            ) : (
-              idleAssets.map((asset) => (
-                <div key={asset.id} className="py-3 flex justify-between items-center text-xs">
-                  <div>
-                    <h4 className="font-bold text-gray-900">{asset.name}</h4>
-                    <p className="text-gray-400 mt-0.5">{asset.assetTag} — {asset.location}</p>
-                  </div>
-                  <span className="text-amber-600 bg-amber-50 rounded-xl px-2.5 py-1 font-semibold ring-1 ring-inset ring-amber-600/10">
-                    Idle since {new Date(asset.idleSince).toLocaleDateString()}
-                  </span>
+              <p className="type-body-sm" style={{ color: '#8a8f98', padding: '16px 0', textAlign: 'center' }}>No idle assets flagged.</p>
+            ) : idleAssets.map(asset => (
+              <div key={asset.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #23252a' }}>
+                <div>
+                  <p style={{ fontSize: 13, fontWeight: 500, color: '#f7f8f8', margin: 0 }}>{asset.name}</p>
+                  <p className="type-mono" style={{ color: '#62666d', marginTop: 2 }}>{asset.assetTag} — {asset.location}</p>
                 </div>
-              ))
-            )}
+                <span style={{ flexShrink: 0, fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 9999, backgroundColor: 'rgba(210,153,34,0.16)', color: '#d29922' }}>
+                  Idle {new Date(asset.idleSince).toLocaleDateString()}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Due For Maintenance */}
-        <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm space-y-4">
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-gray-500" />
-            Assets Requiring Proactive Maintenance
-          </h2>
-          <div className="pt-2 max-h-72 overflow-y-auto divide-y divide-gray-50">
+        {/* Due for maintenance */}
+        <div className="feature-card">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+            <AlertTriangle size={16} color="#8a8f98" />
+            <h2 className="type-card-title" style={{ margin: 0, color: '#f7f8f8' }}>Proactive Maintenance</h2>
+          </div>
+          <div style={{ maxHeight: 260, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 0 }}>
             {dueMaintenance.length === 0 ? (
-              <p className="text-sm text-gray-400 py-4 text-center">All assets are in good condition.</p>
-            ) : (
-              dueMaintenance.map((asset) => (
-                <div key={asset.id} className="py-3 flex justify-between items-center text-xs">
-                  <div>
-                    <h4 className="font-bold text-gray-900">{asset.name}</h4>
-                    <p className="text-gray-400 mt-0.5">{asset.assetTag} — {asset.location}</p>
-                  </div>
-                  <span className="text-red-600 bg-red-50 rounded-xl px-2.5 py-1 font-semibold ring-1 ring-inset ring-red-600/10">
-                    Condition: {asset.condition} ({asset.status})
-                  </span>
+              <p className="type-body-sm" style={{ color: '#8a8f98', padding: '16px 0', textAlign: 'center' }}>All assets are in good condition.</p>
+            ) : dueMaintenance.map(asset => (
+              <div key={asset.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #23252a' }}>
+                <div>
+                  <p style={{ fontSize: 13, fontWeight: 500, color: '#f7f8f8', margin: 0 }}>{asset.name}</p>
+                  <p className="type-mono" style={{ color: '#62666d', marginTop: 2 }}>{asset.assetTag} — {asset.location}</p>
                 </div>
-              ))
-            )}
+                <span style={{ flexShrink: 0, fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 9999, backgroundColor: 'rgba(248,81,73,0.14)', color: '#f85149' }}>
+                  {asset.condition} / {asset.status}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Booking Heatmap (7x24 matrix) */}
-      <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm space-y-6">
-        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-          <Clock className="h-5 w-5 text-gray-500" />
-          Resource Booking Heatmap (Hour of Day vs Day of Week)
-        </h2>
-        <div className="overflow-x-auto pt-2">
-          <div className="inline-block min-w-full align-middle">
-            <div className="grid grid-cols-[auto_repeat(24,_minmax(32px,_1fr))] gap-1.5 min-w-[800px] text-center text-xs">
-              {/* Hour Labels */}
-              <div />
-              {Array.from({ length: 24 }).map((_, hour) => (
-                <div key={hour} className="font-semibold text-gray-400 text-[10px]">
-                  {hour}h
+      {/* ── Booking Heatmap ──────────────────────────────────────────────── */}
+      <div className="feature-card">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+          <Clock size={16} color="#8a8f98" />
+          <h2 className="type-card-title" style={{ margin: 0, color: '#f7f8f8' }}>Booking Heatmap (Hour × Day)</h2>
+        </div>
+        <div style={{ overflowX: 'auto' }}>
+          <div style={{ display: 'inline-grid', gridTemplateColumns: 'auto repeat(24, minmax(28px, 1fr))', gap: 4, minWidth: 700, textAlign: 'center' }}>
+            {/* Hour labels */}
+            <div />
+            {Array.from({ length: 24 }).map((_, h) => (
+              <div key={h} style={{ fontSize: 9, fontWeight: 600, color: '#62666d', paddingBottom: 2 }}>{h}h</div>
+            ))}
+            {/* Day rows */}
+            {heatmap.map((row, dayIdx) => (
+              <React.Fragment key={dayIdx}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: '#8a8f98', paddingRight: 8, display: 'flex', alignItems: 'center', textAlign: 'left', whiteSpace: 'nowrap' }}>
+                  {daysOfWeek[dayIdx]}
                 </div>
-              ))}
-
-              {/* Day Rows */}
-              {heatmap.map((row, dayIdx) => (
-                <React.Fragment key={dayIdx}>
-                  <div className="font-semibold text-gray-700 pr-3 text-left w-12 flex items-center">
-                    {daysOfWeek[dayIdx]}
+                {row.map((count, hourIdx) => (
+                  <div
+                    key={hourIdx}
+                    style={{ height: 28, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, ...getHeatmapStyle(count) }}
+                    title={`${daysOfWeek[dayIdx]} at ${hourIdx}:00 — ${count} bookings`}
+                  >
+                    {count > 0 && count}
                   </div>
-                  {row.map((count, hourIdx) => (
-                    <div
-                      key={hourIdx}
-                      className={`h-8 rounded-lg flex items-center justify-center transition-all ${getHeatmapColor(count)}`}
-                      title={`${daysOfWeek[dayIdx]} at ${hourIdx}:00 — ${count} bookings`}
-                    >
-                      {count > 0 && <span className="text-[10px]">{count}</span>}
-                    </div>
-                  ))}
-                </React.Fragment>
-              ))}
-            </div>
+                ))}
+              </React.Fragment>
+            ))}
           </div>
         </div>
-        <div className="flex gap-4 items-center text-xs text-gray-400 mt-2 font-medium">
-          <span className="flex items-center gap-1.5">
-            <span className="inline-block h-3.5 w-3.5 rounded bg-gray-100" /> 0 bookings
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="inline-block h-3.5 w-3.5 rounded bg-indigo-155" style={{ backgroundColor: 'rgb(224, 231, 255)' }} /> 1-2 bookings
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="inline-block h-3.5 w-3.5 rounded bg-indigo-350" style={{ backgroundColor: 'rgb(199, 210, 254)' }} /> 3-5 bookings
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="inline-block h-3.5 w-3.5 rounded bg-indigo-500" /> 6+ bookings
-          </span>
+        {/* Legend */}
+        <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginTop: 16, flexWrap: 'wrap' }}>
+          {[
+            { style: { backgroundColor: '#141516' }, label: '0 bookings' },
+            { style: { backgroundColor: 'rgba(94,106,210,0.14)' }, label: '1–2' },
+            { style: { backgroundColor: 'rgba(94,106,210,0.30)' }, label: '3–5' },
+            { style: { backgroundColor: '#5e6ad2' }, label: '6+' },
+          ].map(l => (
+            <span key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#8a8f98' }}>
+              <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: 3, ...l.style }} />
+              {l.label}
+            </span>
+          ))}
         </div>
       </div>
+
+      </div>{/* end column flex */}
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
     </div>
   );
 }

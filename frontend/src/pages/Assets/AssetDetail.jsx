@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   ChevronLeft, Package, Hash, MapPin, Calendar, DollarSign,
-  BookOpen, Wrench, Clock, User, AlertCircle, Loader2,
+  BookOpen, Wrench, User, AlertCircle, Loader2,
   CheckCircle2, XCircle, RotateCcw, Tag,
 } from 'lucide-react';
 import { getAssetById } from '../../api/assetApi';
@@ -10,28 +10,24 @@ import StatusBadge from './components/StatusBadge';
 import HistoryTimeline from './components/HistoryTimeline';
 
 // ─── Allocation status styles ─────────────────────────────────────────────────
-const ALLOC_STATUS = {
-  ACTIVE:   { label: 'Active',   cls: 'bg-blue-50 text-blue-700 ring-1 ring-blue-200' },
-  RETURNED: { label: 'Returned', cls: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200' },
-  OVERDUE:  { label: 'Overdue',  cls: 'bg-red-50 text-red-700 ring-1 ring-red-200' },
-};
+// ─── Allocation status styles ─────────────────────────────────────────────────
 
 // ─── Maintenance priority styles ──────────────────────────────────────────────
 const PRIORITY_STYLES = {
-  LOW:      'bg-slate-100 text-slate-600 ring-1 ring-slate-200',
-  MEDIUM:   'bg-amber-50 text-amber-700 ring-1 ring-amber-200',
-  HIGH:     'bg-orange-50 text-orange-700 ring-1 ring-orange-200',
-  CRITICAL: 'bg-red-50 text-red-700 ring-1 ring-red-200',
+  LOW:      { bg: 'rgba(139,148,158,0.16)', color: '#8b949e' },
+  MEDIUM:   { bg: 'rgba(210,153,34,0.16)', color: '#d29922' },
+  HIGH:     { bg: 'rgba(255,123,114,0.16)', color: '#ff7b72' },
+  CRITICAL: { bg: 'rgba(248,81,73,0.14)', color: '#f85149' },
 };
 
 // ─── Maintenance status styles ────────────────────────────────────────────────
 const MAINT_STATUS = {
-  PENDING_APPROVAL:    { label: 'Pending Approval',    cls: 'bg-slate-100 text-slate-600 ring-1 ring-slate-200' },
-  APPROVED:            { label: 'Approved',            cls: 'bg-blue-50 text-blue-700 ring-1 ring-blue-200' },
-  TECHNICIAN_ASSIGNED: { label: 'Technician Assigned', cls: 'bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200' },
-  IN_PROGRESS:         { label: 'In Progress',         cls: 'bg-amber-50 text-amber-700 ring-1 ring-amber-200' },
-  RESOLVED:            { label: 'Resolved',            cls: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200' },
-  REJECTED:            { label: 'Rejected',            cls: 'bg-red-50 text-red-700 ring-1 ring-red-200' },
+  PENDING_APPROVAL:    { label: 'Pending Approval',    cls: { bg: 'rgba(139,148,158,0.16)', color: '#8b949e' } },
+  APPROVED:            { label: 'Approved',            cls: { bg: 'rgba(88,166,255,0.14)', color: '#58a6ff' } },
+  TECHNICIAN_ASSIGNED: { label: 'Technician Assigned', cls: { bg: 'rgba(163,113,247,0.16)', color: '#a371f7' } },
+  IN_PROGRESS:         { label: 'In Progress',         cls: { bg: 'rgba(210,153,34,0.16)', color: '#d29922' } },
+  RESOLVED:            { label: 'Resolved',            cls: { bg: 'rgba(63,185,80,0.14)', color: '#3fb950' } },
+  REJECTED:            { label: 'Rejected',            cls: { bg: 'rgba(248,81,73,0.14)', color: '#f85149' } },
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -43,8 +39,9 @@ function formatDate(iso) {
 }
 
 function Pill({ label, cls }) {
+  const style = typeof cls === 'object' ? cls : { bg: 'rgba(139,148,158,0.16)', color: '#8b949e' };
   return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${cls}`}>
+    <span style={{ display: 'inline-flex', alignItems: 'center', borderRadius: 9999, padding: '2px 8px', fontSize: 11, fontWeight: 600, backgroundColor: style.bg, color: style.color }}>
       {label}
     </span>
   );
@@ -52,11 +49,11 @@ function Pill({ label, cls }) {
 
 function InfoRow({ icon: Icon, label, value }) {
   return (
-    <div className="flex items-start gap-2.5 py-2.5 border-b border-slate-100 last:border-0">
-      <Icon className="h-4 w-4 text-slate-400 mt-0.5 flex-shrink-0" aria-hidden="true" />
-      <div className="flex-1 min-w-0">
-        <span className="text-xs text-slate-500 block">{label}</span>
-        <span className="text-sm font-medium text-slate-800 mt-0.5 block break-words">{value || '—'}</span>
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '10px 0', borderBottom: '1px solid #23252a' }}>
+      <Icon size={16} color="#8a8f98" style={{ marginTop: 2, flexShrink: 0 }} aria-hidden="true" />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <span style={{ fontSize: 12, color: '#8a8f98', display: 'block' }}>{label}</span>
+        <span style={{ fontSize: 14, fontWeight: 500, color: '#f7f8f8', marginTop: 2, display: 'block', wordBreak: 'break-word' }}>{value || '—'}</span>
       </div>
     </div>
   );
@@ -72,12 +69,12 @@ function AllocationHistory({ allocations }) {
     ].filter(Boolean).join(' · ');
 
     const detailEl = (a.returnCondition || a.returnNotes) ? (
-      <div className="space-y-0.5">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 4 }}>
         {a.returnCondition && (
-          <p><span className="font-medium text-slate-500">Condition at return:</span> {a.returnCondition}</p>
+          <p style={{ margin: 0, fontSize: 13, color: '#c9d1d9' }}><span style={{ fontWeight: 500, color: '#8a8f98' }}>Condition at return:</span> {a.returnCondition}</p>
         )}
         {a.returnNotes && (
-          <p><span className="font-medium text-slate-500">Notes:</span> {a.returnNotes}</p>
+          <p style={{ margin: 0, fontSize: 13, color: '#c9d1d9' }}><span style={{ fontWeight: 500, color: '#8a8f98' }}>Notes:</span> {a.returnNotes}</p>
         )}
       </div>
     ) : null;
@@ -97,55 +94,55 @@ function AllocationHistory({ allocations }) {
 function MaintenanceHistory({ requests }) {
   if (!requests || requests.length === 0) {
     return (
-      <div className="py-12 text-center">
-        <Wrench className="h-8 w-8 text-slate-200 mx-auto mb-3" />
-        <p className="text-sm font-medium text-slate-500">No maintenance history for this asset.</p>
-        <p className="text-xs text-slate-400 mt-1">Maintenance requests will appear here once created.</p>
+      <div style={{ padding: '48px 0', textAlign: 'center' }}>
+        <Wrench size={32} color="#34343a" style={{ margin: '0 auto 12px' }} />
+        <p style={{ fontSize: 14, fontWeight: 500, color: '#8a8f98', margin: 0 }}>No maintenance history for this asset.</p>
+        <p style={{ fontSize: 12, color: '#62666d', marginTop: 4 }}>Maintenance requests will appear here once created.</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-slate-100 text-sm" aria-label="Maintenance history">
+    <div style={{ overflowX: 'auto', border: '1px solid #23252a', borderRadius: 8 }}>
+      <table style={{ minWidth: '100%', borderCollapse: 'collapse', fontSize: 13 }} aria-label="Maintenance history">
         <thead>
-          <tr className="bg-slate-50 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">
-            <th className="px-4 py-3">Issue</th>
-            <th className="px-4 py-3">Priority</th>
-            <th className="px-4 py-3">Status</th>
-            <th className="px-4 py-3">Requested</th>
-            <th className="px-4 py-3">Technician</th>
+          <tr style={{ backgroundColor: '#141516', textAlign: 'left', fontSize: 11, fontWeight: 600, color: '#8a8f98', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid #23252a' }}>
+            <th style={{ padding: '12px 16px' }}>Issue</th>
+            <th style={{ padding: '12px 16px' }}>Priority</th>
+            <th style={{ padding: '12px 16px' }}>Status</th>
+            <th style={{ padding: '12px 16px' }}>Requested</th>
+            <th style={{ padding: '12px 16px' }}>Technician</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100 bg-white">
+        <tbody style={{ backgroundColor: '#0f1011' }}>
           {requests.map((m) => {
-            const statusInfo = MAINT_STATUS[m.status] ?? { label: m.status, cls: 'bg-slate-100 text-slate-500 ring-1 ring-slate-200' };
-            const priorityCls = PRIORITY_STYLES[m.priority] ?? 'bg-slate-100 text-slate-500 ring-1 ring-slate-200';
+            const statusInfo = MAINT_STATUS[m.status] ?? { label: m.status, cls: { bg: 'rgba(139,148,158,0.16)', color: '#8b949e' } };
+            const priorityCls = PRIORITY_STYLES[m.priority] ?? { bg: 'rgba(139,148,158,0.16)', color: '#8b949e' };
             return (
-              <tr key={m.id} className="hover:bg-slate-50 transition-colors">
-                <td className="px-4 py-3">
-                  <p className="font-medium text-slate-800 line-clamp-2 max-w-xs">{m.issueDescription}</p>
+              <tr key={m.id} style={{ borderBottom: '1px solid #23252a' }}>
+                <td style={{ padding: '12px 16px' }}>
+                  <p style={{ fontWeight: 500, color: '#f7f8f8', margin: 0 }}>{m.issueDescription}</p>
                   {m.resolvedNotes && (
-                    <p className="text-xs text-slate-400 mt-0.5 line-clamp-1">✓ {m.resolvedNotes}</p>
+                    <p style={{ fontSize: 11, color: '#62666d', marginTop: 2 }}>✓ {m.resolvedNotes}</p>
                   )}
                 </td>
-                <td className="px-4 py-3">
+                <td style={{ padding: '12px 16px' }}>
                   <Pill label={m.priority} cls={priorityCls} />
                 </td>
-                <td className="px-4 py-3">
+                <td style={{ padding: '12px 16px' }}>
                   <Pill label={statusInfo.label} cls={statusInfo.cls} />
                 </td>
-                <td className="px-4 py-3 text-slate-500 whitespace-nowrap">
+                <td style={{ padding: '12px 16px', color: '#8a8f98', whiteSpace: 'nowrap' }}>
                   {formatDate(m.createdAt)}
                 </td>
-                <td className="px-4 py-3 text-slate-600">
+                <td style={{ padding: '12px 16px', color: '#c9d1d9' }}>
                   {m.technician?.name ? (
-                    <span className="flex items-center gap-1.5">
-                      <User className="h-3.5 w-3.5 text-slate-400" />
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <User size={14} color="#8a8f98" />
                       {m.technician.name}
                     </span>
                   ) : (
-                    <span className="text-slate-300">—</span>
+                    <span style={{ color: '#34343a' }}>—</span>
                   )}
                 </td>
               </tr>
@@ -205,10 +202,10 @@ export default function AssetDetail() {
   // ── Loading ────────────────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-indigo-500 mx-auto mb-3" />
-          <p className="text-sm text-slate-500">Loading asset details…</p>
+      <div style={{ minHeight: '100vh', backgroundColor: '#010102', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <Loader2 size={32} color="#5e6ad2" style={{ animation: 'spin 1s linear infinite', margin: '0 auto 12px' }} />
+          <p style={{ fontSize: 14, color: '#8a8f98', margin: 0 }}>Loading asset details…</p>
         </div>
       </div>
     );
@@ -217,14 +214,11 @@ export default function AssetDetail() {
   // ── Error ──────────────────────────────────────────────────────────────────
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-8">
-        <div className="text-center max-w-sm">
-          <AlertCircle className="h-10 w-10 text-red-400 mx-auto mb-3" />
-          <h2 className="text-lg font-semibold text-slate-800">{error}</h2>
-          <button
-            onClick={() => navigate('/assets')}
-            className="mt-4 text-sm text-indigo-600 hover:underline"
-          >
+      <div style={{ minHeight: '100vh', backgroundColor: '#010102', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32 }}>
+        <div style={{ textAlign: 'center', maxWidth: 384 }}>
+          <AlertCircle size={40} color="#f85149" style={{ margin: '0 auto 12px' }} />
+          <h2 style={{ fontSize: 18, fontWeight: 600, color: '#f7f8f8', margin: '0 0 16px' }}>{error}</h2>
+          <button onClick={() => navigate('/assets')} style={{ fontSize: 14, color: '#5e6ad2', background: 'none', border: 'none', cursor: 'pointer' }}>
             ← Back to Asset Directory
           </button>
         </div>
@@ -238,74 +232,74 @@ export default function AssetDetail() {
   const maintenanceReqs = asset.maintenanceReqs ?? asset.maintenanceRequests ?? [];
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div style={{ minHeight: '100vh', backgroundColor: '#010102', color: '#c9d1d9' }}>
       {/* ── Page header ─────────────────────────────────────────────────────── */}
-      <div className="bg-white border-b border-slate-200 px-6 py-4">
-        <div className="max-w-5xl mx-auto flex items-center gap-3">
+      <div style={{ backgroundColor: '#0f1011', borderBottom: '1px solid #23252a', padding: '16px 24px' }}>
+        <div style={{ maxWidth: 1024, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 12 }}>
           <button
             onClick={() => navigate('/assets')}
-            className="text-slate-400 hover:text-slate-700 focus-visible:ring-2 focus-visible:ring-indigo-500 rounded transition-colors p-0.5"
+            style={{ color: '#8a8f98', background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}
             aria-label="Back to Asset Directory"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft size={20} />
           </button>
-          <div className="flex items-center gap-2 flex-1 min-w-0">
-            <Package className="h-5 w-5 text-indigo-600 flex-shrink-0" aria-hidden="true" />
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-mono text-sm font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
+            <Package size={20} color="#5e6ad2" style={{ flexShrink: 0 }} aria-hidden="true" />
+            <div style={{ minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 14, fontWeight: 600, color: '#8a8f98', backgroundColor: '#23252a', padding: '2px 8px', borderRadius: 4 }}>
                   {asset.assetTag}
                 </span>
-                <h1 className="text-lg font-semibold text-slate-900 truncate">{asset.name}</h1>
+                <h1 style={{ fontSize: 18, fontWeight: 600, color: '#f7f8f8', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{asset.name}</h1>
               </div>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p style={{ fontSize: 12, color: '#8a8f98', margin: '2px 0 0' }}>
                 {asset.category?.name ?? '—'}
                 {asset.department?.name ? ` · ${asset.department.name}` : ''}
               </p>
             </div>
           </div>
-          <div className="flex-shrink-0">
+          <div style={{ flexShrink: 0 }}>
             <StatusBadge status={asset.status} />
           </div>
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 py-6 space-y-6">
+      <div style={{ maxWidth: 1024, margin: '0 auto', padding: '24px', display: 'flex', flexDirection: 'column', gap: 24 }}>
         {/* ── Info cards grid ──────────────────────────────────────────────── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 16 }}>
 
           {/* Identity card */}
-          <div className="bg-white border border-slate-200 rounded-lg px-5 py-4">
-            <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">Identity</h2>
+          <div style={{ backgroundColor: '#0f1011', border: '1px solid #23252a', borderRadius: 8, padding: '16px 20px' }}>
+            <h2 style={{ fontSize: 11, fontWeight: 600, color: '#8a8f98', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 4px' }}>Identity</h2>
             <InfoRow icon={Tag}      label="Asset Tag"     value={asset.assetTag} />
             <InfoRow icon={Hash}     label="Serial Number" value={asset.serialNumber} />
             <InfoRow icon={Package}  label="Category"      value={asset.category?.name} />
           </div>
 
           {/* Location & Condition card */}
-          <div className="bg-white border border-slate-200 rounded-lg px-5 py-4">
-            <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">Location</h2>
+          <div style={{ backgroundColor: '#0f1011', border: '1px solid #23252a', borderRadius: 8, padding: '16px 20px' }}>
+            <h2 style={{ fontSize: 11, fontWeight: 600, color: '#8a8f98', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 4px' }}>Location</h2>
             <InfoRow icon={MapPin}   label="Location"    value={asset.location} />
             <InfoRow icon={Package}  label="Condition"   value={asset.condition} />
             <InfoRow icon={Package}  label="Department"  value={asset.department?.name} />
           </div>
 
           {/* Acquisition card */}
-          <div className="bg-white border border-slate-200 rounded-lg px-5 py-4">
-            <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">Acquisition</h2>
+          <div style={{ backgroundColor: '#0f1011', border: '1px solid #23252a', borderRadius: 8, padding: '16px 20px' }}>
+            <h2 style={{ fontSize: 11, fontWeight: 600, color: '#8a8f98', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 4px' }}>Acquisition</h2>
             <InfoRow icon={Calendar}    label="Acquired"  value={formatDate(asset.acquisitionDate)} />
             <InfoRow icon={DollarSign}  label="Cost"      value={asset.acquisitionCost != null ? `₹${Number(asset.acquisitionCost).toLocaleString('en-IN')}` : null} />
-            <div className="flex items-start gap-2.5 py-2.5">
-              <BookOpen className="h-4 w-4 text-slate-400 mt-0.5 flex-shrink-0" />
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '10px 0' }}>
+              <BookOpen size={16} color="#8a8f98" style={{ marginTop: 2, flexShrink: 0 }} />
               <div>
-                <span className="text-xs text-slate-500 block">Bookable</span>
+                <span style={{ fontSize: 12, color: '#8a8f98', display: 'block' }}>Bookable</span>
                 {asset.isBookable ? (
-                  <span className="flex items-center gap-1 text-sm font-medium text-indigo-600 mt-0.5">
-                    <CheckCircle2 className="h-3.5 w-3.5" /> Yes
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 14, fontWeight: 500, color: '#5e6ad2', marginTop: 2 }}>
+                    <CheckCircle2 size={14} /> Yes
                   </span>
                 ) : (
-                  <span className="flex items-center gap-1 text-sm font-medium text-slate-400 mt-0.5">
-                    <XCircle className="h-3.5 w-3.5" /> No
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 14, fontWeight: 500, color: '#8a8f98', marginTop: 2 }}>
+                    <XCircle size={14} /> No
                   </span>
                 )}
               </div>
@@ -315,49 +309,49 @@ export default function AssetDetail() {
 
         {/* ── Photo (if present) ───────────────────────────────────────────── */}
         {asset.photoUrl && (
-          <div className="bg-white border border-slate-200 rounded-lg p-4">
-            <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">Photo</h2>
+          <div style={{ backgroundColor: '#0f1011', border: '1px solid #23252a', borderRadius: 8, padding: 16 }}>
+            <h2 style={{ fontSize: 11, fontWeight: 600, color: '#8a8f98', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 12px' }}>Photo</h2>
             <img
               src={asset.photoUrl}
               alt={`Photo of ${asset.name}`}
-              className="max-h-48 rounded-md object-contain border border-slate-100"
+              style={{ maxHeight: 192, borderRadius: 6, objectFit: 'contain', border: '1px solid #23252a' }}
               onError={(e) => { e.currentTarget.style.display = 'none'; }}
             />
           </div>
         )}
 
         {/* ── Tabs ─────────────────────────────────────────────────────────── */}
-        <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+        <div style={{ backgroundColor: '#0f1011', border: '1px solid #23252a', borderRadius: 12, overflow: 'hidden' }}>
           {/* Tab bar */}
-          <div className="flex border-b border-slate-200" role="tablist">
-            {tabs.map((tab) => (
-              <button
-                key={tab.key}
-                role="tab"
-                aria-selected={activeTab === tab.key}
-                aria-controls={`tabpanel-${tab.key}`}
-                id={`tab-${tab.key}`}
-                onClick={() => setActiveTab(tab.key)}
-                className={[
-                  'flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500',
-                  activeTab === tab.key
-                    ? 'border-indigo-600 text-indigo-600'
-                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300',
-                ].join(' ')}
-              >
-                <tab.icon className="h-4 w-4" aria-hidden="true" />
-                {tab.label}
-                {tab.count > 0 && (
-                  <span className={`text-xs rounded-full px-2 py-0.5 font-medium ${
-                    activeTab === tab.key
-                      ? 'bg-indigo-100 text-indigo-700'
-                      : 'bg-slate-100 text-slate-500'
-                  }`}>
-                    {tab.count}
-                  </span>
-                )}
-              </button>
-            ))}
+          <div style={{ display: 'flex', borderBottom: '1px solid #23252a' }} role="tablist">
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-controls={`tabpanel-${tab.key}`}
+                  id={`tab-${tab.key}`}
+                  onClick={() => setActiveTab(tab.key)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', fontSize: 14, fontWeight: 500,
+                    backgroundColor: 'transparent', border: 'none', cursor: 'pointer',
+                    borderBottom: isActive ? '2px solid #5e6ad2' : '2px solid transparent',
+                    color: isActive ? '#f7f8f8' : '#8a8f98',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <tab.icon size={16} aria-hidden="true" />
+                  {tab.label}
+                  {tab.count > 0 && (
+                    <span style={{ fontSize: 11, fontWeight: 600, borderRadius: 9999, padding: '2px 6px', backgroundColor: isActive ? 'rgba(94,106,210,0.15)' : '#23252a', color: isActive ? '#5e6ad2' : '#8a8f98' }}>
+                      {tab.count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
 
           {/* Tab panels */}
@@ -366,7 +360,7 @@ export default function AssetDetail() {
             id="tabpanel-allocations"
             aria-labelledby="tab-allocations"
             hidden={activeTab !== 'allocations'}
-            className="px-6 py-4"
+            style={{ padding: '16px 24px', display: activeTab === 'allocations' ? 'block' : 'none' }}
           >
             <AllocationHistory allocations={allocations} />
           </div>
@@ -376,13 +370,14 @@ export default function AssetDetail() {
             id="tabpanel-maintenance"
             aria-labelledby="tab-maintenance"
             hidden={activeTab !== 'maintenance'}
+            style={{ padding: '16px 24px', display: activeTab === 'maintenance' ? 'block' : 'none' }}
           >
             <MaintenanceHistory requests={maintenanceReqs} />
           </div>
         </div>
 
         {/* ── Meta ─────────────────────────────────────────────────────────── */}
-        <p className="text-xs text-slate-400 text-right">
+        <p style={{ fontSize: 12, color: '#62666d', textAlign: 'right', margin: 0 }}>
           Asset registered: {formatDate(asset.createdAt)}
         </p>
       </div>
