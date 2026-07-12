@@ -8,6 +8,26 @@ import LoginPage from './pages/Login/LoginPage';
 import RegisterPage from './pages/Register/RegisterPage';
 import OrganizationSetupPage from './pages/OrganizationSetup/OrganizationSetupPage';
 
+<<<<<<< HEAD
+// Member 2: Asset Core (Screen 4 & 5)
+import AssetDirectory from './pages/Assets/AssetDirectory';
+import AssetRegistrationForm from './pages/Assets/AssetRegistrationForm';
+import AssetDetail from './pages/Assets/AssetDetail';
+import AllocationTransferPage from './pages/AllocationTransfer/AllocationTransferPage';
+import TestComponents from './pages/Assets/components/TestComponents';
+
+// Dashboard placeholder - Member 4 will replace this
+function DashboardPage() {
+  return (
+    <div>
+      <h1 className="text-2xl font-semibold text-slate-900 mb-2">Dashboard</h1>
+      <p className="text-slate-500 text-sm">Dashboard module coming soon - owned by Member 4.</p>
+    </div>
+  );
+}
+
+// Temporary placeholder component for routes not yet built
+=======
 // ── Member 3: Operations Module (Screen 6 & 7) ───────────────────────────────
 import ResourceBookingPage from './pages/ResourceBooking/ResourceBookingPage';
 import MaintenancePage from './pages/Maintenance/MaintenancePage';
@@ -87,6 +107,7 @@ export default function App() {
 }
 
 // ── Temporary placeholder for routes not yet built ───────────────────────────
+>>>>>>> origin/main
 function Placeholder({ label }) {
   return (
     <div className="flex flex-col items-center justify-center h-64 text-center">
@@ -100,3 +121,56 @@ function Placeholder({ label }) {
     </div>
   );
 }
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      {/* AuthProvider wraps the entire tree so all components can access auth state */}
+      <AuthProvider>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+
+          {/* Asset Core (Member 2 - Screen 4) - unprotected for now */}
+          {/* TODO Member 1: wrap these in <ProtectedRoute> + <DashboardLayout> once auth is stable */}
+          <Route path="/assets"          element={<AssetDirectory />} />
+          <Route path="/assets/register" element={<AssetRegistrationForm />} />
+          <Route path="/assets/new"      element={<AssetRegistrationForm />} />
+          <Route path="/assets/:id"      element={<AssetDetail />} />
+
+          {/* Allocation & Transfer (Member 2 - Screen 5) */}
+          {/* TODO Member 1: wrap in <ProtectedRoute> + <DashboardLayout> */}
+          <Route path="/allocation-transfer" element={<AllocationTransferPage />} />
+          <Route path="/allocations"         element={<AllocationTransferPage />} />
+
+          {/* Components Test */}
+          <Route path="/components-test" element={<TestComponents />} />
+
+          {/* Protected routes (require authentication) */}
+          <Route
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="/dashboard"    element={<DashboardPage />} />
+            <Route path="/organization" element={<OrganizationSetupPage />} />
+
+            {/* Placeholders - other members fill these in */}
+            <Route path="/bookings"      element={<Placeholder label="Resource Bookings" />} />
+            <Route path="/maintenance"   element={<Placeholder label="Maintenance" />} />
+            <Route path="/audits"        element={<Placeholder label="Audits" />} />
+            <Route path="/reports"       element={<Placeholder label="Reports" />} />
+            <Route path="/notifications" element={<Placeholder label="Notifications" />} />
+          </Route>
+
+          {/* Default redirect */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
+  );
+}
+

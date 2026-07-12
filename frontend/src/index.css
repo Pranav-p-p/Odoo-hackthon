@@ -1,14 +1,17 @@
-@import "tailwindcss";
-
-/* ── Google Fonts: Inter ────────────────────────────────────────────────── */
+/* ── Google Fonts — must be first before @tailwind directives ───────────── */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* ── Base reset ─────────────────────────────────────────────────────────── */
+/* ── Tailwind v3 ─────────────────────────────────────────────────────────── */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base reset ──────────────────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
-html, body, #root {
+html, body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -18,10 +21,11 @@ body {
   font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #f8fafc;
+  color: #0f172a;
 }
 
 #root {
-  /* Override any Vite scaffold defaults — full viewport */
   width: 100%;
   max-width: none;
   text-align: left;
@@ -30,7 +34,7 @@ body {
   display: block;
 }
 
-/* ── Hide native browser password reveal icon (Edge) ────────────────────── */
+/* ── Hide native Edge/IE password reveal button ──────────────────────────── */
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none;
