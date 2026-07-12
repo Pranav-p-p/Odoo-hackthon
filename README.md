@@ -83,7 +83,7 @@ AssetFlow/
 ### 1. Clone the Repository
 ```bash
 git clone <repository-url>
-cd Odoo-hackthon
+cd AssetFlow
 ```
 
 ### 2. Backend Setup
