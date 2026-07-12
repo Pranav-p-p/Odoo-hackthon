@@ -52,22 +52,22 @@
 - [x] Cascade / SetNull / Restrict delete rules defined
 - [x] Migration done — Supabase DB created (commit fd6664c)
 
-### PENDING — Backend Auth Routes & Middleware
+### DONE — Backend Auth Routes & Middleware
 
-- [ ] POST /auth/signup — create EMPLOYEE with bcrypt + JWT
-- [ ] POST /auth/login — verify credentials, reject INACTIVE users
-- [ ] POST /auth/forgot-password — log to console (demo mode)
-- [ ] GET /auth/me — return current user from JWT
-- [ ] auth.middleware.js — JWT verify → req.user
-- [ ] role.middleware.js — RBAC
-- [ ] validate.middleware.js — body validation
-- [ ] error.middleware.js — global error handler
-- [ ] department.routes.js — GET, POST, PATCH /departments
-- [ ] category.routes.js — GET, POST, PATCH /categories
-- [ ] user.routes.js — GET /users, PATCH /role, PATCH /status
-- [ ] server.js — Express entry point, CORS, route registration
-- [ ] config/prisma.js — Prisma client singleton
-- [ ] config/jwt.js — secret + expiry
+- [x] POST /auth/signup — create EMPLOYEE with bcrypt + JWT
+- [x] POST /auth/login — verify credentials, reject INACTIVE users
+- [x] POST /auth/forgot-password — log to console (demo mode)
+- [x] GET /auth/me — return current user from JWT
+- [x] auth.middleware.js — JWT verify → req.user
+- [x] role.middleware.js — RBAC
+- [x] validate.middleware.js — body validation
+- [x] error.middleware.js — global error handler
+- [x] department.routes.js — GET, POST, PATCH /departments
+- [x] category.routes.js — GET, POST, PATCH /categories
+- [x] user.routes.js — GET /users, PATCH /role, PATCH /status
+- [x] server.js — Express entry point, CORS, route registration
+- [x] config/prisma.js — Prisma client singleton
+- [x] config/jwt.js — secret + expiry
 
 ### DONE — Frontend
 
