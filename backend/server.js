@@ -11,6 +11,9 @@ const authRoutes = require('./src/routes/auth.routes');
 const departmentRoutes = require('./src/routes/department.routes');
 const categoryRoutes = require('./src/routes/category.routes');
 const userRoutes = require('./src/routes/user.routes');
+// Member 3 — Operations Module
+const bookingRoutes = require('./src/routes/booking.routes');
+const maintenanceRoutes = require('./src/routes/maintenance.routes');
 
 // ── Module 2 Routes (Member 2) ───────────────────────────────────────────────
 const assetRoutes = require('./src/routes/asset.routes');
@@ -20,9 +23,9 @@ const transferRoutes = require('./src/routes/transfer.routes');
 // ── Module 4 Routes (Member 4) ───────────────────────────────────────────────
 const dashboardRoutes = require('./src/modules/dashboard/dashboard.routes');
 const notificationRoutes = require('./src/modules/notification/notification.routes');
-// const auditRoutes        = require('./src/modules/audit/audit.routes');
-// const reportsRoutes      = require('./src/modules/reports/reports.routes');
-// const activityLogRoutes  = require('./src/modules/activity-log/activityLog.routes');
+const auditRoutes = require('./src/modules/audit/audit.routes');
+const reportsRoutes = require('./src/modules/reports/reports.routes');
+const activityLogRoutes = require('./src/modules/activity-log/activityLog.routes');
 
 const { errorHandler, notFoundHandler } = require('./src/middleware/error.middleware');
 
@@ -40,23 +43,30 @@ app.use(cors(corsOptions));
 app.options(/.*/, cors(corsOptions));
 app.use(express.json());
 
-// ── API Routes — Module 1 (Member 1) ─────────────────────────────────────────
+// ── API Routes (Module 1 — Identity & Foundation) ─────────────────────────
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/departments', departmentRoutes);
 app.use('/api/v1/categories', categoryRoutes);
 app.use('/api/v1/users', userRoutes);
 
+<<<<<<< HEAD
 // ── API Routes — Module 2 (Member 2) ─────────────────────────────────────────
 app.use('/api/v1/assets', assetRoutes);
 app.use('/api/v1/allocations', allocationRoutes);
 app.use('/api/v1/transfers', transferRoutes);
 
+=======
+// ── API Routes (Module 3 — Operations) ─────────────────────────────────────
+app.use('/api/v1/bookings', bookingRoutes);
+app.use('/api/v1/maintenance-requests', maintenanceRoutes);
+>>>>>>> origin/main
 // ── API Routes — Module 4 (Member 4) ─────────────────────────────────────────
 app.use('/api/v1/dashboard', dashboardRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
-// app.use('/api/v1/audits',        auditRoutes);
-// app.use('/api/v1/reports',       reportsRoutes);
-// app.use('/api/v1/activity-logs', activityLogRoutes);
+
+app.use('/api/v1/audits', auditRoutes);
+app.use('/api/v1/reports', reportsRoutes);
+app.use('/api/v1/activity-logs', activityLogRoutes);
 
 // ── Status Route ────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
