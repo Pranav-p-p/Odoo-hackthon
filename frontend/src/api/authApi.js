@@ -15,7 +15,10 @@ const apiClient = axios.create({
  * Attach the stored JWT to every outgoing request automatically.
  */
 apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('assetflow_token');
+  // Check localStorage first ("Remember me"), then sessionStorage (session-only)
+  const token =
+    localStorage.getItem('assetflow_token') ||
+    sessionStorage.getItem('assetflow_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
