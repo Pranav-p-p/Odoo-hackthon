@@ -22,84 +22,59 @@ function validateForm({ email, password }) {
   return errors;
 }
 
-// ─── Role → route map (all redirect to /dashboard; other modules extend this) ─
+// ─── Role → route map ─────────────────────────────────────────────────────────
 
 const ROLE_REDIRECT = {
-  ADMIN: '/dashboard',
-  ASSET_MANAGER: '/dashboard',
-  DEPARTMENT_HEAD: '/dashboard',
-  EMPLOYEE: '/dashboard',
+  ADMIN:          '/dashboard',
+  ASSET_MANAGER:  '/dashboard',
+  DEPARTMENT_HEAD:'/dashboard',
+  EMPLOYEE:       '/dashboard',
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 /**
- * LoginPage
- *
- * Minimal, professional login form for AssetFlow.
- * - Controlled inputs
- * - Client-side validation (required + email format)
- * - Calls POST /api/v1/auth/login via axios
- * - Loading state on submit button
- * - Inline error message (aria-live) on failure
- * - Stores JWT; redirects by returned role
- * - Fully accessible: label/input association, visible focus states
+ * LoginPage — dark canvas design per DESIGN.md
+ * - Canvas (#010102) background
+ * - Surface-1 form card with hairline border (no shadow)
+ * - Lavender (#5e6ad2) primary CTA — btn-primary class
+ * - Inter font, negative letter-spacing on headings
  */
 export default function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  // ── Form state ──────────────────────────────────────────────────────────────
-  const [fields, setFields] = useState({ email: '', password: '' });
-  const [rememberMe, setRememberMe] = useState(false);
+  const [fields, setFields]           = useState({ email: '', password: '' });
+  const [rememberMe, setRememberMe]   = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
   const [serverError, setServerError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-
-  // ── Handlers ────────────────────────────────────────────────────────────────
+  const [isLoading, setIsLoading]     = useState(false);
 
   function handleChange(e) {
     const { name, value } = e.target;
-    setFields((prev) => ({ ...prev, [name]: value }));
-    // Clear field-level error on edit
-    if (fieldErrors[name]) {
-      setFieldErrors((prev) => ({ ...prev, [name]: '' }));
-    }
-    // Clear server error on any change
+    setFields(prev => ({ ...prev, [name]: value }));
+    if (fieldErrors[name]) setFieldErrors(prev => ({ ...prev, [name]: '' }));
     if (serverError) setServerError('');
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
     setServerError('');
-
-    // Client-side validation
     const errors = validateForm(fields);
-    if (Object.keys(errors).length > 0) {
-      setFieldErrors(errors);
-      return;
-    }
+    if (Object.keys(errors).length > 0) { setFieldErrors(errors); return; }
 
     setIsLoading(true);
     try {
       const result = await loginUser(fields.email.trim(), fields.password);
-
-      // API_CONTRACT.md: { success: true, data: { token, user } }
       const { token, user } = result.data;
-
-      // Store token + update AuthContext state
       login(token, user, rememberMe);
-
-      // Redirect by role
       const destination = ROLE_REDIRECT[user.role] ?? '/dashboard';
       navigate(destination, { replace: true });
     } catch (err) {
-      // Extract human-readable message from error response
       const apiMessage =
         err?.response?.data?.error?.message ||
         err?.response?.data?.message ||
         null;
-
       if (err?.response?.status === 401) {
         setServerError(apiMessage || 'Invalid email or password. Please try again.');
       } else if (err?.response?.status === 400) {
@@ -114,56 +89,63 @@ export default function LoginPage() {
     }
   }
 
-  // ── Render ──────────────────────────────────────────────────────────────────
-
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-12">
-      {/* ── Card ─────────────────────────────────────────────────────────── */}
-      <div className="w-full max-w-sm">
+    /* ── Full-page dark canvas ─────────────────────────────────────────────── */
+    <div style={{
+      minHeight:       '100vh',
+      backgroundColor: '#010102',       /* canvas */
+      display:         'flex',
+      alignItems:      'center',
+      justifyContent:  'center',
+      padding:         '48px 16px',
+    }}>
+      <div style={{ width: '100%', maxWidth: 380 }}>
 
-        {/* Logo / Brand */}
-        <div className="mb-8 text-center">
-          <div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-indigo-600 mb-4">
-            {/* Simple geometric mark — no external image needed */}
-            <svg
-              viewBox="0 0 20 20"
-              fill="none"
-              className="w-5 h-5 text-white"
-              aria-hidden="true"
-            >
+        {/* ── Brand mark + heading ─────────────────────────────────────────── */}
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          {/* Lavender glyph */}
+          <div style={{
+            display:         'inline-flex',
+            alignItems:      'center',
+            justifyContent:  'center',
+            width:           44,
+            height:          44,
+            borderRadius:    10,
+            backgroundColor: '#5e6ad2',
+            marginBottom:    16,
+          }}>
+            <svg viewBox="0 0 20 20" fill="none" width={20} height={20} aria-hidden="true">
               <rect x="3" y="3" width="6" height="6" rx="1" fill="white" fillOpacity="0.9" />
               <rect x="11" y="3" width="6" height="6" rx="1" fill="white" fillOpacity="0.6" />
               <rect x="3" y="11" width="6" height="6" rx="1" fill="white" fillOpacity="0.6" />
               <rect x="11" y="11" width="6" height="6" rx="1" fill="white" fillOpacity="0.9" />
             </svg>
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+
+          <h1 className="type-display-md" style={{ color: '#f7f8f8', margin: 0 }}>
             AssetFlow
           </h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="type-body-sm" style={{ color: '#8a8f98', marginTop: 6 }}>
             Sign in to your workspace
           </p>
         </div>
 
-        {/* ── Form card ────────────────────────────────────────────────────── */}
-        <div className="bg-white border border-slate-200 rounded-lg shadow-sm px-8 py-8">
-          <form
-            id="login-form"
-            onSubmit={handleSubmit}
-            noValidate
-            aria-label="Sign in form"
-          >
-            <div className="space-y-5">
+        {/* ── Form card — surface-1 lift, hairline border ──────────────────── */}
+        <div style={{
+          backgroundColor: '#0f1011',    /* surface-1 */
+          border:          '1px solid #23252a',
+          borderRadius:    12,
+          padding:         '32px 28px',
+        }}>
+          <form id="login-form" onSubmit={handleSubmit} noValidate aria-label="Sign in form">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
               {/* ── Email ──────────────────────────────────────────────────── */}
-              <div className="space-y-1">
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-slate-700"
-                >
+              <div>
+                <label htmlFor="email" className="field-label">
                   Email address
                 </label>
-                <div className="relative">
+                <div style={{ position: 'relative' }}>
                   <input
                     id="email"
                     name="email"
@@ -175,48 +157,42 @@ export default function LoginPage() {
                     aria-invalid={Boolean(fieldErrors.email)}
                     aria-describedby={fieldErrors.email ? 'email-error' : undefined}
                     placeholder="you@company.com"
-                    className={[
-                      'block w-full rounded-md border px-3 py-2 text-sm text-slate-900 placeholder-slate-400',
-                      'pl-9 outline-none',
-                      'focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500',
-                      'transition-colors duration-150',
-                      fieldErrors.email
-                        ? 'border-red-400 bg-red-50'
-                        : 'border-slate-300 bg-white hover:border-slate-400',
-                    ].join(' ')}
+                    className={`input-field ${fieldErrors.email ? 'error' : ''}`}
+                    style={{ paddingLeft: 36 }}
                   />
                   <Mail
-                    className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none"
+                    size={15}
+                    color="#62666d"
+                    style={{
+                      position:      'absolute',
+                      left:          11,
+                      top:           '50%',
+                      transform:     'translateY(-50%)',
+                      pointerEvents: 'none',
+                    }}
                     aria-hidden="true"
                   />
                 </div>
                 {fieldErrors.email && (
-                  <p id="email-error" className="text-xs text-red-600 mt-0.5">
-                    {fieldErrors.email}
-                  </p>
+                  <p id="email-error" className="field-error">{fieldErrors.email}</p>
                 )}
               </div>
 
               {/* ── Password ───────────────────────────────────────────────── */}
-              <div className="space-y-1">
-                {/* Label row: "Password" left, "Forgot password?" right */}
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor="password"
-                    className="block text-sm font-medium text-slate-700"
-                  >
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                  <label htmlFor="password" className="field-label" style={{ margin: 0 }}>
                     Password
                   </label>
                   <Link
                     to="/forgot-password"
                     id="forgot-password-link"
-                    className="text-xs text-indigo-600 hover:text-indigo-800 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded transition-colors"
+                    className="text-link"
+                    style={{ fontSize: 12 }}
                   >
                     Forgot password?
                   </Link>
                 </div>
-
-                {/* PasswordInput handles the input + toggle internally */}
                 <PasswordInput
                   id="password"
                   label=""
@@ -227,37 +203,44 @@ export default function LoginPage() {
               </div>
 
               {/* ── Remember me ────────────────────────────────────────────── */}
-              <div className="flex items-center gap-2">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <input
                   id="remember-me"
                   name="rememberMe"
                   type="checkbox"
                   checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                  onChange={e => setRememberMe(e.target.checked)}
+                  style={{
+                    width:       16,
+                    height:      16,
+                    accentColor: '#5e6ad2',
+                    cursor:      'pointer',
+                  }}
                 />
                 <label
                   htmlFor="remember-me"
-                  className="text-sm text-slate-600 cursor-pointer select-none"
+                  className="type-body-sm"
+                  style={{ color: '#8a8f98', cursor: 'pointer', userSelect: 'none' }}
                 >
                   Remember me
                 </label>
               </div>
 
-              {/* ── Server / API error (inline, aria-live) ─────────────────── */}
-              {/* Always rendered so screen readers observe the live region */}
-              <div
-                role="alert"
-                aria-live="polite"
-                aria-atomic="true"
-                id="login-error-region"
-              >
+              {/* ── Server / API error ─────────────────────────────────────── */}
+              <div role="alert" aria-live="polite" aria-atomic="true" id="login-error-region">
                 {serverError && (
-                  <div className="flex items-start gap-2 rounded-md border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700">
-                    <AlertCircle
-                      className="h-4 w-4 mt-0.5 flex-shrink-0"
-                      aria-hidden="true"
-                    />
+                  <div style={{
+                    display:         'flex',
+                    alignItems:      'flex-start',
+                    gap:             8,
+                    backgroundColor: 'rgba(248,81,73,0.10)',
+                    border:          '1px solid rgba(248,81,73,0.30)',
+                    borderRadius:    8,
+                    padding:         '10px 12px',
+                    color:           '#f85149',
+                    fontSize:        13,
+                  }}>
+                    <AlertCircle size={14} style={{ flexShrink: 0, marginTop: 1 }} aria-hidden="true" />
                     <span>{serverError}</span>
                   </div>
                 )}
@@ -268,19 +251,13 @@ export default function LoginPage() {
                 id="login-submit-btn"
                 type="submit"
                 disabled={isLoading}
-                className={[
-                  'w-full flex items-center justify-center gap-2',
-                  'rounded-md px-4 py-2.5 text-sm font-medium text-white',
-                  'bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2',
-                  'transition-colors duration-150',
-                  'disabled:opacity-60 disabled:cursor-not-allowed',
-                ].join(' ')}
+                className="btn-primary"
+                style={{ width: '100%', justifyContent: 'center', height: 40 }}
                 aria-busy={isLoading}
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                    <Loader2 size={15} style={{ animation: 'spin 1s linear infinite' }} aria-hidden="true" />
                     Signing in…
                   </>
                 ) : (
@@ -290,20 +267,27 @@ export default function LoginPage() {
             </div>
           </form>
 
-          {/* Redirect link to Register */}
-          <div className="mt-6 text-center text-sm text-slate-600">
-            Don't have an account?{' '}
-            <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-800 hover:underline">
-              Sign up
-            </Link>
+          {/* ── Sign up link ─────────────────────────────────────────────────── */}
+          <div style={{ marginTop: 24, textAlign: 'center' }}>
+            <span className="type-body-sm" style={{ color: '#8a8f98' }}>
+              Don't have an account?{' '}
+              <Link to="/register" className="text-link" style={{ fontWeight: 500 }}>
+                Sign up
+              </Link>
+            </span>
           </div>
         </div>
 
-        {/* ── Footer microcopy ───────────────────────────────────────────────── */}
-        <p className="mt-6 text-center text-xs text-slate-500">
+        {/* ── Footer microcopy ──────────────────────────────────────────────── */}
+        <p className="type-caption" style={{ marginTop: 24, textAlign: 'center', color: '#62666d' }}>
           Contact your administrator for account access.
         </p>
       </div>
+
+      {/* Spinner keyframe */}
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+      `}</style>
     </div>
   );
 }

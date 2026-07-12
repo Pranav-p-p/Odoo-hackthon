@@ -2,136 +2,157 @@ import React from 'react';
 import { Activity, User, Monitor, Key, FileText, CheckCircle2 } from 'lucide-react';
 
 /**
- * RecentActivityPanel component.
- * Renders a timeline list of recent activity logs.
+ * RecentActivityPanel — DESIGN.md dark canvas version
+ *
+ * Data-table–style activity feed on surface-1 card.
+ * Timeline connector uses hairline color.
+ * Timestamps in mono font (type-mono).
+ * Icon backgrounds use semantic spectrum at ~14% alpha.
  */
+
+/* Action → { icon, dotColor, title } */
+function getActionConfig(action) {
+  switch (action) {
+    case 'USER_SIGNUP':
+    case 'USER_LOGIN':
+      return { icon: User,        dotColor: '#58a6ff', title: 'User Event' };
+    case 'ASSET_REGISTERED':
+    case 'ASSET_UPDATED':
+      return { icon: Monitor,     dotColor: '#3fb950', title: 'Asset Core' };
+    case 'ALLOCATION_CREATED':
+    case 'ALLOCATION_RETURNED':
+      return { icon: Key,         dotColor: '#5e6ad2', title: 'Allocation' };
+    case 'AUDIT_CYCLE_CREATED':
+    case 'AUDIT_CYCLE_CLOSED':
+    case 'AUDIT_ITEM_VERIFIED':
+      return { icon: CheckCircle2, dotColor: '#d29922', title: 'Audit System' };
+    default:
+      return { icon: FileText,    dotColor: '#8a8f98', title: 'System Activity' };
+  }
+}
+
+function formatTimestamp(iso) {
+  try {
+    const d = new Date(iso);
+    return (
+      d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      + ' · '
+      + d.toLocaleDateString([], { month: 'short', day: 'numeric' })
+    );
+  } catch {
+    return iso;
+  }
+}
+
+function getActionText(log) {
+  const d = log.details || {};
+  switch (log.action) {
+    case 'USER_SIGNUP':           return 'New employee registered.';
+    case 'USER_LOGIN':            return 'User logged into the system.';
+    case 'ASSET_REGISTERED':      return `Asset registered: ${d.assetTag || 'unknown'} (${d.name || 'unnamed'}).`;
+    case 'ASSET_UPDATED':         return `Asset updated: ${d.name || 'unnamed'}.`;
+    case 'ALLOCATION_CREATED':    return `Asset allocated to user: ${d.assetTag || 'unknown'}.`;
+    case 'ALLOCATION_RETURNED':   return `Asset returned: ${d.assetTag || 'unknown'}.`;
+    case 'AUDIT_CYCLE_CREATED':   return `Audit cycle initiated: "${d.name || 'Cycle'}".`;
+    case 'AUDIT_CYCLE_CLOSED':    return `Audit cycle "${d.name || 'Cycle'}" closed.`;
+    case 'AUDIT_ITEM_VERIFIED':   return `Asset ${d.assetTag || 'unknown'} verified as ${d.actualStatus || 'PENDING'}.`;
+    default:                      return `${log.action.replace(/_/g, ' ')} on ${log.entityType}`;
+  }
+}
+
 export default function RecentActivityPanel({ logs = [] }) {
-  // Map actions to icon and color schemes
-  const getActionConfig = (action) => {
-    const defaultIcon = <Activity className="h-4 w-4" />;
-    switch (action) {
-      case 'USER_SIGNUP':
-      case 'USER_LOGIN':
-        return {
-          icon: <User className="h-4 w-4 text-blue-600" />,
-          bgColor: 'bg-blue-50',
-          title: 'User Event',
-        };
-      case 'ASSET_REGISTERED':
-      case 'ASSET_UPDATED':
-        return {
-          icon: <Monitor className="h-4 w-4 text-emerald-600" />,
-          bgColor: 'bg-emerald-50',
-          title: 'Asset Core',
-        };
-      case 'ALLOCATION_CREATED':
-      case 'ALLOCATION_RETURNED':
-        return {
-          icon: <Key className="h-4 w-4 text-purple-600" />,
-          bgColor: 'bg-purple-50',
-          title: 'Allocation',
-        };
-      case 'AUDIT_CYCLE_CREATED':
-      case 'AUDIT_CYCLE_CLOSED':
-      case 'AUDIT_ITEM_VERIFIED':
-        return {
-          icon: <CheckCircle2 className="h-4 w-4 text-amber-600" />,
-          bgColor: 'bg-amber-50',
-          title: 'Audit System',
-        };
-      default:
-        return {
-          icon: defaultIcon,
-          bgColor: 'bg-gray-100',
-          title: 'System Activity',
-        };
-    }
-  };
-
-  const formatTimestamp = (isoString) => {
-    try {
-      const date = new Date(isoString);
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' - ' + date.toLocaleDateString();
-    } catch {
-      return isoString;
-    }
-  };
-
-  const getActionText = (log) => {
-    const details = log.details || {};
-    switch (log.action) {
-      case 'USER_SIGNUP':
-        return 'New employee registered.';
-      case 'USER_LOGIN':
-        return 'User logged into the system.';
-      case 'ASSET_REGISTERED':
-        return `Asset registered: ${details.assetTag || 'unknown'} (${details.name || 'unnamed'}).`;
-      case 'ASSET_UPDATED':
-        return `Asset updated: ${details.name || 'unnamed'}.`;
-      case 'ALLOCATION_CREATED':
-        return `Asset allocated to user: ${details.assetTag || 'unknown'}.`;
-      case 'ALLOCATION_RETURNED':
-        return `Asset returned: ${details.assetTag || 'unknown'}.`;
-      case 'AUDIT_CYCLE_CREATED':
-        return `Audit cycle initiated: "${details.name || 'Cycle'}".`;
-      case 'AUDIT_CYCLE_CLOSED':
-        return `Audit cycle "${details.name || 'Cycle'}" closed.`;
-      case 'AUDIT_ITEM_VERIFIED':
-        return `Asset ${details.assetTag || 'unknown'} verified as ${details.actualStatus || 'PENDING'}.`;
-      default:
-        return `${log.action.replace(/_/g, ' ')} on ${log.entityType}`;
-    }
-  };
-
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-      <div className="flex items-center justify-between pb-4 border-b border-gray-50">
-        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-          <Activity className="h-5 w-5 text-gray-500" />
-          Recent System Activity
-        </h2>
-        <span className="text-xs text-gray-400">Real-time logs</span>
+    <div className="feature-card">
+      {/* ── Header ───────────────────────────────────────────────────────── */}
+      <div style={{
+        display:       'flex',
+        alignItems:    'center',
+        justifyContent:'space-between',
+        paddingBottom: 16,
+        borderBottom:  '1px solid #23252a',
+        marginBottom:  20,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Activity size={16} color="#8a8f98" />
+          <h2 className="type-card-title" style={{ margin: 0, color: '#f7f8f8' }}>
+            Recent Activity
+          </h2>
+        </div>
+        <span className="type-caption" style={{ color: '#62666d' }}>Real-time logs</span>
       </div>
 
-      <div className="mt-6 flow-root">
-        {logs.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-8 text-center">
-            <Activity className="h-8 w-8 text-gray-300" />
-            <p className="mt-2 text-sm text-gray-400">No activity recorded yet.</p>
-          </div>
-        ) : (
-          <ul className="-mb-8">
-            {logs.map((log, idx) => {
-              const config = getActionConfig(log.action);
-              return (
-                <li key={log.id || idx}>
-                  <div className="relative pb-8">
-                    {idx !== logs.length - 1 && (
-                      <span className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-100" aria-hidden="true" />
-                    )}
-                    <div className="relative flex space-x-3">
-                      <div>
-                        <span className={`flex h-8 w-8 items-center justify-center rounded-lg ${config.bgColor} ring-8 ring-white`}>
-                          {config.icon}
-                        </span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm text-gray-800">
-                          <span className="font-semibold text-gray-900 mr-2">{config.title}</span>
-                          {getActionText(log)}
-                        </div>
-                        <div className="text-xs text-gray-400 mt-1">
-                          {formatTimestamp(log.createdAt)}
-                        </div>
-                      </div>
-                    </div>
+      {/* ── Log list ─────────────────────────────────────────────────────── */}
+      {logs.length === 0 ? (
+        <div style={{
+          display:        'flex',
+          flexDirection:  'column',
+          alignItems:     'center',
+          justifyContent: 'center',
+          padding:        '32px 0',
+          gap:            10,
+          color:          '#62666d',
+        }}>
+          <Activity size={28} color="#3e3e44" />
+          <p className="type-body-sm" style={{ color: '#62666d', margin: 0 }}>
+            No activity recorded yet.
+          </p>
+        </div>
+      ) : (
+        <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+          {logs.map((log, idx) => {
+            const { icon: Icon, dotColor, title } = getActionConfig(log.action);
+            const isLast = idx === logs.length - 1;
+
+            return (
+              <li key={log.id || idx} style={{ position: 'relative', paddingBottom: isLast ? 0 : 20 }}>
+                {/* ── Vertical connector line ──────────────────────────── */}
+                {!isLast && (
+                  <span
+                    aria-hidden="true"
+                    style={{
+                      position:   'absolute',
+                      top:        28,
+                      left:       14,
+                      bottom:     0,
+                      width:      1,
+                      backgroundColor: '#23252a', /* hairline */
+                    }}
+                  />
+                )}
+
+                <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                  {/* ── Icon dot ──────────────────────────────────────── */}
+                  <div style={{
+                    display:         'flex',
+                    alignItems:      'center',
+                    justifyContent:  'center',
+                    width:           28,
+                    height:          28,
+                    borderRadius:    8,
+                    backgroundColor: `${dotColor}22`, /* ~13% alpha */
+                    flexShrink:      0,
+                    position:        'relative',
+                    zIndex:          1,
+                  }}>
+                    <Icon size={14} color={dotColor} />
                   </div>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </div>
+
+                  {/* ── Content ───────────────────────────────────────── */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: 13, color: '#f7f8f8', margin: 0 }}>
+                      <span style={{ fontWeight: 600, marginRight: 6 }}>{title}</span>
+                      {getActionText(log)}
+                    </p>
+                    <p className="type-mono" style={{ color: '#62666d', marginTop: 3 }}>
+                      {formatTimestamp(log.createdAt)}
+                    </p>
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 }
