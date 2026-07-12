@@ -134,7 +134,10 @@
 - [x] `maintenance.controller.js` — full status machine with state guards
 - [x] Auto asset status: `AVAILABLE → UNDER_MAINTENANCE` on approve (prisma.$transaction)
 - [x] Auto asset status: `UNDER_MAINTENANCE → AVAILABLE` on resolve (prisma.$transaction)
-- [~] Auth middleware wired (imports present but commented — TODO [MEMBER 1])
+- [x] Auth middleware wired — `authenticate` + `anyAuthenticatedUser` + `assetManagerOrAbove` all live in routes
+- [x] `req.user.id` used in all controllers (no more TEMP_USER_ID)
+- [x] Owner permission check in `cancelBooking` now live
+- [x] CommonJS conversion complete — all 4 files use `require`/`module.exports`
 - [~] createLog() + createNotification() wired (TODO placeholders — TODO [MEMBER 4])
 
 ### Frontend
@@ -151,10 +154,10 @@
 
 | # | Blocked On | Action Required |
 |---|-----------|----------------|
-| 1 | Member 1 | Uncomment `authenticate` + `authorize` in both route files; replace TEMP_USER_ID with req.user.id |
-| 2 | Member 1 | Register booking + maintenance routes in `server.js` |
-| 3 | Member 1 | Wrap ResourceBookingPage + MaintenancePage in DashboardLayout |
-| 4 | Member 1 | PR: add /booking + /maintenance routes to App.jsx |
+| 1 | ~~Member 1~~ DONE | ✅ Auth middleware wired, req.user.id live, CommonJS conversion done |
+| 2 | ~~Self — Phase 5~~ DONE | ✅ Routes registered in `server.js` — `/api/v1/bookings` + `/api/v1/maintenance-requests` live |
+| 3 | Member 1 Pending | Wrap ResourceBookingPage + MaintenancePage in DashboardLayout |
+| 4 | Self — Phase 8 | Add /booking + /maintenance to App.jsx |
 | 5 | Member 2 | Replace MOCK_BOOKABLE_ASSETS + MOCK_ASSETS with live GET /assets |
 | 6 | Member 4 | Replace all createLog() + createNotification() TODO placeholders |
 
@@ -193,8 +196,8 @@
 | Hour | Checkpoint | Status | Notes |
 |------|-----------|--------|-------|
 | 0.5 | Schema Freeze — Member 1 pushes schema, all pull + npx prisma generate | [x] Done | Schema merged, Supabase DB created |
-| 2.0 | Auth Ready — Member 1 auth middleware live; Member 4 delivers utilities | [ ] Pending | Auth routes not yet built |
-| 4.0 | Core APIs — Members 1–3 backend endpoints working | [ ] Pending | — |
+| 2.0 | Auth Ready — Member 1 auth middleware live; Member 4 delivers utilities | [x] Done | Auth wired in Member 3's routes + controllers (Phase 4 complete) |
+| 4.0 | Core APIs — Members 1–3 backend endpoints working | [~] Partial | Member 3 backend fully live — Members 2 & 4 pending |
 | 5.5 | UI Integration — Frontend wired to live APIs | [ ] Pending | — |
 | 7.0 | Feature Freeze | [ ] Pending | — |
 | 7.5 | Final merge to main, demo rehearsal | [ ] Pending | — |

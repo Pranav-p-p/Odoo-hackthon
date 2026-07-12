@@ -1,5 +1,5 @@
 // ============================================================================
-// maintenance.controller.js — Member 3: Operations Module
+// maintenance.controller.js — Member 3: Operations Module  [PHASE 4 — Auth wired]
 // Screen 7 — Maintenance Management (Kanban Board)
 // API Contract: docs/API_CONTRACT.md — Module 3 / Maintenance
 // WORKFLOW.md: Section 7 — Maintenance Management Workflow
@@ -8,17 +8,17 @@
 //   PENDING_APPROVAL → REJECTED (terminal)
 // ============================================================================
 
-import prisma from '../config/prisma.js';
+const prisma = require('../config/prisma');
 
 // TODO [MEMBER 4]: Uncomment when utilities are delivered
-// import { createLog }          from '../utils/createLog.js';
-// import { createNotification } from '../utils/createNotification.js';
+// const { createLog }          = require('../utils/createLog');
+// const { createNotification } = require('../utils/createNotification');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GET /api/v1/maintenance-requests
 // Query: ?status=...&assetId=...&priority=...
 // ─────────────────────────────────────────────────────────────────────────────
-export async function getMaintenanceRequests(req, res, next) {
+const getMaintenanceRequests = async (req, res, next) => {
   try {
     const { status, assetId, priority } = req.query;
 
@@ -50,7 +50,7 @@ export async function getMaintenanceRequests(req, res, next) {
   } catch (err) {
     next(err);
   }
-}
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // POST /api/v1/maintenance-requests
@@ -58,7 +58,7 @@ export async function getMaintenanceRequests(req, res, next) {
 // Any authenticated user can raise a request
 // Initial status: PENDING_APPROVAL
 // ─────────────────────────────────────────────────────────────────────────────
-export async function createMaintenanceRequest(req, res, next) {
+const createMaintenanceRequest = async (req, res, next) => {
   try {
     const { assetId, issueDescription, priority, photoUrl } = req.body;
 
@@ -95,8 +95,8 @@ export async function createMaintenanceRequest(req, res, next) {
     }
 
     // ── 4. Create maintenance request ─────────────────────────────────────────
-    // TODO [MEMBER 1]: Replace 'TEMP_USER_ID' with req.user.id once auth middleware is live
-    const requestedById = req.user?.id ?? 'TEMP_USER_ID';
+    // req.user.id is now live — set by authenticate middleware
+    const requestedById = req.user.id;
 
     const request = await prisma.maintenanceRequest.create({
       data: {
@@ -131,16 +131,16 @@ export async function createMaintenanceRequest(req, res, next) {
   } catch (err) {
     next(err);
   }
-}
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PATCH /api/v1/maintenance-requests/:id/approve
-// ASSET_MANAGER only
+// ASSET_MANAGER + ADMIN only (enforced by assetManagerOrAbove in route)
 // CRITICAL: Uses prisma.$transaction to atomically update BOTH request AND asset
 // Status:  PENDING_APPROVAL → APPROVED
 // Asset:   any             → UNDER_MAINTENANCE
 // ─────────────────────────────────────────────────────────────────────────────
-export async function approveRequest(req, res, next) {
+const approveRequest = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -201,7 +201,7 @@ export async function approveRequest(req, res, next) {
 
     // TODO [MEMBER 4]:
     // await createLog(
-    //   req.user?.id ?? 'TEMP_USER_ID',
+    //   req.user.id,
     //   'MAINTENANCE_APPROVED',
     //   'MaintenanceRequest',
     //   id,
@@ -216,15 +216,15 @@ export async function approveRequest(req, res, next) {
   } catch (err) {
     next(err);
   }
-}
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PATCH /api/v1/maintenance-requests/:id/reject
-// ASSET_MANAGER only
+// ASSET_MANAGER + ADMIN only
 // Body: { reason? }
 // Status: PENDING_APPROVAL → REJECTED (terminal state)
 // ─────────────────────────────────────────────────────────────────────────────
-export async function rejectRequest(req, res, next) {
+const rejectRequest = async (req, res, next) => {
   try {
     const { id }     = req.params;
     const { reason } = req.body;
@@ -257,8 +257,8 @@ export async function rejectRequest(req, res, next) {
     const updated = await prisma.maintenanceRequest.update({
       where: { id },
       data: {
-        status:       'REJECTED',
-        resolvedNotes: reason ?? null,  // store rejection reason in resolvedNotes
+        status:        'REJECTED',
+        resolvedNotes: reason ?? null,  // store rejection reason in resolvedNotes field
       },
       include: {
         asset:       { select: { id: true, assetTag: true, name: true } },
@@ -276,7 +276,7 @@ export async function rejectRequest(req, res, next) {
     // );
 
     // TODO [MEMBER 4]:
-    // await createLog(req.user?.id ?? 'TEMP_USER_ID', 'MAINTENANCE_REJECTED', 'MaintenanceRequest', id, { reason });
+    // await createLog(req.user.id, 'MAINTENANCE_REJECTED', 'MaintenanceRequest', id, { reason });
 
     return res.status(200).json({
       success: true,
@@ -286,18 +286,18 @@ export async function rejectRequest(req, res, next) {
   } catch (err) {
     next(err);
   }
-}
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PATCH /api/v1/maintenance-requests/:id/assign
-// ASSET_MANAGER only
+// ASSET_MANAGER + ADMIN only
 // Body: { technicianId }
 // Status: APPROVED → TECHNICIAN_ASSIGNED
 // ─────────────────────────────────────────────────────────────────────────────
-export async function assignTechnician(req, res, next) {
+const assignTechnician = async (req, res, next) => {
   try {
-    const { id }            = req.params;
-    const { technicianId }  = req.body;
+    const { id }           = req.params;
+    const { technicianId } = req.body;
 
     if (!technicianId) {
       return res.status(400).json({
@@ -350,7 +350,7 @@ export async function assignTechnician(req, res, next) {
     });
 
     // TODO [MEMBER 4]:
-    // await createLog(req.user?.id ?? 'TEMP_USER_ID', 'TECHNICIAN_ASSIGNED', 'MaintenanceRequest', id, { technicianId });
+    // await createLog(req.user.id, 'TECHNICIAN_ASSIGNED', 'MaintenanceRequest', id, { technicianId });
 
     return res.status(200).json({
       success: true,
@@ -360,14 +360,14 @@ export async function assignTechnician(req, res, next) {
   } catch (err) {
     next(err);
   }
-}
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PATCH /api/v1/maintenance-requests/:id/start
-// ASSET_MANAGER only
+// ASSET_MANAGER + ADMIN only
 // Status: TECHNICIAN_ASSIGNED → IN_PROGRESS
 // ─────────────────────────────────────────────────────────────────────────────
-export async function startWork(req, res, next) {
+const startWork = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -400,7 +400,7 @@ export async function startWork(req, res, next) {
     });
 
     // TODO [MEMBER 4]:
-    // await createLog(req.user?.id ?? 'TEMP_USER_ID', 'MAINTENANCE_STARTED', 'MaintenanceRequest', id, {});
+    // await createLog(req.user.id, 'MAINTENANCE_STARTED', 'MaintenanceRequest', id, {});
 
     return res.status(200).json({
       success: true,
@@ -410,17 +410,17 @@ export async function startWork(req, res, next) {
   } catch (err) {
     next(err);
   }
-}
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PATCH /api/v1/maintenance-requests/:id/resolve
-// ASSET_MANAGER only
+// ASSET_MANAGER + ADMIN only
 // Body: { resolvedNotes }
 // CRITICAL: Uses prisma.$transaction to atomically update BOTH request AND asset
 // Status:  IN_PROGRESS → RESOLVED
 // Asset:   UNDER_MAINTENANCE → AVAILABLE
 // ─────────────────────────────────────────────────────────────────────────────
-export async function resolveRequest(req, res, next) {
+const resolveRequest = async (req, res, next) => {
   try {
     const { id }            = req.params;
     const { resolvedNotes } = req.body;
@@ -471,13 +471,13 @@ export async function resolveRequest(req, res, next) {
       }),
       prisma.asset.update({
         where: { id: request.assetId },
-        data:  { status: 'AVAILABLE' },  // SHARED_ENUMS.md: AssetStatus — reverts from UNDER_MAINTENANCE
+        data:  { status: 'AVAILABLE' },  // SHARED_ENUMS.md: AssetStatus
       }),
     ]);
 
     // TODO [MEMBER 4]: Uncomment when utilities are delivered
     // await createLog(
-    //   req.user?.id ?? 'TEMP_USER_ID',
+    //   req.user.id,
     //   'MAINTENANCE_RESOLVED',
     //   'MaintenanceRequest',
     //   id,
@@ -492,4 +492,14 @@ export async function resolveRequest(req, res, next) {
   } catch (err) {
     next(err);
   }
-}
+};
+
+module.exports = {
+  getMaintenanceRequests,
+  createMaintenanceRequest,
+  approveRequest,
+  rejectRequest,
+  assignTechnician,
+  startWork,
+  resolveRequest,
+};

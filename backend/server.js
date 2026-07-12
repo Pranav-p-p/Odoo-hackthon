@@ -6,10 +6,13 @@ require('dotenv').config({ path: '../.env' });
 const express = require('express');
 const cors = require('cors');
 
-const authRoutes = require('./routes/auth.routes');
-const departmentRoutes = require('./routes/department.routes');
-const categoryRoutes = require('./routes/category.routes');
-const userRoutes = require('./routes/user.routes');
+const authRoutes        = require('./routes/auth.routes');
+const departmentRoutes  = require('./routes/department.routes');
+const categoryRoutes    = require('./routes/category.routes');
+const userRoutes        = require('./routes/user.routes');
+// Member 3 — Operations Module
+const bookingRoutes     = require('./src/routes/booking.routes');
+const maintenanceRoutes = require('./src/routes/maintenance.routes');
 
 const { errorHandler, notFoundHandler } = require('./middleware/error.middleware');
 
@@ -20,11 +23,15 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// ── API Routes (Module 1) ──────────────────────────────────────────────────
-app.use('/api/v1/auth', authRoutes);
+// ── API Routes (Module 1 — Identity & Foundation) ─────────────────────────
+app.use('/api/v1/auth',        authRoutes);
 app.use('/api/v1/departments', departmentRoutes);
-app.use('/api/v1/categories', categoryRoutes);
-app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/categories',  categoryRoutes);
+app.use('/api/v1/users',       userRoutes);
+
+// ── API Routes (Module 3 — Operations) ─────────────────────────────────────
+app.use('/api/v1/bookings',             bookingRoutes);
+app.use('/api/v1/maintenance-requests', maintenanceRoutes);
 
 // ── Status Route ────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {

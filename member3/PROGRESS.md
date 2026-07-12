@@ -19,10 +19,11 @@
 - `createBooking` — validates duration (min 15 min, max 8h), checks isBookable, runs overlap query, returns 409 with `conflictingBooking`
 - `cancelBooking` — state guards, owner/role permission stub
 
-### TODOs remaining (blocked on other members)
-- [ ] `// TODO [MEMBER 1]` — replace `req.user?.id ?? 'TEMP_USER_ID'` with real `req.user.id`
-- [ ] `// TODO [MEMBER 1]` — uncomment `authenticate` + `authorize` imports
-- [ ] `// TODO [MEMBER 4]` — uncomment `createNotification(BOOKING_CONFIRMED)` + `createLog()` calls
+### Phase 4 completions for Phase 2
+- [x] `// TODO [MEMBER 1]` — `req.user.id` now live (auth middleware wired)
+- [x] `// TODO [MEMBER 1]` — `authenticate` + `anyAuthenticatedUser` imported and active
+- [x] `// TODO [MEMBER 1]` — owner/manager permission check in `cancelBooking` now live
+- [ ] `// TODO [MEMBER 4]` — `createNotification(BOOKING_CONFIRMED)` + `createLog()` still pending
 
 ---
 
@@ -42,9 +43,10 @@
 - `startWork` — validates TECHNICIAN_ASSIGNED source state
 - `resolveRequest` — `prisma.$transaction`: sets request → RESOLVED **AND** asset → AVAILABLE atomically
 
-### TODOs remaining (blocked on other members)
-- [ ] `// TODO [MEMBER 1]` — uncomment auth middleware in routes
-- [ ] `// TODO [MEMBER 4]` — uncomment `createNotification(MAINTENANCE_APPROVED/REJECTED)` + `createLog()` calls
+### Phase 4 completions for Phase 3
+- [x] `// TODO [MEMBER 1]` — auth middleware wired (`authenticate` + `assetManagerOrAbove`)
+- [x] `// TODO [MEMBER 1]` — `req.user.id` now live in all 5 controller functions
+- [ ] `// TODO [MEMBER 4]` — `createNotification(MAINTENANCE_APPROVED/REJECTED)` + `createLog()` still pending
 
 ---
 
@@ -93,19 +95,53 @@
 
 ---
 
+## Phase 4 — Auth Middleware Wired ✅ COMPLETE
+
+| Task | Status | Notes |
+|------|--------|-------|
+| Convert `booking.routes.js` to CommonJS | ✅ Done | `const express = require('express')` + live auth |
+| Convert `booking.controller.js` to CommonJS | ✅ Done | `req.user.id` live, `module.exports` added |
+| Convert `maintenance.routes.js` to CommonJS | ✅ Done | `anyAuthenticatedUser` + `assetManagerOrAbove` wired |
+| Convert `maintenance.controller.js` to CommonJS | ✅ Done | All 7 functions, `req.user.id` live everywhere |
+| Owner check in `cancelBooking` | ✅ Done | `isOwner \|\| isManager` fully live — no longer commented |
+
+### Key: exact names used from Member 1's middleware
+```js
+const { authenticate }            = require('../middleware/auth.middleware');
+const { anyAuthenticatedUser,
+        assetManagerOrAbove }     = require('../middleware/role.middleware');
+const prisma                      = require('../config/prisma');
+```
+
+### TODOs remaining
+- [ ] `// TODO [MEMBER 4]` — all `createLog()` + `createNotification()` placeholders still pending
+- [ ] Phase 5 — Register routes in `server.js` (next step)
+
+---
+
+## Phase 5 — Register Routes in server.js ✅ COMPLETE
+
+| Task | Status | Notes |
+|------|--------|-------|
+| Add `bookingRoutes` import to `server.js` | ✅ Done | `require('./src/routes/booking.routes')` |
+| Add `maintenanceRoutes` import to `server.js` | ✅ Done | `require('./src/routes/maintenance.routes')` |
+| Register `GET\|POST /api/v1/bookings` | ✅ Done | `app.use('/api/v1/bookings', bookingRoutes)` |
+| Register `GET\|POST /api/v1/maintenance-requests` | ✅ Done | `app.use('/api/v1/maintenance-requests', maintenanceRoutes)` |
+
+> **Backend is now fully wired and ready to test.** Start the server with `cd backend && npm run dev`.
+
+
 ## Pending (Waiting on Other Members)
 
-| Task | Waiting for | When |
-|------|------------|------|
-| Register `booking.routes.js` in `server.js` | Member 1 to create `server.js` | Hour 0.5–1 |
-| Register `maintenance.routes.js` in `server.js` | Member 1 to create `server.js` | Hour 0.5–1 |
-| Uncomment `authenticate` + `authorize` in routes | Member 1's auth.middleware.js | Hour 2 |
-| Replace `TEMP_USER_ID` with `req.user.id` | Member 1's auth.middleware.js | Hour 2 |
-| Wire `createLog()` + `createNotification()` | Member 4's utilities | Hour 2 |
-| Replace mock assets with live `GET /assets` | Member 2's asset endpoint | Hour 1.5–2 |
-| Replace mock users with live `GET /users` | Member 1's user endpoint | Hour 2–3 |
-| Wrap pages in `DashboardLayout` | Member 1's DashboardLayout.jsx | Hour 2–3 |
-| Add routes to `App.jsx` | PR to Member 1 | Hour 3 |
+| Task | Waiting for | Status |
+|------|------------|--------|
+| Register `booking.routes.js` in `server.js` | Add 2 lines to server.js | ⏳ Phase 5 — next |
+| Register `maintenance.routes.js` in `server.js` | Add 2 lines to server.js | ⏳ Phase 5 — next |
+| Wire `createLog()` + `createNotification()` | Member 4's utilities | ❌ Blocked |
+| Replace mock assets with live `GET /assets` | Member 2's asset endpoint | ❌ Blocked |
+| Swap MOCK_USERS with live `GET /users` | Note: `GET /users` is Admin-only — keep mock | ⚠️ Design issue |
+| Wrap pages in `DashboardLayout` | Member 1's DashboardLayout.jsx | ❌ Pending |
+| Add /booking + /maintenance to App.jsx | Phase 8 | ⏳ After Phase 5 |
 
 ---
 

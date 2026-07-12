@@ -1,15 +1,15 @@
 // ============================================================================
-// booking.controller.js — Member 3: Operations Module
+// booking.controller.js — Member 3: Operations Module  [PHASE 4 — Auth wired]
 // Screen 6 — Resource Booking
 // API Contract: docs/API_CONTRACT.md — Module 3 / Bookings
 // WORKFLOW.md: Section 6 — Resource Booking Workflow
 // ============================================================================
 
-import prisma from '../config/prisma.js';
+const prisma = require('../config/prisma');
 
 // TODO [MEMBER 4]: Uncomment when utilities are delivered
-// import { createLog }          from '../utils/createLog.js';
-// import { createNotification } from '../utils/createNotification.js';
+// const { createLog }          = require('../utils/createLog');
+// const { createNotification } = require('../utils/createNotification');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
@@ -25,12 +25,12 @@ function computeEffectiveStatus(booking) {
   if (booking.status === 'CANCELLED' || booking.status === 'COMPLETED') {
     return booking.status;
   }
-  const now = new Date();
+  const now   = new Date();
   const start = new Date(booking.startTime);
-  const end = new Date(booking.endTime);
+  const end   = new Date(booking.endTime);
 
-  if (now >= end)        return 'COMPLETED';
-  if (now >= start)      return 'ONGOING';
+  if (now >= end)   return 'COMPLETED';
+  if (now >= start) return 'ONGOING';
   return 'UPCOMING';
 }
 
@@ -38,15 +38,14 @@ function computeEffectiveStatus(booking) {
 // GET /api/v1/bookings
 // Query: ?assetId=...&userId=...&date=ISO8601&status=...
 // ─────────────────────────────────────────────────────────────────────────────
-export async function getBookings(req, res, next) {
+const getBookings = async (req, res, next) => {
   try {
     const { assetId, userId, date, status } = req.query;
 
     const where = {};
-
-    if (assetId)  where.assetId = assetId;
-    if (userId)   where.userId  = userId;
-    if (status)   where.status  = status;
+    if (assetId) where.assetId = assetId;
+    if (userId)  where.userId  = userId;
+    if (status)  where.status  = status;
 
     // If a date is provided, filter bookings that overlap that calendar day
     if (date) {
@@ -86,14 +85,14 @@ export async function getBookings(req, res, next) {
   } catch (err) {
     next(err);
   }
-}
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // POST /api/v1/bookings
 // Body: { assetId, startTime, endTime, purpose? }
 // Returns 409 with conflictingBooking if overlap detected
 // ─────────────────────────────────────────────────────────────────────────────
-export async function createBooking(req, res, next) {
+const createBooking = async (req, res, next) => {
   try {
     const { assetId, startTime, endTime, purpose } = req.body;
 
@@ -199,8 +198,8 @@ export async function createBooking(req, res, next) {
     }
 
     // ── 4. Create booking ─────────────────────────────────────────────────────
-    // TODO [MEMBER 1]: Replace 'TEMP_USER_ID' with req.user.id once auth middleware is live
-    const userId = req.user?.id ?? 'TEMP_USER_ID';
+    // req.user.id is now live — set by authenticate middleware
+    const userId = req.user.id;
 
     const booking = await prisma.booking.create({
       data: {
@@ -244,13 +243,13 @@ export async function createBooking(req, res, next) {
   } catch (err) {
     next(err);
   }
-}
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PATCH /api/v1/bookings/:id/cancel
 // Owner of booking OR Asset Manager / Admin can cancel
 // ─────────────────────────────────────────────────────────────────────────────
-export async function cancelBooking(req, res, next) {
+const cancelBooking = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -270,18 +269,16 @@ export async function cancelBooking(req, res, next) {
       });
     }
 
-    // ── 2. Permission check ───────────────────────────────────────────────────
-    // TODO [MEMBER 1]: Uncomment role check when auth middleware is live
-    // const currentUserId = req.user.id;
-    // const currentRole   = req.user.role;
-    // const isOwner       = booking.userId === currentUserId;
-    // const isManager     = ['ASSET_MANAGER', 'ADMIN'].includes(currentRole);
-    // if (!isOwner && !isManager) {
-    //   return res.status(403).json({
-    //     success: false,
-    //     error: { code: 'FORBIDDEN', message: 'You can only cancel your own bookings.' },
-    //   });
-    // }
+    // ── 2. Permission check — owner OR asset manager / admin ─────────────────
+    const isOwner   = booking.userId === req.user.id;
+    const isManager = ['ASSET_MANAGER', 'ADMIN'].includes(req.user.role);
+
+    if (!isOwner && !isManager) {
+      return res.status(403).json({
+        success: false,
+        error: { code: 'FORBIDDEN', message: 'You can only cancel your own bookings.' },
+      });
+    }
 
     // ── 3. State guard ────────────────────────────────────────────────────────
     if (booking.status === 'CANCELLED') {
@@ -320,7 +317,7 @@ export async function cancelBooking(req, res, next) {
 
     // TODO [MEMBER 4]:
     // await createLog(
-    //   req.user?.id ?? booking.userId,
+    //   req.user.id,
     //   'BOOKING_CANCELLED',
     //   'Booking',
     //   id,
@@ -335,4 +332,6 @@ export async function cancelBooking(req, res, next) {
   } catch (err) {
     next(err);
   }
-}
+};
+
+module.exports = { getBookings, createBooking, cancelBooking };

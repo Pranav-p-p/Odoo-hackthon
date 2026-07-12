@@ -1,45 +1,27 @@
 // ============================================================================
-// booking.routes.js — Member 3: Operations Module
+// booking.routes.js — Member 3: Operations Module  [PHASE 4 — Auth wired]
 // Endpoints: GET /bookings, POST /bookings, PATCH /bookings/:id/cancel
 // API Contract: docs/API_CONTRACT.md — Module 3: Operations (Screen 6)
 // ============================================================================
 
-import express from 'express';
-import {
-  getBookings,
-  createBooking,
-  cancelBooking,
-} from '../controllers/booking.controller.js';
-
-// TODO [MEMBER 1]: Uncomment these when auth.middleware.js is delivered
-// import { authenticate } from '../middleware/auth.middleware.js';
-// import { authorize }    from '../middleware/role.middleware.js';
+const express = require('express');
+const { getBookings, createBooking, cancelBooking } = require('../controllers/booking.controller');
+const { authenticate }        = require('../middleware/auth.middleware');
+const { anyAuthenticatedUser } = require('../middleware/role.middleware');
 
 const router = express.Router();
 
 // GET /api/v1/bookings?assetId=...&userId=...&date=ISO8601&status=...
-// Any authenticated user can view bookings (for calendar display)
-router.get(
-  '/',
-  // TODO [MEMBER 1]: authenticate,
-  getBookings,
-);
+// Any authenticated user — needed for calendar display
+router.get('/', authenticate, anyAuthenticatedUser, getBookings);
 
 // POST /api/v1/bookings
-// Any authenticated user can create a booking on an isBookable asset
-// Returns 409 with conflictingBooking details if time slot overlaps
-router.post(
-  '/',
-  // TODO [MEMBER 1]: authenticate,
-  createBooking,
-);
+// Any authenticated user can book an isBookable asset
+// Returns 409 + conflictingBooking details on time-slot overlap
+router.post('/', authenticate, anyAuthenticatedUser, createBooking);
 
 // PATCH /api/v1/bookings/:id/cancel
-// Owner of booking OR Asset Manager / Admin can cancel
-router.patch(
-  '/:id/cancel',
-  // TODO [MEMBER 1]: authenticate,
-  cancelBooking,
-);
+// Owner of booking OR Asset Manager / Admin — ownership checked inside controller
+router.patch('/:id/cancel', authenticate, anyAuthenticatedUser, cancelBooking);
 
-export default router;
+module.exports = router;
