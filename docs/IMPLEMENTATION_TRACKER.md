@@ -80,13 +80,13 @@
 - [x] src/pages/Register/RegisterPage.jsx — signup form, dept dropdown
 - [x] src/App.jsx — BrowserRouter with /login, /register, /dashboard routes
 
-### PENDING — Frontend (Member 1)
+### DONE — Frontend (Member 1)
 
-- [ ] src/context/AuthContext.jsx — currentUser, login(), logout()
-- [ ] src/layouts/DashboardLayout.jsx — Sidebar + content shell
-- [ ] src/pages/OrganizationSetup/ — Screen 3 (3 tabs: Departments, Categories, Employee Directory)
-- [ ] Protected route wrapper — redirect unauth users to /login
-- [ ] src/hooks/useAuth.js
+- [x] src/context/AuthContext.jsx — currentUser, login(), logout()
+- [x] src/layouts/DashboardLayout.jsx — Sidebar + content shell
+- [x] src/pages/OrganizationSetup/ — Screen 3 (3 tabs: Departments, Categories, Employee Directory)
+- [x] Protected route wrapper — redirect unauth users to /login
+- [x] src/hooks/useAuth.js
 
 ### ISSUES FOUND
 
@@ -94,7 +94,7 @@
 |---|----------|-------|----------|--------|
 | 1 | ~~MUST FIX~~ FIXED | Password min-length was 6; SHARED_ENUMS.md specifies 8 | RegisterPage.jsx L21 | **Fixed** — changed to `< 8` |
 | 2 | ~~MUST FIX~~ FIXED | JWT interceptor only read localStorage; sessionStorage tokens were ignored | authApi.js L18 | **Fixed** — interceptor now checks both |
-| 3 | Medium | LoginPage stores JWT without calling AuthContext.login() — update once AuthContext is built | LoginPage.jsx L89–95 | Update after AuthContext is built |
+| 3 | ~~Medium~~ FIXED | LoginPage stores JWT without calling AuthContext.login() — update once AuthContext is built | LoginPage.jsx L89–95 | **Fixed** — Updated to call login() |
 | 4 | Low | RegisterPage redirects to /login after signup — WORKFLOW.md says Dashboard. Acceptable for demo. | RegisterPage.jsx L97 | Low priority |
 | 5 | Low | App.css contains unused Vite boilerplate CSS (.hero, .ticks, etc.) | App.css | Cleanup |
 
