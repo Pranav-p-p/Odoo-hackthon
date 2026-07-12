@@ -206,6 +206,31 @@ function BookingCard({ booking, onCancel }) {
   );
 }
 
+function CalendarSkeleton() {
+  const hourSlots = Array.from({ length: 12 }, (_, i) => i + 8); // 8 → 19
+  return (
+    <div className="relative border border-gray-200 rounded-lg overflow-hidden bg-white animate-pulse">
+      <div className="flex">
+        <div className="w-16 flex-shrink-0 border-r border-gray-100">
+          {hourSlots.map((hour) => (
+            <div key={hour} className="h-12 flex items-start px-2 pt-1">
+              <div className="h-3 bg-gray-200 rounded w-8" />
+            </div>
+          ))}
+        </div>
+        <div className="flex-1 relative" style={{ height: `${hourSlots.length * 3}rem` }}>
+          {hourSlots.map((_, i) => (
+            <div key={i} className="absolute w-full border-t border-gray-100" style={{ top: `${i * 3}rem` }} />
+          ))}
+          <div className="absolute left-2 rounded px-1 py-0.5 bg-gray-200 w-1/3 top-[10%] h-[15%]" />
+          <div className="absolute left-1/3 rounded px-1 py-0.5 bg-gray-200 w-1/4 top-[40%] h-[20%]" />
+          <div className="absolute left-2/3 rounded px-1 py-0.5 bg-gray-200 w-1/4 top-[70%] h-[10%]" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Main Page
 // ─────────────────────────────────────────────────────────────────────────────
@@ -216,6 +241,8 @@ export default function ResourceBookingPage() {
   const [bookings, setBookings]         = useState([]);
   const [loading, setLoading]           = useState(false);
   const [fetchingBookings, setFetchingBookings] = useState(false);
+  const [assetLoadError, setAssetLoadError]     = useState('');
+  const [calendarError, setCalendarError]       = useState('');
 
   // Booking form state
   const [startTime, setStartTime]       = useState('09:00');
@@ -232,11 +259,13 @@ export default function ResourceBookingPage() {
   // ── Load bookable assets on mount ─────────────────────────────────────────
   useEffect(() => {
     setLoading(true);
+    setAssetLoadError('');
     getBookableAssets()
       .then((data) => {
         setAssets(data);
         if (data.length > 0) setSelectedAsset(data[0]);
       })
+      .catch((err) => setAssetLoadError(err.response?.data?.error?.message ?? 'Failed to load resources. Please try again.'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -244,11 +273,12 @@ export default function ResourceBookingPage() {
   const fetchBookings = useCallback(async () => {
     if (!selectedAsset) return;
     setFetchingBookings(true);
+    setCalendarError('');
     try {
       const res = await getBookings({ assetId: selectedAsset.id, date: selectedDate });
       setBookings(res.data ?? []);
     } catch (err) {
-      console.error('[ResourceBookingPage] fetchBookings error:', err);
+      setCalendarError(err.response?.data?.error?.message ?? 'Failed to load calendar data.');
     } finally {
       setFetchingBookings(false);
     }
@@ -333,8 +363,22 @@ export default function ResourceBookingPage() {
           </button>
         </div>
 
-        {/* ── Asset + Date Selectors ──────────────────────────────────────── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {assetLoadError ? (
+          <div className="bg-white border border-red-200 rounded-xl p-8 flex flex-col items-center justify-center text-center shadow-sm">
+            <AlertTriangle size={48} className="text-red-400 mb-4" />
+            <h2 className="text-lg font-semibold text-gray-900 mb-1">Failed to load resources</h2>
+            <p className="text-sm text-gray-500 mb-4">{assetLoadError}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 font-medium rounded-lg px-4 py-2 text-sm transition-colors"
+            >
+              Reload Page
+            </button>
+          </div>
+        ) : (
+          <>
+            {/* ── Asset + Date Selectors ──────────────────────────────────────── */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Asset selector */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -398,12 +442,29 @@ export default function ResourceBookingPage() {
                 <Clock size={14} />
                 {selectedAsset ? `${selectedAsset.name} — ${selectedDate}` : 'Select a resource'}
               </h2>
-              {fetchingBookings && (
+              {fetchingBookings && !calendarError ? (
                 <span className="text-xs text-blue-500 animate-pulse">Loading…</span>
-              )}
+              ) : null}
             </div>
 
-            <CalendarTimeline bookings={bookings} selectedDate={selectedDate} />
+            <div className="relative">
+              {fetchingBookings && !calendarError ? (
+                <CalendarSkeleton />
+              ) : (
+                <CalendarTimeline bookings={bookings} selectedDate={selectedDate} />
+              )}
+              
+              {calendarError && (
+                <div className="absolute inset-0 bg-white/80 backdrop-blur-[2px] flex flex-col items-center justify-center text-center p-4 z-10 rounded-lg border border-red-100">
+                  <AlertTriangle size={32} className="text-red-500 mb-2" />
+                  <p className="text-sm font-semibold text-red-800">Calendar Error</p>
+                  <p className="text-xs text-red-600 mt-1 mb-3">{calendarError}</p>
+                  <button onClick={fetchBookings} className="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-medium rounded border border-red-200 transition-colors">
+                    Retry
+                  </button>
+                </div>
+              )}
+            </div>
 
             {/* Booking list */}
             {bookings.length > 0 && (
@@ -529,7 +590,9 @@ export default function ResourceBookingPage() {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </>
+    )}
+  </div>
+</div>
   );
 }

@@ -365,7 +365,7 @@ function MaintenanceCard({ request, onApprove, onReject, onAssign, onStart, onRe
   const isLoading = actionLoading === request.id;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm space-y-3 hover:shadow-md transition-shadow">
+    <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm space-y-3 hover:-translate-y-1 hover:shadow-lg transition-all duration-200">
       {/* Asset + Priority */}
       <div className="flex items-start justify-between gap-2">
         <div>
@@ -456,6 +456,56 @@ function MaintenanceCard({ request, onApprove, onReject, onAssign, onStart, onRe
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Kanban Skeletons
+// ─────────────────────────────────────────────────────────────────────────────
+function CardSkeleton() {
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm space-y-3">
+      <div className="flex items-start justify-between gap-2">
+        <div className="space-y-1.5 w-full">
+          <div className="h-4 bg-gray-200 rounded w-1/3 animate-pulse" />
+          <div className="h-3 bg-gray-200 rounded w-1/2 animate-pulse" />
+        </div>
+        <div className="h-4 bg-gray-200 rounded-full w-16 animate-pulse flex-shrink-0" />
+      </div>
+      <div className="space-y-1.5 pt-1">
+        <div className="h-3 bg-gray-200 rounded w-full animate-pulse" />
+        <div className="h-3 bg-gray-200 rounded w-5/6 animate-pulse" />
+      </div>
+      <div className="space-y-1 pt-1">
+        <div className="h-3 bg-gray-200 rounded w-24 animate-pulse" />
+        <div className="h-3 bg-gray-200 rounded w-32 animate-pulse" />
+      </div>
+      <div className="pt-2">
+        <div className="h-7 bg-gray-200 rounded-lg w-full animate-pulse" />
+      </div>
+    </div>
+  );
+}
+
+function KanbanSkeleton() {
+  return (
+    <div className="flex gap-4 overflow-x-auto pb-4">
+      {KANBAN_COLUMNS.map((col) => (
+        <div key={col.key} className={`flex flex-col min-w-[220px] w-full border-t-4 ${col.color} bg-gray-50 rounded-xl`}>
+          <div className="px-4 pt-4 pb-3 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-gray-800">{col.label}</h3>
+              <div className="h-5 w-6 bg-gray-200 rounded-full animate-pulse" />
+            </div>
+          </div>
+          <div className="flex-1 p-3 space-y-3 overflow-y-auto max-h-[calc(100vh-260px)]">
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -621,12 +671,7 @@ export default function MaintenancePage() {
 
         {/* ── Kanban Board ────────────────────────────────────────────────── */}
         {loading && requests.length === 0 ? (
-          <div className="flex items-center justify-center h-64">
-            <div className="flex items-center gap-2 text-gray-400">
-              <RefreshCw size={20} className="animate-spin" />
-              <span>Loading requests…</span>
-            </div>
-          </div>
+          <KanbanSkeleton />
         ) : (
           <div className="flex gap-4 overflow-x-auto pb-4">
             {KANBAN_COLUMNS.map((col) => (
