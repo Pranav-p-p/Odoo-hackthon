@@ -15,9 +15,9 @@ const userRoutes = require('./src/routes/user.routes');
 // ── Module 4 Routes (Member 4) ───────────────────────────────────────────────
 const dashboardRoutes = require('./src/modules/dashboard/dashboard.routes');
 const notificationRoutes = require('./src/modules/notification/notification.routes');
-const auditRoutes        = require('./src/modules/audit/audit.routes');
-const reportsRoutes      = require('./src/modules/reports/reports.routes');
-const activityLogRoutes  = require('./src/modules/activity-log/activityLog.routes');
+// const auditRoutes        = require('./src/modules/audit/audit.routes');
+// const reportsRoutes      = require('./src/modules/reports/reports.routes');
+// const activityLogRoutes  = require('./src/modules/activity-log/activityLog.routes');
 
 const { errorHandler, notFoundHandler } = require('./src/middleware/error.middleware');
 
@@ -44,9 +44,9 @@ app.use('/api/v1/users', userRoutes);
 // ── API Routes — Module 4 (Member 4) ─────────────────────────────────────────
 app.use('/api/v1/dashboard', dashboardRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
-app.use('/api/v1/audits',        auditRoutes);
-app.use('/api/v1/reports',       reportsRoutes);
-app.use('/api/v1/activity-logs', activityLogRoutes);
+// app.use('/api/v1/audits',        auditRoutes);
+// app.use('/api/v1/reports',       reportsRoutes);
+// app.use('/api/v1/activity-logs', activityLogRoutes);
 
 // ── Status Route ────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
