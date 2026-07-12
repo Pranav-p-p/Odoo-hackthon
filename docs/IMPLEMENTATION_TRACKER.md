@@ -24,7 +24,7 @@
 |--------|--------|---------|----------|--------|
 | Member 1 | Identity & Foundation | `[~]` Schema only | `[x]` Login + Register | Partially complete — auth routes pending |
 | Member 2 | Asset Core | `[ ]` | `[ ]` | Not started |
-| Member 3 | Operations | `[ ]` | `[ ]` | Not started |
+| Member 3 | Operations | `[x]` booking + maintenance routes & controllers | `[x]` ResourceBookingPage + MaintenancePage | Phase 2, 3, 6, 7 complete — awaiting auth middleware & utilities |
 | Member 4 | Intelligence | `[ ]` | `[ ]` | Not started |
 
 ---
@@ -123,18 +123,40 @@
 ## Member 3 — Operations
 
 **Screens Owned:** Screen 6 (Resource Booking) + Screen 7 (Maintenance)
+**Branch:** `member3`
 **Depends on:** Member 1's auth.middleware.js, Member 2's /assets GET endpoint, Member 4's utilities
 
 ### Backend
 
-- [ ] booking.routes.js + controller (POST with overlap SQL, GET, PATCH /cancel)
-- [ ] maintenance.routes.js + controller (POST, PATCH /approve, /reject, /assign, /start, /resolve)
-- [ ] Auto asset status: AVAILABLE → UNDER_MAINTENANCE on approve; → AVAILABLE on resolve
+- [x] `booking.routes.js` — GET /bookings, POST /bookings, PATCH /bookings/:id/cancel
+- [x] `booking.controller.js` — overlap SQL query (Prisma), 409 with conflictingBooking, effective status computation
+- [x] `maintenance.routes.js` — 7 endpoints: GET, POST, approve, reject, assign, start, resolve
+- [x] `maintenance.controller.js` — full status machine with state guards
+- [x] Auto asset status: `AVAILABLE → UNDER_MAINTENANCE` on approve (prisma.$transaction)
+- [x] Auto asset status: `UNDER_MAINTENANCE → AVAILABLE` on resolve (prisma.$transaction)
+- [~] Auth middleware wired (imports present but commented — TODO [MEMBER 1])
+- [~] createLog() + createNotification() wired (TODO placeholders — TODO [MEMBER 4])
 
 ### Frontend
 
-- [ ] pages/ResourceBooking/ — resource selector, calendar view, booking form, conflict display
-- [ ] pages/Maintenance/ — Kanban board 5 columns (Pending → Resolved), card actions
+- [x] `src/api/bookingApi.js` — getBookings, createBooking, cancelBooking, getBookableAssets (mock)
+- [x] `src/api/maintenanceApi.js` — all 7 API functions, mock assets + users
+- [x] `pages/ResourceBooking/ResourceBookingPage.jsx` — asset selector, CalendarTimeline (8AM–8PM), booking form, ConflictBanner on 409, cancel action
+- [x] `pages/Maintenance/MaintenancePage.jsx` — 5-column Kanban, MaintenanceCard, RaiseRequestModal, AssignTechnicianModal, ResolveModal, RejectModal
+- [~] DashboardLayout wrap pending — TODO [MEMBER 1]
+- [~] App.jsx route registration pending — PR to Member 1
+- [~] Live asset dropdown pending — TODO [MEMBER 2]
+
+### TODOS Remaining (Blocked)
+
+| # | Blocked On | Action Required |
+|---|-----------|----------------|
+| 1 | Member 1 | Uncomment `authenticate` + `authorize` in both route files; replace TEMP_USER_ID with req.user.id |
+| 2 | Member 1 | Register booking + maintenance routes in `server.js` |
+| 3 | Member 1 | Wrap ResourceBookingPage + MaintenancePage in DashboardLayout |
+| 4 | Member 1 | PR: add /booking + /maintenance routes to App.jsx |
+| 5 | Member 2 | Replace MOCK_BOOKABLE_ASSETS + MOCK_ASSETS with live GET /assets |
+| 6 | Member 4 | Replace all createLog() + createNotification() TODO placeholders |
 
 ---
 
