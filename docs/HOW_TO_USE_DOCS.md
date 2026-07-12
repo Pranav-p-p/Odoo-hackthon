@@ -24,6 +24,7 @@ Each file serves a specific purpose during development:
 | **Decide what library to use** | [TECH_STACK_FREEZE.md](file:///d:/projects/Odoo-hackthon/docs/TECH_STACK_FREEZE.md) — if it's not on the approved list, don't use it |
 | **Know if you can edit a file** | [GIT_WORKFLOW.md](file:///d:/projects/Odoo-hackthon/docs/GIT_WORKFLOW.md) — check the ownership tables |
 | **Understand the full architecture** | [SYSTEM_ARCHITECTURE.md](file:///d:/projects/Odoo-hackthon/docs/SYSTEM_ARCHITECTURE.md) — folder structure, module boundaries, data flow |
+| **Track progress & check blockers** | [IMPLEMENTATION_TRACKER.md](file:///d:/projects/Odoo-hackthon/docs/IMPLEMENTATION_TRACKER.md) — update this when you finish a feature or merge a PR |
 
 ### 🧑‍🤝‍🧑 Per-Member Workflow
 
@@ -82,3 +83,4 @@ Open [ACCEPTANCE_CRITERIA.md](file:///d:/projects/Odoo-hackthon/docs/ACCEPTANCE_
 4. **If you change an API response shape**, update `API_CONTRACT.md` immediately.
 5. **If you need to change `schema.prisma`**, announce to the team — one person applies and pushes.
 6. **Frontend devs: mock data from `API_CONTRACT.md`** until the backend endpoint is live. Don't wait.
+7. **Always update the tracker.** Check off completed tasks in [IMPLEMENTATION_TRACKER.md](file:///d:/projects/Odoo-hackthon/docs/IMPLEMENTATION_TRACKER.md) when you merge to `dev`.
