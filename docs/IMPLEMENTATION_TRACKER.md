@@ -23,7 +23,7 @@
 | Member | Module | Backend | Frontend | Status |
 |--------|--------|---------|----------|--------|
 | Member 1 | Identity & Foundation | `[~]` Schema only | `[x]` Login + Register | Partially complete — auth routes pending |
-| Member 2 | Asset Core | `[ ]` | `[ ]` | Not started |
+| Member 2 | Asset Core | `[ ]` | `[x]` | Frontend complete — backend pending |
 | Member 3 | Operations | `[ ]` | `[ ]` | Not started |
 | Member 4 | Intelligence | `[ ]` | `[ ]` | Not started |
 
@@ -97,6 +97,8 @@
 | 3 | Medium | LoginPage stores JWT without calling AuthContext.login() — update once AuthContext is built | LoginPage.jsx L89–95 | Update after AuthContext is built |
 | 4 | Low | RegisterPage redirects to /login after signup — WORKFLOW.md says Dashboard. Acceptable for demo. | RegisterPage.jsx L97 | Low priority |
 | 5 | Low | App.css contains unused Vite boilerplate CSS (.hero, .ticks, etc.) | App.css | Cleanup |
+| 6 | ~~MUST FIX~~ FIXED | `toDept` does not exist as relation on `Transfer` in `schema.prisma` (only `toDeptId` UUID field) | AllocationTransferPage.jsx L345 | **Fixed** — resolve department name locally via departments array lookup |
+| 7 | Low/Medium | Dropdown list for Select Asset in Allocate/Transfer tab cut off/hidden at bottom | AllocationTransferPage.jsx L828 | **Fixed** — removed `overflow-hidden` from tab container div to allow absolute dropdown to overflow |
 
 ---
 
@@ -114,9 +116,9 @@
 
 ### Frontend
 
-- [ ] pages/Assets/ — registration form + directory table with search + filter
-- [ ] pages/AllocationTransfer/ — allocation form + conflict display + transfer form + history
-- [ ] Asset detail page — allocation history + maintenance history tabs
+- [x] pages/Assets/ — registration form + directory table with search + filter
+- [x] pages/AllocationTransfer/ — allocation form + conflict display + transfer form + history
+- [x] Asset detail page — allocation history + maintenance history tabs
 
 ---
 
