@@ -8,7 +8,6 @@ import {
   ArrowLeftRight,
   AlertTriangle,
   ClipboardCheck,
-  PlusCircle,
   FileBarChart2,
   Bell,
   RefreshCw,
@@ -17,199 +16,274 @@ import { getKpi, getRecentActivity } from '../../api/dashboard.api';
 import KpiCard from '../../components/dashboard/KpiCard';
 import RecentActivityPanel from '../../components/dashboard/RecentActivityPanel';
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   DashboardPage — DESIGN.md dark canvas
+   - Canvas (#010102) background
+   - KPI cards in 4-up grid at ≥1280px, 2-up tablet, 1-up mobile
+   - Quick Actions in feature-card (surface-1)
+   - Data protagonist: tables and KPIs front and center
+───────────────────────────────────────────────────────────────────────────── */
 export default function DashboardPage() {
   const navigate = useNavigate();
   const [kpi, setKpi] = useState({
-    assetsAvailable: 0,
-    assetsAllocated: 0,
+    assetsAvailable:  0,
+    assetsAllocated:  0,
     maintenanceToday: 0,
-    upcomingReturns: 0,
+    upcomingReturns:  0,
     pendingTransfers: 0,
-    activeBookings: 0,
-    overdueReturns: 0,
+    activeBookings:   0,
+    overdueReturns:   0,
   });
-  const [logs, setLogs] = useState([]);
+  const [logs, setLogs]       = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError]     = useState(null);
 
   const fetchData = async () => {
     try {
       setLoading(true);
       setError(null);
       const [kpiRes, logsRes] = await Promise.all([getKpi(), getRecentActivity()]);
-
-      if (kpiRes.success) setKpi(kpiRes.data);
+      if (kpiRes.success)  setKpi(kpiRes.data);
       if (logsRes.success) setLogs(logsRes.data);
     } catch (err) {
-      console.error('[Dashboard] Error fetching dashboard data:', err);
+      console.error('[Dashboard] Error:', err);
       setError('Could not connect to the server. Please check if the backend is running.');
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  useEffect(() => { fetchData(); }, []);
 
+  /* ── Loading state ─────────────────────────────────────────────────────── */
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="flex flex-col items-center gap-4">
-          <RefreshCw className="h-10 w-10 animate-spin text-indigo-600" />
-          <p className="text-sm font-medium text-gray-500">Loading dashboard intelligence...</p>
-        </div>
+      <div style={{
+        display:        'flex',
+        alignItems:     'center',
+        justifyContent: 'center',
+        minHeight:      '60vh',
+        flexDirection:  'column',
+        gap:            16,
+      }}>
+        <RefreshCw
+          size={28}
+          color='var(--color-primary)'
+          style={{ animation: 'spin 1s linear infinite' }}
+        />
+        <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)' }}>
+          Loading dashboard intelligence…
+        </p>
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 sm:p-8">
-      {/* Top Banner Header */}
-      <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+    <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+
+      {/* ── Page header ───────────────────────────────────────────────────── */}
+      <div style={{
+        display:        'flex',
+        alignItems:     'flex-start',
+        justifyContent: 'space-between',
+        gap:            16,
+        marginBottom:   32,
+        flexWrap:       'wrap',
+      }}>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Dashboard</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="type-display-lg" style={{ color: 'var(--color-ink)', margin: 0 }}>Dashboard</h1>
+          <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)', marginTop: 6 }}>
             Real-time tracking of organization assets and resource activities.
           </p>
         </div>
         <button
           onClick={fetchData}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-white border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+          className="btn-secondary"
+          style={{ flexShrink: 0 }}
         >
-          <RefreshCw className="h-4 w-4" />
-          Refresh Stats
+          <RefreshCw size={14} />
+          Refresh
         </button>
       </div>
 
+      {/* ── Backend error banner ──────────────────────────────────────────── */}
       {error && (
-        <div className="mb-8 rounded-xl border border-red-100 bg-red-50 p-4 text-red-700 flex items-start gap-3">
-          <AlertTriangle className="h-5 w-5 shrink-0 mt-0.5" />
+        <div style={{
+          display:         'flex',
+          alignItems:      'flex-start',
+          gap:             12,
+          backgroundColor: 'var(--color-semantic-error-bg)',
+          border:          '1px solid var(--color-semantic-error)',
+          borderRadius:    12,
+          padding:         '16px 20px',
+          marginBottom:    32,
+          color:           'var(--color-semantic-error)',
+        }}>
+          <AlertTriangle size={18} style={{ flexShrink: 0, marginTop: 1 }} />
           <div>
-            <h4 className="font-semibold">Backend Connection Issue</h4>
-            <p className="text-sm mt-1">{error}</p>
+            <p style={{ fontWeight: 600, fontSize: 14, margin: 0 }}>Backend Connection Issue</p>
+            <p style={{ fontSize: 13, marginTop: 4, color: 'var(--color-ink-muted)' }}>{error}</p>
           </div>
         </div>
       )}
 
-      {/* Conditionally Rendered Overdue Return Alert */}
+      {/* ── Overdue returns alert ─────────────────────────────────────────── */}
       {kpi.overdueReturns > 0 && (
-        <div className="mb-8 flex items-center justify-between rounded-2xl border border-red-200 bg-gradient-to-r from-red-50 to-orange-50 p-6 shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="rounded-xl bg-red-100 p-3 text-red-600">
-              <AlertTriangle className="h-6 w-6" />
+        <div style={{
+          display:         'flex',
+          alignItems:      'center',
+          justifyContent:  'space-between',
+          gap:             16,
+          backgroundColor: 'rgba(248,81,73,0.08)',
+          border:          '1px solid var(--color-semantic-error)',
+          borderRadius:    12,
+          padding:         '16px 20px',
+          marginBottom:    32,
+          flexWrap:        'wrap',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{
+              display:         'flex',
+              alignItems:      'center',
+              justifyContent:  'center',
+              width:           36,
+              height:          36,
+              borderRadius:    8,
+              backgroundColor: 'rgba(248,81,73,0.16)',
+              flexShrink:      0,
+            }}>
+              <AlertTriangle size={16} color='var(--color-semantic-error)' />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-red-950">Overdue Asset Returns Detected</h3>
-              <p className="text-sm text-red-800 mt-1">
-                There are currently <span className="font-bold">{kpi.overdueReturns}</span> asset allocations that have passed their expected return date.
+              <p style={{ fontWeight: 600, fontSize: 14, color: 'var(--color-ink)', margin: 0 }}>
+                Overdue Asset Returns Detected
+              </p>
+              <p style={{ fontSize: 13, color: 'var(--color-ink-muted)', marginTop: 2 }}>
+                {kpi.overdueReturns} allocation{kpi.overdueReturns !== 1 ? 's' : ''} past expected return date.
               </p>
             </div>
           </div>
           <button
-            onClick={() => navigate('/audit')}
-            className="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 transition-colors"
+            onClick={() => navigate('/audits')}
+            className="btn-danger"
+            style={{ flexShrink: 0 }}
           >
-            Review Audit Discrepancies
+            Review Audit
           </button>
         </div>
       )}
 
-      {/* Grid of 6 KPI Cards */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {/* ── KPI Grid — 4-up on wide, 2-up tablet, 1-up mobile ────────────── */}
+      <div style={{
+        display:             'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+        gap:                 20,
+        marginBottom:        32,
+      }}>
         <KpiCard
           title="Assets Available"
           value={kpi.assetsAvailable}
-          icon={<Monitor className="h-6 w-6" />}
-          colorClass="text-emerald-600"
-          bgGradient="from-emerald-50 to-teal-50"
+          icon={<Monitor size={16} />}
+          delta={kpi.assetsAvailable > 0 ? 'Ready for allocation' : undefined}
         />
         <KpiCard
           title="Assets Allocated"
           value={kpi.assetsAllocated}
-          icon={<Key className="h-6 w-6" />}
-          colorClass="text-indigo-600"
-          bgGradient="from-indigo-50 to-blue-50"
+          icon={<Key size={16} />}
         />
         <KpiCard
           title="Active Bookings"
           value={kpi.activeBookings}
-          icon={<Calendar className="h-6 w-6" />}
-          colorClass="text-pink-600"
-          bgGradient="from-pink-50 to-rose-50"
+          icon={<Calendar size={16} />}
         />
         <KpiCard
-          title="Maintenance Requests Today"
+          title="Maintenance Today"
           value={kpi.maintenanceToday}
-          icon={<Wrench className="h-6 w-6" />}
-          colorClass="text-amber-600"
-          bgGradient="from-amber-50 to-yellow-50"
+          icon={<Wrench size={16} />}
+          delta={kpi.maintenanceToday > 0 ? 'Pending attention' : undefined}
+          deltaDir={kpi.maintenanceToday > 0 ? 'down' : null}
         />
         <KpiCard
-          title="Upcoming Returns (7 Days)"
+          title="Upcoming Returns"
           value={kpi.upcomingReturns}
-          icon={<RefreshCw className="h-6 w-6" />}
-          colorClass="text-blue-600"
-          bgGradient="from-blue-50 to-cyan-50"
+          icon={<RefreshCw size={16} />}
+          delta="Next 7 days"
         />
         <KpiCard
-          title="Pending Transfer Requests"
+          title="Pending Transfers"
           value={kpi.pendingTransfers}
-          icon={<ArrowLeftRight className="h-6 w-6" />}
-          colorClass="text-purple-600"
-          bgGradient="from-purple-50 to-violet-50"
+          icon={<ArrowLeftRight size={16} />}
         />
       </div>
 
-      {/* Quick Actions & Recent Activity Sections */}
-      <div className="mt-8 grid gap-8 lg:grid-cols-3">
-        {/* Left Columns: Activity Log */}
-        <div className="lg:col-span-2">
+      {/* ── Activity + Quick Actions ──────────────────────────────────────── */}
+      <div style={{
+        display:             'grid',
+        gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)',
+        gap:                 24,
+      }}
+        className="af-dashboard-grid"
+      >
+        {/* Recent Activity */}
+        <div>
           <RecentActivityPanel logs={logs} />
         </div>
 
-        {/* Right Column: Quick Action Center */}
-        <div className="space-y-6">
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <ClipboardCheck className="h-5 w-5 text-gray-500" />
-              Quick Action Center
-            </h2>
-            <div className="flex flex-col gap-3">
-              <button
-                onClick={() => navigate('/audit')}
-                className="flex items-center gap-3 w-full rounded-xl border border-gray-150 p-3 text-left hover:bg-gray-50 transition-colors"
-              >
-                <ClipboardCheck className="h-5 w-5 text-amber-500" />
-                <div>
-                  <div className="text-sm font-semibold text-gray-900">Manage Audit Cycles</div>
-                  <div className="text-xs text-gray-400">Launch audits & verify items</div>
-                </div>
-              </button>
-              <button
-                onClick={() => navigate('/reports')}
-                className="flex items-center gap-3 w-full rounded-xl border border-gray-150 p-3 text-left hover:bg-gray-50 transition-colors"
-              >
-                <FileBarChart2 className="h-5 w-5 text-indigo-500" />
-                <div>
-                  <div className="text-sm font-semibold text-gray-900">Reports & Analytics</div>
-                  <div className="text-xs text-gray-400">Export CSVs & track heatmaps</div>
-                </div>
-              </button>
-              <button
-                onClick={() => navigate('/notifications')}
-                className="flex items-center gap-3 w-full rounded-xl border border-gray-150 p-3 text-left hover:bg-gray-50 transition-colors"
-              >
-                <Bell className="h-5 w-5 text-blue-500" />
-                <div>
-                  <div className="text-sm font-semibold text-gray-900">System Notifications</div>
-                  <div className="text-xs text-gray-400">Check inbox warnings</div>
-                </div>
-              </button>
+        {/* Quick Action Center */}
+        <div>
+          <div className="feature-card">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+              <ClipboardCheck size={16} color='var(--color-ink-subtle)' />
+              <h2 className="type-card-title" style={{ margin: 0, color: 'var(--color-ink)' }}>
+                Quick Actions
+              </h2>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+
+              {[
+                { icon: ClipboardCheck, label: 'Manage Audit Cycles', sub: 'Launch audits & verify items', path: '/audits', iconColor: 'var(--color-status-maintenance)' },
+                { icon: FileBarChart2,  label: 'Reports & Analytics',  sub: 'Export CSVs & track heatmaps',  path: '/reports', iconColor: 'var(--color-primary)' },
+                { icon: Bell,           label: 'System Notifications', sub: 'Check inbox warnings',           path: '/notifications', iconColor: 'var(--color-status-allocated)' },
+              ].map(({ icon: Icon, label, sub, path, iconColor }) => (
+                <button
+                  key={path}
+                  onClick={() => navigate(path)}
+                  style={{
+                    display:         'flex',
+                    alignItems:      'center',
+                    gap:             12,
+                    width:           '100%',
+                    padding:         '10px 12px',
+                    borderRadius:    8,
+                    border:          '1px solid #23252a',
+                    backgroundColor: 'transparent',
+                    cursor:          'pointer',
+                    textAlign:       'left',
+                    transition:      'background-color var(--duration-fast) var(--ease-standard)',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'}
+                  onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  <Icon size={16} color={iconColor} style={{ flexShrink: 0 }} />
+                  <div>
+                    <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--color-ink)', margin: 0 }}>{label}</p>
+                    <p style={{ fontSize: 12, color: 'var(--color-ink-subtle)', margin: '2px 0 0' }}>{sub}</p>
+                  </div>
+                </button>
+              ))}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Responsive: stack columns on mobile */}
+      <style>{`
+        @media (max-width: 768px) {
+          .af-dashboard-grid { grid-template-columns: 1fr !important; }
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+      `}</style>
     </div>
   );
 }

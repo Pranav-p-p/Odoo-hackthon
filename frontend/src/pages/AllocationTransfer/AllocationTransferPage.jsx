@@ -40,16 +40,16 @@ function Pill({ label, cls }) {
 }
 
 const TRANSFER_STATUS_STYLES = {
-  REQUESTED: 'bg-amber-50 text-amber-700 ring-1 ring-amber-200',
-  APPROVED:  'bg-blue-50 text-blue-700 ring-1 ring-blue-200',
-  REJECTED:  'bg-red-50 text-red-700 ring-1 ring-red-200',
-  COMPLETED: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200',
+  REQUESTED: 'bg-status-maintenance-bg text-status-maintenance ring-0',
+  APPROVED:  'bg-status-allocated-bg text-status-allocated ring-0',
+  REJECTED:  'bg-[var(--color-semantic-error-bg)] text-semantic-error ring-0',
+  COMPLETED: 'bg-status-available-bg text-status-available ring-0',
 };
 
 const ALLOC_STATUS_STYLES = {
-  ACTIVE:   'bg-blue-50 text-blue-700 ring-1 ring-blue-200',
-  RETURNED: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200',
-  OVERDUE:  'bg-red-50 text-red-700 ring-1 ring-red-200',
+  ACTIVE:   'bg-status-allocated-bg text-status-allocated ring-0',
+  RETURNED: 'bg-status-available-bg text-status-available ring-0',
+  OVERDUE:  'bg-[var(--color-semantic-error-bg)] text-semantic-error ring-0',
 };
 
 function formatDate(iso) {
@@ -62,8 +62,8 @@ function SectionTitle({ icon: Icon, title, subtitle }) {
     <div className="flex items-center gap-2 mb-4">
       <Icon className="h-4 w-4 text-indigo-600 flex-shrink-0" />
       <div>
-        <h2 className="text-sm font-semibold text-slate-800">{title}</h2>
-        {subtitle && <p className="text-xs text-slate-500">{subtitle}</p>}
+        <h2 className="text-sm font-semibold text-ink">{title}</h2>
+        {subtitle && <p className="text-xs text-ink-subtle">{subtitle}</p>}
       </div>
     </div>
   );
@@ -71,7 +71,7 @@ function SectionTitle({ icon: Icon, title, subtitle }) {
 
 function SuccessAlert({ message, onDismiss }) {
   return (
-    <div className="flex items-start gap-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg px-4 py-3 text-sm">
+    <div className="flex items-start gap-3 bg-status-available-bg border border-status-available text-status-available rounded-lg px-4 py-3 text-sm">
       <CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0 text-emerald-600" />
       <span className="flex-1">{message}</span>
       <button onClick={onDismiss} className="text-emerald-500 hover:text-emerald-700">
@@ -84,7 +84,7 @@ function SuccessAlert({ message, onDismiss }) {
 function ErrorAlert({ message }) {
   if (!message) return null;
   return (
-    <div className="flex items-start gap-3 bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">
+    <div className="flex items-start gap-3 bg-[var(--color-semantic-error-bg)] border border-semantic-error text-semantic-error rounded-lg px-4 py-3 text-sm">
       <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
       <span>{message}</span>
     </div>
@@ -114,15 +114,15 @@ function ReturnForm({ allocation, onCancel, onSuccess }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="border border-slate-200 rounded-lg p-4 bg-slate-50 space-y-3">
-      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Return Asset</p>
+    <form onSubmit={handleSubmit} className="border border-hairline rounded-lg p-4 bg-slate-50 space-y-3">
+      <p className="field-label">Return Asset</p>
       {error && <ErrorAlert message={error} />}
       <div>
-        <label className="block text-xs font-medium text-slate-700 mb-1">Return Condition <span className="text-red-500">*</span></label>
+        <label className="field-label">Return Condition <span className="text-red-500">*</span></label>
         <select
           value={returnCondition}
           onChange={e => setReturnCondition(e.target.value)}
-          className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+          className="input-field"
         >
           <option value="Good">Good</option>
           <option value="Fair">Fair</option>
@@ -130,20 +130,20 @@ function ReturnForm({ allocation, onCancel, onSuccess }) {
         </select>
       </div>
       <div>
-        <label className="block text-xs font-medium text-slate-700 mb-1">Notes <span className="text-slate-400">(optional)</span></label>
+        <label className="field-label">Notes <span className="text-ink-tertiary">(optional)</span></label>
         <textarea
           value={returnNotes}
           onChange={e => setReturnNotes(e.target.value)}
           rows={2}
           placeholder="Any notes about the returned condition…"
-          className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+          className="input-field"
         />
       </div>
       <div className="flex gap-2 pt-1">
         <button
           type="submit"
           disabled={loading}
-          className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white text-sm font-medium px-4 py-2 rounded-md transition-colors"
+          className="flex items-center gap-1.5 btn-primary text-sm font-medium px-4 py-2 rounded-md transition-colors"
         >
           {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCheck className="h-3.5 w-3.5" />}
           Confirm Return
@@ -151,7 +151,7 @@ function ReturnForm({ allocation, onCancel, onSuccess }) {
         <button
           type="button"
           onClick={onCancel}
-          className="text-sm text-slate-600 hover:text-slate-800 px-3 py-2 rounded-md border border-slate-200 hover:border-slate-300 transition-colors"
+          className="text-sm text-ink-tertiary hover:text-ink px-3 py-2 rounded-md border border-hairline hover:border-hairline transition-colors"
         >
           Cancel
         </button>
@@ -167,8 +167,8 @@ function ActiveAllocationsList({ allocations, loading, onReturnSuccess }) {
   if (loading) {
     return (
       <div className="py-8 text-center">
-        <Loader2 className="h-6 w-6 animate-spin text-indigo-400 mx-auto mb-2" />
-        <p className="text-sm text-slate-500">Loading active allocations…</p>
+        <Loader2 className="h-6 w-6 animate-spin text-primary mx-auto mb-2" />
+        <p className="text-sm text-ink-subtle">Loading active allocations…</p>
       </div>
     );
   }
@@ -177,29 +177,29 @@ function ActiveAllocationsList({ allocations, loading, onReturnSuccess }) {
     return (
       <div className="py-8 text-center">
         <Layers className="h-7 w-7 text-slate-200 mx-auto mb-2" />
-        <p className="text-sm text-slate-500">No active allocations at the moment.</p>
+        <p className="text-sm text-ink-subtle">No active allocations at the moment.</p>
       </div>
     );
   }
 
   return (
-    <ul className="divide-y divide-slate-100">
+    <ul className="divide-y divide-[#23252a]">
       {allocations.map(a => (
         <li key={a.id} className="py-4">
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-sm font-semibold text-slate-800">
+                <span className="text-sm font-semibold text-ink">
                   {a.asset?.name ?? a.assetId}
                 </span>
                 {a.asset?.assetTag && (
-                  <span className="font-mono text-xs text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
+                  <span className="font-mono text-xs text-ink-tertiary bg-slate-100 px-1.5 py-0.5 rounded">
                     {a.asset.assetTag}
                   </span>
                 )}
-                <Pill label={a.status} cls={ALLOC_STATUS_STYLES[a.status] ?? 'bg-slate-100 text-slate-500 ring-1 ring-slate-200'} />
+                <Pill label={a.status} cls={ALLOC_STATUS_STYLES[a.status] ?? 'bg-slate-100 text-ink-subtle ring-1 ring-slate-200'} />
               </div>
-              <div className="mt-1 text-xs text-slate-500 flex items-center gap-3 flex-wrap">
+              <div className="mt-1 text-xs text-ink-subtle flex items-center gap-3 flex-wrap">
                 <span className="flex items-center gap-1">
                   <User className="h-3 w-3" />
                   {a.user?.name ?? 'Unknown'}
@@ -219,7 +219,7 @@ function ActiveAllocationsList({ allocations, loading, onReturnSuccess }) {
             {a.status === 'ACTIVE' && returningId !== a.id && (
               <button
                 onClick={() => setReturningId(a.id)}
-                className="flex items-center gap-1.5 text-xs font-medium text-indigo-600 hover:text-indigo-800 border border-indigo-200 hover:border-indigo-400 px-3 py-1.5 rounded-md transition-colors flex-shrink-0"
+                className="flex items-center gap-1.5 text-xs font-medium btn-tertiary px-3 py-1.5 rounded-md transition-colors flex-shrink-0"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
                 Mark Returned
@@ -279,8 +279,8 @@ function PendingTransfersList({ transfers, departments = [], loading, onAction }
   if (loading) {
     return (
       <div className="py-8 text-center">
-        <Loader2 className="h-6 w-6 animate-spin text-indigo-400 mx-auto mb-2" />
-        <p className="text-sm text-slate-500">Loading pending transfers…</p>
+        <Loader2 className="h-6 w-6 animate-spin text-primary mx-auto mb-2" />
+        <p className="text-sm text-ink-subtle">Loading pending transfers…</p>
       </div>
     );
   }
@@ -289,13 +289,13 @@ function PendingTransfersList({ transfers, departments = [], loading, onAction }
     return (
       <div className="py-8 text-center">
         <ArrowLeftRight className="h-7 w-7 text-slate-200 mx-auto mb-2" />
-        <p className="text-sm text-slate-500">No pending transfer requests.</p>
+        <p className="text-sm text-ink-subtle">No pending transfer requests.</p>
       </div>
     );
   }
 
   return (
-    <ul className="divide-y divide-slate-100">
+    <ul className="divide-y divide-[#23252a]">
       {transfers.map(t => {
         const actState = actionStates[t.id];
         const isRejecting = rejectingId === t.id;
@@ -304,38 +304,38 @@ function PendingTransfersList({ transfers, departments = [], loading, onAction }
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-sm font-semibold text-slate-800">
+                  <span className="text-sm font-semibold text-ink">
                     {t.asset?.name ?? t.assetId}
                   </span>
                   {t.asset?.assetTag && (
-                    <span className="font-mono text-xs text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
+                    <span className="font-mono text-xs text-ink-tertiary bg-slate-100 px-1.5 py-0.5 rounded">
                       {t.asset.assetTag}
                     </span>
                   )}
                   <Pill
                     label={t.status}
-                    cls={TRANSFER_STATUS_STYLES[t.status] ?? 'bg-slate-100 text-slate-500 ring-1 ring-slate-200'}
+                    cls={TRANSFER_STATUS_STYLES[t.status] ?? 'bg-slate-100 text-ink-subtle ring-1 ring-slate-200'}
                   />
                 </div>
-                <div className="mt-1 text-xs text-slate-500 space-y-0.5">
+                <div className="mt-1 text-xs text-ink-subtle space-y-0.5">
                   <div className="flex items-center gap-1">
                     <User className="h-3 w-3" />
                     Requested by {t.requestedBy?.name ?? 'Unknown'} · {formatDate(t.createdAt)}
                   </div>
                   {t.toUser && (
                     <div className="flex items-center gap-1">
-                      <User className="h-3 w-3 text-indigo-400" />
+                      <User className="h-3 w-3 text-primary" />
                       To: {t.toUser.name}
                     </div>
                   )}
                   {t.toDeptId && !t.toUser && (
                     <div className="flex items-center gap-1">
-                      <Building2 className="h-3 w-3 text-indigo-400" />
+                      <Building2 className="h-3 w-3 text-primary" />
                       To dept: {departments.find(d => d.id === t.toDeptId)?.name ?? t.toDeptId}
                     </div>
                   )}
                   {t.reason && (
-                    <div className="italic text-slate-400">"{t.reason}"</div>
+                    <div className="italic text-ink-tertiary">"{t.reason}"</div>
                   )}
                 </div>
               </div>
@@ -345,7 +345,7 @@ function PendingTransfersList({ transfers, departments = [], loading, onAction }
                   <button
                     onClick={() => handleApprove(t.id)}
                     disabled={actState === 'approving'}
-                    className="flex items-center gap-1 text-xs font-medium bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white px-3 py-1.5 rounded-md transition-colors"
+                    className="flex items-center gap-1 text-xs font-medium btn-primary px-3 py-1.5 rounded-md transition-colors"
                   >
                     {actState === 'approving'
                       ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -355,7 +355,7 @@ function PendingTransfersList({ transfers, departments = [], loading, onAction }
                   <button
                     onClick={() => { setRejectingId(t.id); setRejectReason(''); }}
                     disabled={actState === 'rejecting'}
-                    className="flex items-center gap-1 text-xs font-medium border border-red-300 text-red-600 hover:bg-red-50 disabled:opacity-60 px-3 py-1.5 rounded-md transition-colors"
+                    className="flex items-center gap-1 text-xs font-medium btn-danger px-3 py-1.5 rounded-md transition-colors"
                   >
                     <Ban className="h-3.5 w-3.5" />
                     Reject
@@ -367,26 +367,26 @@ function PendingTransfersList({ transfers, departments = [], loading, onAction }
             {isRejecting && (
               <div className="mt-3 flex gap-2 items-end">
                 <div className="flex-1">
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Rejection reason <span className="text-red-500">*</span></label>
+                  <label className="field-label">Rejection reason <span className="text-red-500">*</span></label>
                   <input
                     type="text"
                     value={rejectReason}
                     onChange={e => setRejectReason(e.target.value)}
                     placeholder="Enter reason for rejection"
-                    className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
+                    className="input-field"
                   />
                 </div>
                 <button
                   onClick={() => handleReject(t.id)}
                   disabled={!rejectReason.trim() || actState === 'rejecting'}
-                  className="flex items-center gap-1 text-xs font-medium bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white px-3 py-2 rounded-md transition-colors"
+                  className="flex items-center gap-1 text-xs font-medium btn-danger px-3 py-2 rounded-md transition-colors"
                 >
                   {actState === 'rejecting' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Ban className="h-3.5 w-3.5" />}
                   Confirm
                 </button>
                 <button
                   onClick={() => setRejectingId(null)}
-                  className="text-xs text-slate-500 hover:text-slate-700 px-3 py-2"
+                  className="text-xs text-ink-subtle hover:text-[#c9d1d9] px-3 py-2"
                 >
                   Cancel
                 </button>
@@ -491,7 +491,7 @@ function AllocatePanel({ assets, users, departments, onSuccess }) {
     <div className="space-y-5">
       {/* Asset search */}
       <div>
-        <label className="block text-xs font-medium text-slate-700 mb-1">
+        <label className="field-label">
           Select Asset <span className="text-red-500">*</span>
         </label>
         <AssetSelector value={selectedAsset} onChange={selectAsset} />
@@ -499,11 +499,11 @@ function AllocatePanel({ assets, users, departments, onSuccess }) {
 
       {/* Selected asset info */}
       {selectedAsset && (
-        <div className="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-lg px-4 py-3">
-          <Package className="h-5 w-5 text-indigo-400 flex-shrink-0" />
+        <div className="flex items-center gap-3 bg-surface-2 border border-hairline rounded-lg px-4 py-3">
+          <Package className="h-5 w-5 text-primary flex-shrink-0" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-slate-800">{selectedAsset.name}</p>
-            <p className="text-xs text-slate-500">{selectedAsset.assetTag} · {selectedAsset.category?.name ?? '—'}</p>
+            <p className="text-sm font-semibold text-ink">{selectedAsset.name}</p>
+            <p className="text-xs text-ink-subtle">{selectedAsset.assetTag} · {selectedAsset.category?.name ?? '—'}</p>
           </div>
           <StatusBadge type="asset" status={selectedAsset.status} />
         </div>
@@ -513,15 +513,15 @@ function AllocatePanel({ assets, users, departments, onSuccess }) {
       {conflictHolder && (
         <>
           <ConflictBanner currentHolder={conflictHolder} />
-          <form onSubmit={handleTransfer} className="space-y-4 border border-slate-200 rounded-lg p-4 bg-white">
-            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Transfer Request</p>
+          <form onSubmit={handleTransfer} className="space-y-4 border border-hairline rounded-lg p-4 bg-canvas">
+            <p className="field-label">Transfer Request</p>
             {transferError && <ErrorAlert message={transferError} />}
 
             {/* To type selector */}
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1.5">Transfer to</label>
+              <label className="field-label">Transfer to</label>
               <div className="flex gap-3">
-                <label className="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
+                <label className="flex items-center gap-1.5 text-sm text-[#c9d1d9] cursor-pointer">
                   <input
                     type="radio"
                     name="toType"
@@ -532,7 +532,7 @@ function AllocatePanel({ assets, users, departments, onSuccess }) {
                   />
                   Employee
                 </label>
-                <label className="flex items-center gap-1.5 text-sm text-slate-700 cursor-pointer">
+                <label className="flex items-center gap-1.5 text-sm text-[#c9d1d9] cursor-pointer">
                   <input
                     type="radio"
                     name="toType"
@@ -548,11 +548,11 @@ function AllocatePanel({ assets, users, departments, onSuccess }) {
 
             {transferToType === 'user' ? (
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Employee <span className="text-red-500">*</span></label>
+                <label className="field-label">Employee <span className="text-red-500">*</span></label>
                 <select
                   value={transferToUser}
                   onChange={e => setTransferToUser(e.target.value)}
-                  className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                  className="input-field"
                 >
                   <option value="">Select employee</option>
                   {users.map(u => (
@@ -562,11 +562,11 @@ function AllocatePanel({ assets, users, departments, onSuccess }) {
               </div>
             ) : (
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Department <span className="text-red-500">*</span></label>
+                <label className="field-label">Department <span className="text-red-500">*</span></label>
                 <select
                   value={transferToDept}
                   onChange={e => setTransferToDept(e.target.value)}
-                  className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                  className="input-field"
                 >
                   <option value="">Select department</option>
                   {departments.map(d => (
@@ -577,20 +577,20 @@ function AllocatePanel({ assets, users, departments, onSuccess }) {
             )}
 
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">Reason <span className="text-red-500">*</span></label>
+              <label className="field-label">Reason <span className="text-red-500">*</span></label>
               <textarea
                 value={transferReason}
                 onChange={e => setTransferReason(e.target.value)}
                 rows={2}
                 placeholder="Reason for the transfer request…"
-                className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                className="input-field"
               />
             </div>
 
             <button
               type="submit"
               disabled={transferLoading}
-              className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white text-sm font-medium px-4 py-2 rounded-md transition-colors"
+              className="flex items-center gap-1.5 btn-primary text-sm font-medium px-4 py-2 rounded-md transition-colors"
             >
               {transferLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
               Submit Transfer Request
@@ -601,15 +601,15 @@ function AllocatePanel({ assets, users, departments, onSuccess }) {
 
       {/* ── AVAILABLE PATH — Allocation form ───────────────────── */}
       {selectedAsset && isAvailable && !conflictHolder && (
-        <form onSubmit={handleAllocate} className="space-y-4 border border-slate-200 rounded-lg p-4 bg-white">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Allocate Asset</p>
+        <form onSubmit={handleAllocate} className="space-y-4 border border-hairline rounded-lg p-4 bg-canvas">
+          <p className="field-label">Allocate Asset</p>
           {allocError && <ErrorAlert message={allocError} />}
           <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">Assign to Employee <span className="text-red-500">*</span></label>
+            <label className="field-label">Assign to Employee <span className="text-red-500">*</span></label>
             <select
               value={userId}
               onChange={e => setUserId(e.target.value)}
-              className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+              className="input-field"
             >
               <option value="">Select employee</option>
               {users.map(u => (
@@ -618,19 +618,19 @@ function AllocatePanel({ assets, users, departments, onSuccess }) {
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">Expected Return Date <span className="text-slate-400">(optional)</span></label>
+            <label className="field-label">Expected Return Date <span className="text-ink-tertiary">(optional)</span></label>
             <input
               type="date"
               value={expectedReturn}
               onChange={e => setExpectedReturn(e.target.value)}
               min={new Date().toISOString().split('T')[0]}
-              className="w-full border border-slate-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-hairline rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
           <button
             type="submit"
             disabled={allocLoading}
-            className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white text-sm font-medium px-4 py-2 rounded-md transition-colors"
+            className="flex items-center gap-1.5 btn-primary text-sm font-medium px-4 py-2 rounded-md transition-colors"
           >
             {allocLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
             Allocate Asset
@@ -640,19 +640,19 @@ function AllocatePanel({ assets, users, departments, onSuccess }) {
 
       {/* Already allocated — hint before conflict is triggered */}
       {selectedAsset && isAllocated && !conflictHolder && (
-        <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 text-sm">
-          <AlertCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-          <div className="text-blue-800">
+        <div className="flex items-start gap-3 bg-status-allocated-bg border border-status-allocated rounded-lg px-4 py-3 text-sm">
+          <AlertCircle className="h-4 w-4 text-status-allocated mt-0.5 flex-shrink-0" />
+          <div className="text-[#c9d1d9]">
             <p className="font-medium">This asset is currently allocated.</p>
-            <p className="text-blue-700 mt-0.5">To move it, click "Try Allocate" — a conflict will be detected and you'll be prompted to submit a transfer request.</p>
+            <p className="text-ink-subtle mt-0.5">To move it, click "Try Allocate" — a conflict will be detected and you'll be prompted to submit a transfer request.</p>
           </div>
         </div>
       )}
 
       {/* Non-available, non-allocated status — no action possible */}
       {selectedAsset && !isAvailable && !isAllocated && (
-        <div className="flex items-start gap-3 bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-sm text-slate-600">
-          <AlertCircle className="h-4 w-4 text-slate-400 mt-0.5 flex-shrink-0" />
+        <div className="flex items-start gap-3 bg-surface-2 border border-hairline rounded-lg px-4 py-3 text-sm text-ink-tertiary">
+          <AlertCircle className="h-4 w-4 text-ink-tertiary mt-0.5 flex-shrink-0" />
           <p>This asset cannot be allocated in its current status (<strong>{selectedAsset.status}</strong>).</p>
         </div>
       )}
@@ -751,119 +751,91 @@ export default function AllocationTransferPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Page header */}
-      <div className="bg-white border-b border-slate-200 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center gap-3">
-          <ArrowLeftRight className="h-5 w-5 text-indigo-600 flex-shrink-0" />
+    <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+      {/* ── Page Header ──────────────────────────────────────────────────────── */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 28, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <ArrowLeftRight size={18} color='var(--color-primary)' style={{ flexShrink: 0 }} />
           <div>
-            <h1 className="text-lg font-semibold text-slate-900">Allocation & Transfers</h1>
-            <p className="text-xs text-slate-500">Manage asset allocation, returns, and transfer requests</p>
+            <h1 className="type-display-md" style={{ color: 'var(--color-ink)', margin: 0 }}>Allocation & Transfers</h1>
+            <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)', marginTop: 6 }}>Manage asset allocation, returns, and transfer requests</p>
           </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-6 space-y-4">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         {/* Flash messages */}
         {successMsg && <SuccessAlert message={successMsg} onDismiss={() => setSuccessMsg('')} />}
         {errorMsg && <ErrorAlert message={errorMsg} />}
 
-        {/* Tab bar */}
-        <div className="bg-white border border-slate-200 rounded-xl">
-          <div className="flex border-b border-slate-200" role="tablist">
-            {tabs.map(tab => (
-              <button
-                key={tab.key}
-                role="tab"
-                aria-selected={activeTab === tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={[
-                  'flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500',
-                  activeTab === tab.key
-                    ? 'border-indigo-600 text-indigo-600'
-                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300',
-                ].join(' ')}
-              >
-                <tab.icon className="h-4 w-4" aria-hidden="true" />
-                {tab.label}
-                {tab.count > 0 && (
-                  <span className={`text-xs rounded-full px-2 py-0.5 font-medium ${
-                    activeTab === tab.key
-                      ? 'bg-indigo-100 text-indigo-700'
-                      : 'bg-slate-100 text-slate-500'
-                  }`}>
-                    {tab.count}
-                  </span>
-                )}
-              </button>
-            ))}
+        {/* Tab bar container */}
+        <div style={{ backgroundColor: 'var(--color-surface-1)', border: '1px solid #23252a', borderRadius: 12, overflow: 'visible' }}>
+          <div style={{ display: 'flex', borderBottom: '1px solid #23252a' }} role="tablist">
+            {tabs.map(tab => {
+              const isActive = activeTab === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => setActiveTab(tab.key)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', fontSize: 14, fontWeight: 500,
+                    backgroundColor: 'transparent', border: 'none', cursor: 'pointer',
+                    borderBottom: isActive ? '2px solid #5e6ad2' : '2px solid transparent',
+                    color: isActive ? 'var(--color-ink)' : 'var(--color-ink-subtle)',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <tab.icon size={16} aria-hidden="true" />
+                  {tab.label}
+                  {tab.count > 0 && (
+                    <span style={{ fontSize: 11, fontWeight: 600, borderRadius: 9999, padding: '2px 6px', backgroundColor: isActive ? 'rgba(94,106,210,0.15)' : 'var(--color-hairline)', color: isActive ? 'var(--color-primary)' : 'var(--color-ink-subtle)' }}>
+                      {tab.count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
 
-          {/* ── Tab: Allocate / Transfer ──────────────────────────────── */}
+          {/* Tab contents */}
           {activeTab === 'allocate' && (
-            <div className="p-6">
+            <div style={{ padding: 24 }}>
               {loadingData ? (
-                <div className="py-10 text-center">
-                  <Loader2 className="h-7 w-7 animate-spin text-indigo-400 mx-auto mb-3" />
-                  <p className="text-sm text-slate-500">Loading assets and users…</p>
+                <div style={{ padding: '40px 0', textAlign: 'center' }}>
+                  <Loader2 size={28} color='var(--color-primary)' style={{ margin: '0 auto 12px', animation: 'spin 1s linear infinite' }} />
+                  <p style={{ fontSize: 14, color: 'var(--color-ink-subtle)', margin: 0 }}>Loading assets and users…</p>
                 </div>
               ) : (
-                <AllocatePanel
-                  assets={assets}
-                  users={users}
-                  departments={departments}
-                  onSuccess={showSuccess}
-                />
+                <AllocatePanel assets={assets} users={users} departments={departments} onSuccess={showSuccess} />
               )}
             </div>
           )}
 
-          {/* ── Tab: Active Allocations ───────────────────────────────── */}
           {activeTab === 'active' && (
-            <div className="px-6 py-4">
-              <SectionTitle
-                icon={ClipboardList}
-                title="Active Allocations"
-                subtitle="Assets currently assigned to employees"
-              />
-              <ActiveAllocationsList
-                allocations={activeAllocations}
-                loading={loadingData}
-                onReturnSuccess={showSuccess}
-              />
+            <div style={{ padding: '16px 24px' }}>
+              <SectionTitle icon={ClipboardList} title="Active Allocations" subtitle="Assets currently assigned to employees" />
+              <ActiveAllocationsList allocations={activeAllocations} loading={loadingData} onReturnSuccess={showSuccess} />
             </div>
           )}
 
-          {/* ── Tab: Pending Transfers (Manager/Admin only) ───────────── */}
           {activeTab === 'transfers' && isManager && (
-            <div className="px-6 py-4">
-              <div className="flex items-center justify-between mb-4">
-                <SectionTitle
-                  icon={RefreshCw}
-                  title="Pending Transfer Requests"
-                  subtitle="Approve or reject queued asset transfers"
-                />
-                <button
-                  onClick={fetchTransfers}
-                  className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-700 border border-slate-200 hover:border-slate-300 px-2.5 py-1.5 rounded-md transition-colors"
-                >
-                  <RefreshCw className="h-3.5 w-3.5" />
-                  Refresh
+            <div style={{ padding: '16px 24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                <SectionTitle icon={RefreshCw} title="Pending Transfer Requests" subtitle="Approve or reject queued asset transfers" />
+                <button onClick={fetchTransfers} className="btn-tertiary" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <RefreshCw size={14} /> Refresh
                 </button>
               </div>
-              <PendingTransfersList
-                transfers={pendingTransfers}
-                departments={departments}
-                loading={loadingTransfers}
-                onAction={handleTransferAction}
-              />
+              <PendingTransfersList transfers={pendingTransfers} departments={departments} loading={loadingTransfers} onAction={handleTransferAction} />
             </div>
           )}
         </div>
 
-        {/* Role notice for non-managers */}
+        {/* Role notice */}
         {!isManager && (
-          <p className="text-xs text-slate-400 text-center">
+          <p style={{ fontSize: 12, color: 'var(--color-ink-tertiary)', textAlign: 'center' }}>
             Transfer approvals and allocations are restricted to Asset Managers and Admins.
           </p>
         )}

@@ -2,15 +2,15 @@ import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 
 /**
- * PasswordInput — reusable password field with visibility toggle.
+ * PasswordInput — dark canvas version per DESIGN.md
  *
  * Props:
- *   id        {string}   - ties <label> to <input> for accessibility
- *   label     {string}   - field label text
- *   value     {string}   - controlled input value
- *   onChange  {Function} - change handler
- *   error     {string}   - optional inline error message
- *   autoComplete {string} - "current-password" | "new-password"
+ *   id          {string}   ties label to input
+ *   label       {string}   field label (pass "" to suppress)
+ *   value       {string}   controlled value
+ *   onChange    {Function} change handler
+ *   error       {string}   optional inline error
+ *   autoComplete{string}   "current-password" | "new-password"
  */
 export default function PasswordInput({
   id,
@@ -23,12 +23,12 @@ export default function PasswordInput({
   const [visible, setVisible] = useState(false);
 
   return (
-    <div className="space-y-1">
-      <label htmlFor={id} className="block text-sm font-medium text-slate-700">
-        {label}
-      </label>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+      {label && (
+        <label htmlFor={id} className="field-label">{label}</label>
+      )}
 
-      <div className="relative">
+      <div style={{ position: 'relative' }}>
         <input
           id={id}
           name={id}
@@ -38,37 +38,40 @@ export default function PasswordInput({
           onChange={onChange}
           aria-invalid={Boolean(error)}
           aria-describedby={error ? `${id}-error` : undefined}
-          className={[
-            'block w-full rounded-md border px-3 py-2 text-sm text-slate-900 placeholder-slate-400',
-            'pr-10 outline-none',
-            'focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500',
-            'transition-colors duration-150',
-            error
-              ? 'border-red-400 bg-red-50'
-              : 'border-slate-300 bg-white hover:border-slate-400',
-          ].join(' ')}
           placeholder="••••••••"
+          className={`input-field ${error ? 'error' : ''}`}
+          style={{ paddingRight: 38 }}
         />
 
         <button
           type="button"
           aria-label={visible ? 'Hide password' : 'Show password'}
-          onClick={() => setVisible((v) => !v)}
-          className="absolute inset-y-0 right-0 flex items-center px-3 text-slate-500 hover:text-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-r-md transition-colors"
+          onClick={() => setVisible(v => !v)}
+          style={{
+            position:        'absolute',
+            top:             0,
+            right:           0,
+            bottom:          0,
+            display:         'flex',
+            alignItems:      'center',
+            padding:         '0 10px',
+            background:      'transparent',
+            border:          'none',
+            cursor:          'pointer',
+            color:           'var(--color-ink-tertiary)',
+            borderRadius:    '0 8px 8px 0',
+            transition:      'color var(--duration-fast) var(--ease-standard)',
+          }}
+          onMouseEnter={e => e.currentTarget.style.color = 'var(--color-primary-hover)'}
+          onMouseLeave={e => e.currentTarget.style.color = 'var(--color-ink-tertiary)'}
           tabIndex={0}
         >
-          {visible ? (
-            <EyeOff className="h-4 w-4" aria-hidden="true" />
-          ) : (
-            <Eye className="h-4 w-4" aria-hidden="true" />
-          )}
+          {visible ? <EyeOff size={15} aria-hidden="true" /> : <Eye size={15} aria-hidden="true" />}
         </button>
       </div>
 
       {error && (
-        <p id={`${id}-error`} className="text-xs text-red-600 mt-0.5">
-          {error}
-        </p>
+        <p id={`${id}-error`} className="field-error">{error}</p>
       )}
     </div>
   );

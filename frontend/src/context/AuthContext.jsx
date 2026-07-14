@@ -6,6 +6,7 @@ import apiClient from '../api/authApi';
  * Provides currentUser, login(), logout(), and loading state
  * to the entire application via React Context.
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {

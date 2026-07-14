@@ -1,66 +1,85 @@
 /**
- * StatusBadge — shared component for Asset Core modules.
- * Handles Asset, Allocation, Transfer, and Maintenance status enums.
+ * StatusBadge — DESIGN.md dark canvas version
+ *
+ * Shape grammar: pill (9999px radius) = state token. NEVER rounded-rect.
+ * Color grammar: semantic spectrum at ~14% alpha fill + full-strength text.
+ *   - AVAILABLE / RETURNED / RESOLVED / APPROVED (terminal) → success (green)
+ *   - ALLOCATED / ACTIVE / APPROVED (workflow)              → info (blue)
+ *   - RESERVED / TECHNICIAN_ASSIGNED                        → lavender (brand)
+ *   - UNDER_MAINTENANCE / PENDING_APPROVAL / REQUESTED      → warning (amber)
+ *   - LOST / REJECTED / OVERDUE                             → error (red)
+ *   - RETIRED / DISPOSED / COMPLETED                        → neutral (slate)
+ *
+ * Handles: asset | allocation | transfer | maintenance status enums.
  */
 
-const ASSET_STYLES = {
-  AVAILABLE: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200',
-  ALLOCATED: 'bg-blue-50 text-blue-700 ring-1 ring-blue-200',
-  RESERVED: 'bg-purple-50 text-purple-700 ring-1 ring-purple-200',
-  UNDER_MAINTENANCE: 'bg-amber-50 text-amber-700 ring-1 ring-amber-200',
-  LOST: 'bg-red-50 text-red-700 ring-1 ring-red-200',
-  RETIRED: 'bg-slate-100 text-slate-600 ring-1 ring-slate-200',
-  DISPOSED: 'bg-slate-100 text-slate-500 ring-1 ring-slate-200',
+/* ── Inline styles per status — avoids light-mode Tailwind color classes ── */
+const STYLES = {
+  /* Asset lifecycle */
+  AVAILABLE:           { background: 'var(--color-status-available-bg)',   color: 'var(--color-status-available)' },
+  ALLOCATED:           { background: 'var(--color-status-allocated-bg)',  color: 'var(--color-status-allocated)' },
+  RESERVED:            { background: 'var(--color-badge-brand-bg)',  color: 'var(--color-primary-hover)' },
+  UNDER_MAINTENANCE:   { background: 'var(--color-status-maintenance-bg)',  color: 'var(--color-status-maintenance)' },
+  LOST:                { background: 'rgba(248,81,73,0.14)',   color: 'var(--color-semantic-error)' },
+  RETIRED:             { background: 'var(--color-status-disposed-bg)', color: 'var(--color-status-disposed)' },
+  DISPOSED:            { background: 'var(--color-status-disposed-bg)', color: 'var(--color-status-disposed)' },
+
+  /* Allocation statuses */
+  ACTIVE:              { background: 'var(--color-status-allocated-bg)',  color: 'var(--color-status-allocated)' },
+  RETURNED:            { background: 'var(--color-status-available-bg)',   color: 'var(--color-status-available)' },
+  OVERDUE:             { background: 'rgba(248,81,73,0.14)',   color: 'var(--color-semantic-error)' },
+
+  /* Transfer statuses */
+  REQUESTED:           { background: 'var(--color-status-maintenance-bg)',  color: 'var(--color-status-maintenance)' },
+  APPROVED:            { background: 'var(--color-status-available-bg)',   color: 'var(--color-status-available)' },
+  REJECTED:            { background: 'rgba(248,81,73,0.14)',   color: 'var(--color-semantic-error)' },
+  COMPLETED:           { background: 'var(--color-status-disposed-bg)', color: 'var(--color-status-disposed)' },
+
+  /* Maintenance statuses */
+  PENDING_APPROVAL:    { background: 'var(--color-status-maintenance-bg)',  color: 'var(--color-status-maintenance)' },
+  TECHNICIAN_ASSIGNED: { background: 'var(--color-badge-brand-bg)',  color: 'var(--color-primary-hover)' },
+  IN_PROGRESS:         { background: 'var(--color-status-allocated-bg)',  color: 'var(--color-status-allocated)' },
+  RESOLVED:            { background: 'var(--color-status-available-bg)',   color: 'var(--color-status-available)' },
 };
 
-const ALLOCATION_STYLES = {
-  ACTIVE: 'bg-blue-50 text-blue-700 ring-1 ring-blue-200',
-  RETURNED: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200',
-  OVERDUE: 'bg-red-50 text-red-700 ring-1 ring-red-200',
-};
+const FALLBACK = { background: 'var(--color-status-disposed-bg)', color: 'var(--color-status-disposed)' };
 
-const TRANSFER_STYLES = {
-  REQUESTED: 'bg-amber-50 text-amber-700 ring-1 ring-amber-200',
-  APPROVED: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200',
-  REJECTED: 'bg-red-50 text-red-700 ring-1 ring-red-200',
-  COMPLETED: 'bg-slate-100 text-slate-600 ring-1 ring-slate-200',
-};
-
-const MAINTENANCE_STYLES = {
-  PENDING_APPROVAL: 'bg-amber-50 text-amber-700 ring-1 ring-amber-200',
-  APPROVED: 'bg-blue-50 text-blue-700 ring-1 ring-blue-200',
-  TECHNICIAN_ASSIGNED: 'bg-purple-50 text-purple-700 ring-1 ring-purple-200',
-  IN_PROGRESS: 'bg-blue-50 text-blue-700 ring-1 ring-blue-200',
-  RESOLVED: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200',
-  REJECTED: 'bg-red-50 text-red-700 ring-1 ring-red-200',
-};
-
-const STYLE_MAP = {
-  asset: ASSET_STYLES,
-  allocation: ALLOCATION_STYLES,
-  transfer: TRANSFER_STYLES,
-  maintenance: MAINTENANCE_STYLES,
-};
-
-// Formats "UNDER_MAINTENANCE" to "Under Maintenance"
+/* Formats "UNDER_MAINTENANCE" → "Under Maintenance" */
 function formatLabel(status) {
   if (!status) return '—';
   return status
     .split('_')
-    .map(word => word.charAt(0) + word.slice(1).toLowerCase())
+    .map(w => w.charAt(0) + w.slice(1).toLowerCase())
     .join(' ');
 }
 
-export default function StatusBadge({ type = 'asset', status }) {
-  const dictionary = STYLE_MAP[type] || STYLE_MAP.asset;
-  const styleClass = dictionary[status] ?? 'bg-slate-100 text-slate-500 ring-1 ring-slate-200';
-  const label = formatLabel(status);
+/**
+ * @param {Object} props
+ * @param {'asset'|'allocation'|'transfer'|'maintenance'} [props.type]  — unused but kept for API compat
+ * @param {string} props.status — The raw enum value
+ */
+export default function StatusBadge({ status }) {
+  const style = STYLES[status] ?? FALLBACK;
 
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap ${styleClass}`}
+      style={{
+        display:         'inline-flex',
+        alignItems:      'center',
+        borderRadius:    9999,       /* pill — state grammar */
+        padding:         '3px 10px',
+        fontSize:        11,
+        fontWeight:      600,
+        lineHeight:      1.30,
+        letterSpacing:   '0.8px',
+        textTransform:   'uppercase',
+        whiteSpace:      'nowrap',
+        flexShrink:      0,
+        backgroundColor: style.background,
+        color:           style.color,
+      }}
     >
-      {label}
+      {formatLabel(status)}
     </span>
   );
 }

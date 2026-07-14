@@ -35,17 +35,7 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
-          {/* Asset Core (Member 2 - Screen 4) - unprotected for now */}
-          {/* TODO Member 1: wrap these in <ProtectedRoute> + <DashboardLayout> once auth is stable */}
-          <Route path="/assets" element={<AssetDirectory />} />
-          <Route path="/assets/register" element={<AssetRegistrationForm />} />
-          <Route path="/assets/new" element={<AssetRegistrationForm />} />
-          <Route path="/assets/:id" element={<AssetDetail />} />
 
-          {/* Allocation & Transfer (Member 2 - Screen 5) */}
-          {/* TODO Member 1: wrap in <ProtectedRoute> + <DashboardLayout> */}
-          <Route path="/allocation-transfer" element={<AllocationTransferPage />} />
-          <Route path="/allocations" element={<AllocationTransferPage />} />
 
           {/* Components Test */}
           <Route path="/components-test" element={<TestComponents />} />
@@ -58,6 +48,16 @@ export default function App() {
               </ProtectedRoute>
             }
           >
+            {/* Member 2 — Screen 4: Asset Core */}
+            <Route path="/assets" element={<AssetDirectory />} />
+            <Route path="/assets/register" element={<AssetRegistrationForm />} />
+            <Route path="/assets/new" element={<AssetRegistrationForm />} />
+            <Route path="/assets/:id" element={<AssetDetail />} />
+
+            {/* Member 2 — Screen 5: Allocation & Transfer */}
+            <Route path="/allocation-transfer" element={<AllocationTransferPage />} />
+            <Route path="/allocations" element={<AllocationTransferPage />} />
+
             {/* Member 4 — Screen 2: Dashboard */}
             <Route path="/dashboard" element={<DashboardPage />} />
 

@@ -53,10 +53,10 @@ function dateToMinutes(date) {
 }
 
 const STATUS_COLORS = {
-  UPCOMING:  'bg-blue-500',
-  ONGOING:   'bg-green-500',
-  COMPLETED: 'bg-gray-400',
-  CANCELLED: 'bg-red-300',
+  UPCOMING:  { bg: '#1f6feb', text: '#ffffff' },
+  ONGOING:   { bg: '#238636', text: '#ffffff' },
+  COMPLETED: { bg: '#30363d', text: 'var(--color-status-disposed)' },
+  CANCELLED: { bg: '#6e040f', text: '#ffa198' },
 };
 
 const STATUS_LABELS = {
@@ -76,68 +76,48 @@ const CALENDAR_RANGE = CALENDAR_END - CALENDAR_START;
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** Timeline column showing existing bookings as positioned blocks */
-function CalendarTimeline({ bookings, selectedDate }) {
-  const hourSlots = Array.from({ length: 12 }, (_, i) => i + 8); // 8 → 19
-
+function CalendarTimeline({ bookings }) {
+  const hourSlots = Array.from({ length: 12 }, (_, i) => i + 8);
   return (
-    <div className="relative border border-gray-200 rounded-lg overflow-hidden bg-white">
-      {/* Hour grid */}
-      <div className="flex">
+    <div style={{ position: 'relative', border: '1px solid #23252a', borderRadius: 8, overflow: 'hidden', backgroundColor: 'var(--color-surface-1)' }}>
+      <div style={{ display: 'flex' }}>
         {/* Time labels */}
-        <div className="w-16 flex-shrink-0 border-r border-gray-100">
-          {hourSlots.map((hour) => (
-            <div key={hour} className="h-12 flex items-start px-2 pt-1">
-              <span className="text-xs text-gray-400">
+        <div style={{ width: 52, flexShrink: 0, borderRight: '1px solid #23252a' }}>
+          {hourSlots.map(hour => (
+            <div key={hour} style={{ height: 48, display: 'flex', alignItems: 'flex-start', padding: '4px 6px' }}>
+              <span style={{ fontSize: 10, color: 'var(--color-ink-tertiary)', fontFamily: 'var(--font-mono)' }}>
                 {hour === 12 ? '12 PM' : hour > 12 ? `${hour - 12} PM` : `${hour} AM`}
               </span>
             </div>
           ))}
         </div>
-
         {/* Booking area */}
-        <div className="flex-1 relative" style={{ height: `${hourSlots.length * 3}rem` }}>
-          {/* Hour lines */}
+        <div style={{ flex: 1, position: 'relative', height: `${hourSlots.length * 48}px` }}>
           {hourSlots.map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-full border-t border-gray-100"
-              style={{ top: `${i * 3}rem` }}
-            />
+            <div key={i} style={{ position: 'absolute', width: '100%', borderTop: '1px solid #1c1e22', top: `${i * 48}px` }} />
           ))}
-
-          {/* Booking blocks */}
-          {bookings
-            .filter((b) => b.status !== 'CANCELLED')
-            .map((b) => {
-              const startMins = Math.max(dateToMinutes(b.startTime), CALENDAR_START);
-              const endMins   = Math.min(dateToMinutes(b.endTime),   CALENDAR_END);
-              if (endMins <= startMins) return null;
-
-              const topPct    = ((startMins - CALENDAR_START) / CALENDAR_RANGE) * 100;
-              const heightPct = ((endMins - startMins)        / CALENDAR_RANGE) * 100;
-              const colorClass = STATUS_COLORS[b.status] ?? 'bg-blue-400';
-
-              return (
-                <div
-                  key={b.id}
-                  className={`absolute left-1 right-1 rounded px-1 py-0.5 text-white text-xs overflow-hidden ${colorClass} opacity-90 shadow-sm`}
-                  style={{
-                    top:    `${topPct}%`,
-                    height: `${heightPct}%`,
-                    minHeight: '1.25rem',
-                  }}
-                  title={`${b.user?.name ?? 'Unknown'} — ${formatTime(b.startTime)}–${formatTime(b.endTime)}${b.purpose ? ` — ${b.purpose}` : ''}`}
-                >
-                  <span className="font-medium">{b.user?.name ?? 'Booked'}</span>
-                  <span className="ml-1 opacity-80">{formatTime(b.startTime)}–{formatTime(b.endTime)}</span>
-                </div>
-              );
-            })}
+          {bookings.filter(b => b.status !== 'CANCELLED').map(b => {
+            const startMins = Math.max(dateToMinutes(b.startTime), CALENDAR_START);
+            const endMins   = Math.min(dateToMinutes(b.endTime),   CALENDAR_END);
+            if (endMins <= startMins) return null;
+            const topPct    = ((startMins - CALENDAR_START) / CALENDAR_RANGE) * 100;
+            const heightPct = ((endMins   - startMins)      / CALENDAR_RANGE) * 100;
+            const c = STATUS_COLORS[b.status] ?? STATUS_COLORS.UPCOMING;
+            return (
+              <div
+                key={b.id}
+                style={{ position: 'absolute', left: 4, right: 4, borderRadius: 4, padding: '2px 6px', fontSize: 11, overflow: 'hidden', backgroundColor: c.bg, color: c.text, top: `${topPct}%`, height: `${heightPct}%`, minHeight: 20, opacity: 0.92 }}
+                title={`${b.user?.name ?? 'Unknown'} — ${formatTime(b.startTime)}–${formatTime(b.endTime)}${b.purpose ? ` — ${b.purpose}` : ''}`}
+              >
+                <span style={{ fontWeight: 600 }}>{b.user?.name ?? 'Booked'}</span>
+                <span style={{ marginLeft: 4, opacity: 0.75 }}>{formatTime(b.startTime)}–{formatTime(b.endTime)}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
-
-      {bookings.filter((b) => b.status !== 'CANCELLED').length === 0 && (
-        <p className="absolute inset-0 flex items-center justify-center text-sm text-gray-400 pointer-events-none">
+      {bookings.filter(b => b.status !== 'CANCELLED').length === 0 && (
+        <p style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: 'var(--color-ink-tertiary)', pointerEvents: 'none' }}>
           No bookings on this day
         </p>
       )}
@@ -148,23 +128,19 @@ function CalendarTimeline({ bookings, selectedDate }) {
 /** 409 Conflict banner */
 function ConflictBanner({ conflict, requestedStart, requestedEnd, onDismiss }) {
   return (
-    <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
-      <AlertTriangle className="text-red-500 mt-0.5 flex-shrink-0" size={18} />
-      <div className="flex-1 text-sm">
-        <p className="font-semibold text-red-800">Time slot unavailable</p>
-        <p className="text-red-700 mt-0.5">
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '12px 14px', backgroundColor: 'var(--color-semantic-error-bg)', border: '1px solid var(--color-semantic-error)', borderRadius: 8 }}>
+      <AlertTriangle size={16} style={{ color: 'var(--color-semantic-error)', flexShrink: 0, marginTop: 1 }} />
+      <div style={{ flex: 1, fontSize: 13 }}>
+        <p style={{ fontWeight: 600, color: 'var(--color-semantic-error)', margin: 0 }}>Time slot unavailable</p>
+        <p style={{ color: '#ffa198', marginTop: 4 }}>
           Requested {formatTime(requestedStart)} – {formatTime(requestedEnd)} conflicts with an existing booking:
         </p>
-        <p className="text-red-600 mt-1">
+        <p style={{ color: '#ffa198', marginTop: 4 }}>
           <strong>{conflict.bookedBy}</strong> — {formatTime(conflict.startTime)} – {formatTime(conflict.endTime)}
         </p>
       </div>
-      <button
-        onClick={onDismiss}
-        className="text-red-400 hover:text-red-600 flex-shrink-0"
-        aria-label="Dismiss conflict"
-      >
-        <X size={16} />
+      <button onClick={onDismiss} style={{ color: 'var(--color-semantic-error)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0 }} aria-label="Dismiss conflict">
+        <X size={15} />
       </button>
     </div>
   );
@@ -173,32 +149,27 @@ function ConflictBanner({ conflict, requestedStart, requestedEnd, onDismiss }) {
 /** Individual booking card in the list below the calendar */
 function BookingCard({ booking, onCancel }) {
   const canCancel = booking.status === 'UPCOMING' || booking.status === 'ONGOING';
-
+  const c = STATUS_COLORS[booking.status] ?? STATUS_COLORS.UPCOMING;
   return (
-    <div className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
-      <div className="flex items-center gap-3">
-        <span
-          className={`inline-block w-2.5 h-2.5 rounded-full ${STATUS_COLORS[booking.status] ?? 'bg-gray-400'}`}
-        />
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', backgroundColor: 'var(--color-surface-2)', border: '1px solid #23252a', borderRadius: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', backgroundColor: c.bg, flexShrink: 0 }} />
         <div>
-          <p className="text-sm font-medium text-gray-800">
+          <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--color-ink-muted)', margin: 0 }}>
             {formatTime(booking.startTime)} – {formatTime(booking.endTime)}
           </p>
           {booking.purpose && (
-            <p className="text-xs text-gray-500">{booking.purpose}</p>
+            <p style={{ fontSize: 11, color: 'var(--color-ink-subtle)', marginTop: 2 }}>{booking.purpose}</p>
           )}
         </div>
       </div>
-      <div className="flex items-center gap-2">
-        <span className={`text-xs px-2 py-0.5 rounded-full text-white ${STATUS_COLORS[booking.status] ?? 'bg-gray-400'}`}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 9999, backgroundColor: c.bg, color: c.text }}>
           {STATUS_LABELS[booking.status]}
         </span>
         {canCancel && (
-          <button
-            onClick={() => onCancel(booking.id)}
-            className="text-xs text-red-500 hover:text-red-700 border border-red-200 hover:border-red-400 rounded px-2 py-0.5 transition-colors"
-          >
-            Cancel
+          <button onClick={() => onCancel(booking.id)} className="btn-icon-row" aria-label="Cancel booking">
+            <X size={12} />
           </button>
         )}
       </div>
@@ -207,24 +178,21 @@ function BookingCard({ booking, onCancel }) {
 }
 
 function CalendarSkeleton() {
-  const hourSlots = Array.from({ length: 12 }, (_, i) => i + 8); // 8 → 19
+  const hourSlots = Array.from({ length: 12 }, (_, i) => i + 8);
   return (
-    <div className="relative border border-gray-200 rounded-lg overflow-hidden bg-white animate-pulse">
-      <div className="flex">
-        <div className="w-16 flex-shrink-0 border-r border-gray-100">
-          {hourSlots.map((hour) => (
-            <div key={hour} className="h-12 flex items-start px-2 pt-1">
-              <div className="h-3 bg-gray-200 rounded w-8" />
+    <div style={{ position: 'relative', border: '1px solid #23252a', borderRadius: 8, overflow: 'hidden', backgroundColor: 'var(--color-surface-1)' }}>
+      <div style={{ display: 'flex' }}>
+        <div style={{ width: 52, flexShrink: 0, borderRight: '1px solid #23252a' }}>
+          {hourSlots.map(h => (
+            <div key={h} style={{ height: 48, display: 'flex', alignItems: 'flex-start', padding: '4px 6px' }}>
+              <div style={{ height: 10, width: 28, borderRadius: 4, backgroundColor: 'var(--color-hairline)' }} />
             </div>
           ))}
         </div>
-        <div className="flex-1 relative" style={{ height: `${hourSlots.length * 3}rem` }}>
-          {hourSlots.map((_, i) => (
-            <div key={i} className="absolute w-full border-t border-gray-100" style={{ top: `${i * 3}rem` }} />
-          ))}
-          <div className="absolute left-2 rounded px-1 py-0.5 bg-gray-200 w-1/3 top-[10%] h-[15%]" />
-          <div className="absolute left-1/3 rounded px-1 py-0.5 bg-gray-200 w-1/4 top-[40%] h-[20%]" />
-          <div className="absolute left-2/3 rounded px-1 py-0.5 bg-gray-200 w-1/4 top-[70%] h-[10%]" />
+        <div style={{ flex: 1, position: 'relative', height: `${hourSlots.length * 48}px` }}>
+          {hourSlots.map((_, i) => <div key={i} style={{ position: 'absolute', width: '100%', borderTop: '1px solid #1c1e22', top: `${i * 48}px` }} />)}
+          <div style={{ position: 'absolute', left: 4, right: 4, top: '10%', height: '15%', borderRadius: 4, backgroundColor: 'var(--color-hairline)', animation: 'pulse 2s infinite' }} />
+          <div style={{ position: 'absolute', left: '33%', top: '40%', height: '20%', width: '25%', borderRadius: 4, backgroundColor: 'var(--color-hairline)', animation: 'pulse 2s infinite' }} />
         </div>
       </div>
     </div>
@@ -339,218 +307,132 @@ export default function ResourceBookingPage() {
   // Render
   // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div style={{ maxWidth: 900, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-        {/* ── Header ─────────────────────────────────────────────────────── */}
-        <div className="flex items-center justify-between">
+      {/* ── Header ──────────────────────────────────────────────────────── */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Calendar size={18} color='var(--color-primary)' />
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <Calendar size={24} className="text-blue-600" />
-              Resource Booking
-            </h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Book shared resources like conference rooms and projectors.
-            </p>
-          </div>
-          <button
-            onClick={fetchBookings}
-            className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-blue-600 border border-gray-200 hover:border-blue-300 rounded-lg px-3 py-1.5 transition-colors"
-          >
-            <RefreshCw size={14} />
-            Refresh
-          </button>
-        </div>
-
-        {assetLoadError ? (
-          <div className="bg-white border border-red-200 rounded-xl p-8 flex flex-col items-center justify-center text-center shadow-sm">
-            <AlertTriangle size={48} className="text-red-400 mb-4" />
-            <h2 className="text-lg font-semibold text-gray-900 mb-1">Failed to load resources</h2>
-            <p className="text-sm text-gray-500 mb-4">{assetLoadError}</p>
-            <button
-              onClick={() => window.location.reload()}
-              className="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 font-medium rounded-lg px-4 py-2 text-sm transition-colors"
-            >
-              Reload Page
-            </button>
-          </div>
-        ) : (
-          <>
-            {/* ── Asset + Date Selectors ──────────────────────────────────────── */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Asset selector */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Select Resource
-            </label>
-            {loading ? (
-              <div className="h-10 bg-gray-100 rounded-lg animate-pulse" />
-            ) : (
-              <select
-                id="resource-selector"
-                value={selectedAsset?.id ?? ''}
-                onChange={(e) => {
-                  const asset = assets.find((a) => a.id === e.target.value);
-                  setSelectedAsset(asset ?? null);
-                  setConflict(null);
-                  setError('');
-                  setSuccess('');
-                }}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-              >
-                {assets.length === 0 && (
-                  <option value="">No bookable resources found</option>
-                )}
-                {assets.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.assetTag} — {a.name}
-                  </option>
-                ))}
-              </select>
-            )}
-          </div>
-
-          {/* Date selector */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Select Date
-            </label>
-            <input
-              id="booking-date"
-              type="date"
-              value={selectedDate}
-              min={toLocalDateString(new Date())}
-              onChange={(e) => {
-                setSelectedDate(e.target.value);
-                setConflict(null);
-                setError('');
-                setSuccess('');
-              }}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-            />
+            <h1 style={{ fontSize: 20, fontWeight: 700, color: 'var(--color-ink)', margin: 0 }}>Resource Booking</h1>
+            <p style={{ fontSize: 13, color: 'var(--color-ink-subtle)', marginTop: 6 }}>Book shared resources like conference rooms and projectors.</p>
           </div>
         </div>
+        <button onClick={fetchBookings} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, padding: '6px 12px', borderRadius: 6, border: '1px solid #30363d', backgroundColor: '#21262d', color: '#c9d1d9', cursor: 'pointer' }}>
+          <RefreshCw size={13} /> Refresh
+        </button>
+      </div>
 
-        {/* ── Main content: Calendar + Form ──────────────────────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-
-          {/* Calendar timeline — 3/5 width */}
-          <div className="lg:col-span-3 space-y-3">
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-gray-700 flex items-center gap-1.5">
-                <Clock size={14} />
-                {selectedAsset ? `${selectedAsset.name} — ${selectedDate}` : 'Select a resource'}
-              </h2>
-              {fetchingBookings && !calendarError ? (
-                <span className="text-xs text-blue-500 animate-pulse">Loading…</span>
-              ) : null}
-            </div>
-
-            <div className="relative">
-              {fetchingBookings && !calendarError ? (
-                <CalendarSkeleton />
+      {assetLoadError ? (
+        <div style={{ backgroundColor: 'var(--color-surface-2)', border: '1px solid var(--color-semantic-error)', borderRadius: 12, padding: '48px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+          <AlertTriangle size={40} color='var(--color-semantic-error)' style={{ marginBottom: 16 }} />
+          <h2 style={{ fontSize: 16, fontWeight: 600, color: 'var(--color-ink)', margin: 0 }}>Failed to load resources</h2>
+          <p style={{ fontSize: 13, color: 'var(--color-ink-subtle)', marginTop: 6, marginBottom: 16 }}>{assetLoadError}</p>
+          <button onClick={() => window.location.reload()} style={{ padding: '8px 16px', backgroundColor: '#da3633', color: '#ffffff', borderRadius: 6, border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 13 }}>Reload Page</button>
+        </div>
+      ) : (
+        <>
+          {/* ── Selectors ─────────────────────────────────────────────── */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div>
+              <label style={{ display: 'block', fontSize: 12, color: 'var(--color-ink-subtle)', marginBottom: 6 }}>Select Resource</label>
+              {loading ? (
+                <div style={{ height: 36, backgroundColor: 'var(--color-hairline)', borderRadius: 8, animation: 'pulse 2s infinite' }} />
               ) : (
-                <CalendarTimeline bookings={bookings} selectedDate={selectedDate} />
+                <select
+                  id="resource-selector"
+                  value={selectedAsset?.id ?? ''}
+                  onChange={(e) => {
+                    const asset = assets.find(a => a.id === e.target.value);
+                    setSelectedAsset(asset ?? null);
+                    setConflict(null); setError(''); setSuccess('');
+                  }}
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #30363d', backgroundColor: '#0d1117', color: '#c9d1d9', outline: 'none' }}
+                >
+                  {assets.length === 0 && <option value="">No bookable resources found</option>}
+                  {assets.map(a => <option key={a.id} value={a.id}>{a.assetTag} — {a.name}</option>)}
+                </select>
               )}
-              
-              {calendarError && (
-                <div className="absolute inset-0 bg-white/80 backdrop-blur-[2px] flex flex-col items-center justify-center text-center p-4 z-10 rounded-lg border border-red-100">
-                  <AlertTriangle size={32} className="text-red-500 mb-2" />
-                  <p className="text-sm font-semibold text-red-800">Calendar Error</p>
-                  <p className="text-xs text-red-600 mt-1 mb-3">{calendarError}</p>
-                  <button onClick={fetchBookings} className="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-medium rounded border border-red-200 transition-colors">
-                    Retry
-                  </button>
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: 12, color: 'var(--color-ink-subtle)', marginBottom: 6 }}>Select Date</label>
+              <input
+                id="booking-date"
+                type="date"
+                value={selectedDate}
+                min={toLocalDateString(new Date())}
+                onChange={(e) => { setSelectedDate(e.target.value); setConflict(null); setError(''); setSuccess(''); }}
+                style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #30363d', backgroundColor: '#0d1117', color: '#c9d1d9', outline: 'none' }}
+              />
+            </div>
+          </div>
+
+          {/* ── Calendar + Form ──────────────────────────────────────────── */}
+          <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 20, alignItems: 'start' }}>
+
+            {/* Calendar timeline */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <h2 style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-ink-muted)', display: 'flex', alignItems: 'center', gap: 6, margin: 0 }}>
+                  <Clock size={13} />
+                  {selectedAsset ? `${selectedAsset.name} — ${selectedDate}` : 'Select a resource'}
+                </h2>
+                {fetchingBookings && !calendarError && (
+                  <span style={{ fontSize: 11, color: 'var(--color-primary)', animation: 'pulse 2s infinite' }}>Loading…</span>
+                )}
+              </div>
+
+              <div style={{ position: 'relative' }}>
+                {fetchingBookings && !calendarError ? <CalendarSkeleton /> : <CalendarTimeline bookings={bookings} />}
+                {calendarError && (
+                  <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(15,16,17,0.85)', backdropFilter: 'blur(2px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: 16, zIndex: 10, borderRadius: 8, border: '1px solid var(--color-semantic-error)' }}>
+                    <AlertTriangle size={28} color='var(--color-semantic-error)' style={{ marginBottom: 8 }} />
+                    <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-semantic-error)', margin: 0 }}>Calendar Error</p>
+                    <p style={{ fontSize: 12, color: '#ffa198', marginTop: 4, marginBottom: 12 }}>{calendarError}</p>
+                    <button onClick={fetchBookings} style={{ fontSize: 12, padding: '6px 12px', borderRadius: 6, border: '1px solid #30363d', backgroundColor: '#21262d', color: '#c9d1d9', cursor: 'pointer' }}>Retry</button>
+                  </div>
+                )}
+              </div>
+
+              {bookings.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-ink-subtle)', textTransform: 'uppercase' }}>Existing Bookings ({bookings.length})</p>
+                  {bookings.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancel} />)}
                 </div>
               )}
             </div>
 
-            {/* Booking list */}
-            {bookings.length > 0 && (
-              <div className="space-y-2">
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                  Existing Bookings ({bookings.length})
-                </p>
-                {bookings.map((b) => (
-                  <BookingCard key={b.id} booking={b} onCancel={handleCancel} />
-                ))}
-              </div>
-            )}
-          </div>
+            {/* Booking form */}
+            <div style={{ backgroundColor: 'var(--color-surface-2)', padding: 16, borderRadius: 12, border: '1px solid #23252a' }}>
+              <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-ink)', margin: '0 0 16px' }}>New Booking</h2>
 
-          {/* Booking form — 2/5 width */}
-          <div className="lg:col-span-2">
-            <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
-              <h2 className="text-base font-semibold text-gray-900">New Booking</h2>
-
-              {/* Conflict banner */}
               {conflict && (
-                <ConflictBanner
-                  conflict={conflict}
-                  requestedStart={conflictRequested.start}
-                  requestedEnd={conflictRequested.end}
-                  onDismiss={() => setConflict(null)}
-                />
+                <ConflictBanner conflict={conflict} requestedStart={conflictRequested.start} requestedEnd={conflictRequested.end} onDismiss={() => setConflict(null)} />
               )}
-
-              {/* Success message */}
               {success && (
-                <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800">
-                  <CheckCircle size={16} className="text-green-600" />
-                  {success}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', backgroundColor: 'var(--color-status-available-bg)', border: '1px solid var(--color-status-available)', borderRadius: 8, fontSize: 13, color: 'var(--color-status-available)', marginTop: conflict ? 12 : 0, marginBottom: 12 }}>
+                  <CheckCircle size={14} />{success}
                 </div>
               )}
-
-              {/* Generic error */}
               {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                <div style={{ padding: '10px 12px', backgroundColor: 'var(--color-semantic-error-bg)', border: '1px solid var(--color-semantic-error)', borderRadius: 8, fontSize: 13, color: 'var(--color-semantic-error)', marginBottom: 12 }}>
                   {error}
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className="space-y-4" id="booking-form">
-                {/* Start time */}
+              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }} id="booking-form">
                 <div>
-                  <label htmlFor="start-time" className="block text-sm font-medium text-gray-700 mb-1">
-                    Start Time
-                  </label>
-                  <input
-                    id="start-time"
-                    type="time"
-                    value={startTime}
-                    onChange={(e) => {
-                      setStartTime(e.target.value);
-                      setConflict(null);
-                      setSuccess('');
-                      setError('');
-                    }}
-                    required
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  <label htmlFor="start-time" style={{ display: 'block', fontSize: 12, color: 'var(--color-ink-subtle)', marginBottom: 6 }}>Start Time</label>
+                  <input id="start-time" type="time" value={startTime} required style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #30363d', backgroundColor: '#0d1117', color: '#c9d1d9', outline: 'none' }}
+                    onChange={e => { setStartTime(e.target.value); setConflict(null); setSuccess(''); setError(''); }} />
                 </div>
-
-                {/* End time */}
                 <div>
-                  <label htmlFor="end-time" className="block text-sm font-medium text-gray-700 mb-1">
-                    End Time
-                  </label>
-                  <input
-                    id="end-time"
-                    type="time"
-                    value={endTime}
-                    onChange={(e) => {
-                      setEndTime(e.target.value);
-                      setConflict(null);
-                      setSuccess('');
-                      setError('');
-                    }}
-                    required
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  {/* Duration hint */}
+                  <label htmlFor="end-time" style={{ display: 'block', fontSize: 12, color: 'var(--color-ink-subtle)', marginBottom: 6 }}>End Time</label>
+                  <input id="end-time" type="time" value={endTime} required style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #30363d', backgroundColor: '#0d1117', color: '#c9d1d9', outline: 'none' }}
+                    onChange={e => { setEndTime(e.target.value); setConflict(null); setSuccess(''); setError(''); }} />
                   {startTime && endTime && (
-                    <p className="text-xs text-gray-400 mt-1">
-                      Duration: {Math.max(0, timeToMinutes(endTime) - timeToMinutes(startTime))} min
-                      &nbsp;(min 15 min, max 8 h)
+                    <p style={{ fontSize: 11, color: 'var(--color-ink-tertiary)', marginTop: 4 }}>
+                      Duration: {Math.max(0, timeToMinutes(endTime) - timeToMinutes(startTime))} min (min 15, max 8h)
                     </p>
                   )}
                 </div>
@@ -587,7 +469,6 @@ export default function ResourceBookingPage() {
               </form>
             </div>
           </div>
-        </div>
       </>
     )}
   </div>

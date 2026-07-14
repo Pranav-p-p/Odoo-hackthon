@@ -26,13 +26,23 @@ const PAGE_SIZE = 20;
 // ─── Small shared helpers ─────────────────────────────────────────────────────
 function SelectFilter({ id, label, value, onChange, children }) {
   return (
-    <div className="flex flex-col gap-1">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <label htmlFor={id} className="sr-only">{label}</label>
       <select
         id={id}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none min-w-[140px]"
+        style={{
+          borderRadius:    8,
+          border:          '1px solid #23252a',
+          backgroundColor: 'var(--color-surface-1)',
+          color:           'var(--color-ink)',
+          padding:         '6px 12px',
+          fontSize:        13,
+          outline:         'none',
+          minWidth:        140,
+          cursor:          'pointer',
+        }}
       >
         {children}
       </select>
@@ -157,53 +167,51 @@ export default function AssetDirectory() {
 
   // ── Render ───────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div style={{ maxWidth: 1280, margin: '0 auto' }}>
       {/* ── Page Header ──────────────────────────────────────────────────────── */}
-      <div className="bg-white border-b border-slate-200 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Package className="h-5 w-5 text-indigo-600" aria-hidden="true" />
-            <div>
-              <h1 className="text-lg font-semibold text-slate-900">Asset Directory</h1>
-              <p className="text-xs text-slate-500">
-                {pagination.total > 0
-                  ? `${pagination.total} asset${pagination.total !== 1 ? 's' : ''} total`
-                  : 'All registered assets'}
-              </p>
-            </div>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Package size={18} color='var(--color-primary)' aria-hidden="true" />
+          <div>
+            <h1 className="type-display-md" style={{ color: 'var(--color-ink)', margin: 0 }}>Asset Directory</h1>
+            <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)', marginTop: 4 }}>
+              {pagination.total > 0
+                ? `${pagination.total} asset${pagination.total !== 1 ? 's' : ''} total`
+                : 'All registered assets'}
+            </p>
           </div>
-
-          {/* Register button — ASSET_MANAGER only */}
-          {isAssetManager && (
-            <button
-              id="register-asset-btn"
-              onClick={() => navigate('/assets/new')}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 transition-colors"
-            >
-              <Plus className="h-4 w-4" aria-hidden="true" />
-              Register Asset
-            </button>
-          )}
         </div>
+
+        {/* Register button — ASSET_MANAGER only */}
+        {isAssetManager && (
+          <button
+            id="register-asset-btn"
+            onClick={() => navigate('/assets/new')}
+            className="btn-primary"
+            style={{ flexShrink: 0 }}
+          >
+            <Plus size={14} aria-hidden="true" />
+            Register Asset
+          </button>
+        )}
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-6 space-y-4">
-        {/* ── Filters row ────────────────────────────────────────────────────── */}
-        <div className="flex flex-wrap items-end gap-3">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {/* ── Filters / sticky filter bar ──────────────────────────────────── */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 10 }}>
           {/* Search */}
-          <div className="flex-1 min-w-[200px]">
+          <div style={{ flex: '1 1 200px', position: 'relative' }}>
             <label htmlFor="asset-search" className="sr-only">Search assets</label>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
-              <input
-                id="asset-search"
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search by tag, name, or serial…"
-                className="w-full pl-9 pr-3 py-1.5 text-sm border border-slate-300 rounded-md bg-white outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-              />
-            </div>
+            <Search size={14} color='var(--color-ink-tertiary)' style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+            <input
+              id="asset-search"
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by tag, name, or serial…"
+              className="input-field"
+              style={{ paddingLeft: 32 }}
+            />
           </div>
 
           {/* Status filter */}
@@ -232,17 +240,13 @@ export default function AssetDirectory() {
 
           {/* Clear filters */}
           {hasFilters && (
-            <button
-              onClick={clearFilters}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-slate-600 border border-slate-300 rounded-md bg-white hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-indigo-500 transition-colors"
-            >
-              <X className="h-3.5 w-3.5" />
+            <button onClick={clearFilters} className="btn-secondary" style={{ padding: '6px 12px', height: 'auto' }}>
+              <X size={13} />
               Clear
             </button>
           )}
 
-          {/* Filters icon for visual polish */}
-          <SlidersHorizontal className="h-4 w-4 text-slate-400 self-center" aria-hidden="true" />
+          <SlidersHorizontal size={14} color='var(--color-ink-subtle)' aria-hidden="true" />
         </div>
 
         {/* ── Error state ──────────────────────────────────────────────────────── */}
@@ -250,39 +254,34 @@ export default function AssetDirectory() {
           <div
             role="alert"
             aria-live="polite"
-            className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+            style={{ display: 'flex', alignItems: 'flex-start', gap: 10, backgroundColor: 'var(--color-semantic-error-bg)', border: '1px solid var(--color-semantic-error)', borderRadius: 8, padding: '10px 14px', color: 'var(--color-semantic-error)', fontSize: 13 }}
           >
-            <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+            <AlertCircle size={14} style={{ flexShrink: 0, marginTop: 1 }} />
             <span>{error}</span>
           </div>
         )}
 
         {/* ── Table ─────────────────────────────────────────────────────────── */}
-        <div className="rounded-lg border border-slate-200 bg-white overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-slate-100 text-sm" aria-label="Asset directory">
+        <div className="data-table">
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ minWidth: '100%', borderCollapse: 'collapse' }} aria-label="Asset directory">
               <thead>
-                <tr className="bg-slate-50 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                  <th className="px-4 py-3 w-28">Tag</th>
-                  <th className="px-4 py-3">Name</th>
-                  <th className="px-4 py-3">Category</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Department</th>
-                  <th className="px-4 py-3">Location</th>
-                  <th className="px-4 py-3 text-center">Bookable</th>
-                  <th className="px-4 py-3 w-10">
-                    <span className="sr-only">Actions</span>
-                  </th>
+                <tr style={{ backgroundColor: 'var(--color-surface-2)' }}>
+                  {['Tag','Name','Category','Status','Department','Location','Bookable',''].map((h, i) => (
+                    <th key={i} className="data-table-header" style={{ textAlign: i === 6 ? 'center' : 'left', width: i === 7 ? 40 : undefined }}>
+                      {h || <span className="sr-only">Actions</span>}
+                    </th>
+                  ))}
                 </tr>
               </thead>
 
-              <tbody className="divide-y divide-slate-100">
+              <tbody>
                 {/* Loading state */}
                 {loading && (
                   <tr>
-                    <td colSpan={8} className="py-16 text-center">
-                      <Loader2 className="h-6 w-6 animate-spin text-indigo-500 mx-auto mb-2" />
-                      <p className="text-sm text-slate-500">Loading assets…</p>
+                    <td colSpan={8} style={{ padding: '48px 16px', textAlign: 'center' }}>
+                      <Loader2 size={22} color='var(--color-primary)' style={{ animation: 'spin 1s linear infinite', margin: '0 auto 8px' }} />
+                      <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)' }}>Loading assets…</p>
                     </td>
                   </tr>
                 )}
@@ -290,28 +289,18 @@ export default function AssetDirectory() {
                 {/* Empty state */}
                 {!loading && assets.length === 0 && !error && (
                   <tr>
-                    <td colSpan={8} className="py-16 text-center">
-                      <Package className="h-10 w-10 text-slate-300 mx-auto mb-3" />
+                    <td colSpan={8} style={{ padding: '48px 16px', textAlign: 'center' }}>
+                      <Package size={32} color='var(--color-hairline-tertiary)' style={{ margin: '0 auto 12px' }} />
                       {hasFilters ? (
                         <>
-                          <p className="text-sm font-medium text-slate-600">No assets match your filters.</p>
-                          <button
-                            onClick={clearFilters}
-                            className="mt-2 text-sm text-indigo-600 hover:underline"
-                          >
-                            Clear filters
-                          </button>
+                          <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)' }}>No assets match your filters.</p>
+                          <button onClick={clearFilters} className="text-link" style={{ marginTop: 8, fontSize: 13 }}>Clear filters</button>
                         </>
                       ) : (
                         <>
-                          <p className="text-sm font-medium text-slate-600">No assets registered yet.</p>
+                          <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)' }}>No assets registered yet.</p>
                           {isAssetManager && (
-                            <button
-                              onClick={() => navigate('/assets/new')}
-                              className="mt-2 text-sm text-indigo-600 hover:underline"
-                            >
-                              Register the first asset →
-                            </button>
+                            <button onClick={() => navigate('/assets/new')} className="text-link" style={{ marginTop: 8, fontSize: 13 }}>Register the first asset →</button>
                           )}
                         </>
                       )}
@@ -324,66 +313,65 @@ export default function AssetDirectory() {
                   <tr
                     key={asset.id}
                     onClick={() => navigate(`/assets/${asset.id}`)}
-                    className="hover:bg-slate-50 cursor-pointer transition-colors group"
+                    className="data-table-row"
                     tabIndex={0}
                     role="button"
+                    style={{ cursor: 'pointer' }}
                     aria-label={`View asset ${asset.assetTag} — ${asset.name}`}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') navigate(`/assets/${asset.id}`);
                     }}
                   >
-                    {/* Asset Tag */}
-                    <td className="px-4 py-3">
-                      <span className="font-mono text-xs font-semibold text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded">
+                    {/* Asset Tag — mono font per DESIGN.md */}
+                    <td style={{ padding: '12px 16px' }}>
+                      <span className="type-mono" style={{ color: 'var(--color-ink-subtle)', backgroundColor: 'var(--color-surface-2)', padding: '2px 6px', borderRadius: 4 }}>
                         {asset.assetTag}
                       </span>
                     </td>
 
                     {/* Name */}
-                    <td className="px-4 py-3">
-                      <div className="font-medium text-slate-800 group-hover:text-indigo-700 transition-colors">
-                        {asset.name}
-                      </div>
+                    <td style={{ padding: '12px 16px' }}>
+                      <p style={{ fontWeight: 500, fontSize: 13, color: 'var(--color-ink)', margin: 0 }}>{asset.name}</p>
                       {asset.serialNumber && (
-                        <div className="text-xs text-slate-400 mt-0.5">{asset.serialNumber}</div>
+                        <p className="type-mono" style={{ color: 'var(--color-ink-tertiary)', marginTop: 2 }}>{asset.serialNumber}</p>
                       )}
                     </td>
 
                     {/* Category */}
-                    <td className="px-4 py-3 text-slate-600">
-                      {asset.category?.name ?? '—'}
+                    <td style={{ padding: '12px 16px', fontSize: 13, color: 'var(--color-ink-muted)' }}>
+                      {asset.category?.name ?? <span style={{ color: 'var(--color-hairline-tertiary)' }}>—</span>}
                     </td>
 
                     {/* Status */}
-                    <td className="px-4 py-3">
+                    <td style={{ padding: '12px 16px' }}>
                       <StatusBadge status={asset.status} />
                     </td>
 
                     {/* Department */}
-                    <td className="px-4 py-3 text-slate-600">
-                      {asset.department?.name ?? <span className="text-slate-300">—</span>}
+                    <td style={{ padding: '12px 16px', fontSize: 13, color: 'var(--color-ink-muted)' }}>
+                      {asset.department?.name ?? <span style={{ color: 'var(--color-hairline-tertiary)' }}>—</span>}
                     </td>
 
                     {/* Location */}
-                    <td className="px-4 py-3 text-slate-600">
-                      {asset.location ?? <span className="text-slate-300">—</span>}
+                    <td style={{ padding: '12px 16px', fontSize: 13, color: 'var(--color-ink-muted)' }}>
+                      {asset.location ?? <span style={{ color: 'var(--color-hairline-tertiary)' }}>—</span>}
                     </td>
 
                     {/* Bookable */}
-                    <td className="px-4 py-3 text-center">
+                    <td style={{ padding: '12px 16px', textAlign: 'center' }}>
                       {asset.isBookable ? (
-                        <span title="Bookable resource" className="inline-flex items-center gap-1 text-xs text-indigo-600">
-                          <BookOpen className="h-3.5 w-3.5" />
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--color-primary)' }}>
+                          <BookOpen size={12} />
                           Yes
                         </span>
                       ) : (
-                        <span className="text-xs text-slate-300">—</span>
+                        <span style={{ fontSize: 12, color: 'var(--color-hairline-tertiary)' }}>—</span>
                       )}
                     </td>
 
-                    {/* Detail link icon */}
-                    <td className="px-4 py-3 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <ExternalLink className="h-3.5 w-3.5" />
+                    {/* Detail icon */}
+                    <td style={{ padding: '12px 16px', color: 'var(--color-ink-tertiary)' }}>
+                      <ExternalLink size={13} />
                     </td>
                   </tr>
                 ))}
@@ -393,36 +381,36 @@ export default function AssetDirectory() {
 
           {/* ── Pagination ─────────────────────────────────────────────────── */}
           {!loading && assets.length > 0 && (
-            <div className="flex items-center justify-between border-t border-slate-100 px-4 py-3 bg-slate-50 text-sm text-slate-600">
-              <span>
-                Showing {(pagination.page - 1) * pagination.limit + 1}–
-                {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #23252a', padding: '10px 16px', backgroundColor: 'var(--color-surface-1)' }}>
+              <span className="type-caption" style={{ color: 'var(--color-ink-subtle)' }}>
+                Showing {(pagination.page - 1) * pagination.limit + 1}–{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}
               </span>
-              <div className="flex items-center gap-2">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page <= 1}
-                  className="p-1 rounded hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors focus-visible:ring-2 focus-visible:ring-indigo-500"
+                  className="btn-icon-row"
                   aria-label="Previous page"
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft size={14} />
                 </button>
-                <span className="px-1 text-xs">
-                  Page {pagination.page} of {totalPages}
+                <span className="type-caption" style={{ color: 'var(--color-ink-subtle)' }}>
+                  {pagination.page} / {totalPages}
                 </span>
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page >= totalPages}
-                  className="p-1 rounded hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors focus-visible:ring-2 focus-visible:ring-indigo-500"
+                  className="btn-icon-row"
                   aria-label="Next page"
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight size={14} />
                 </button>
               </div>
             </div>
           )}
         </div>
       </div>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }
