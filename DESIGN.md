@@ -4,49 +4,66 @@ name: AssetFlow-design-system
 description: A dark-canvas operations interface for AssetFlow, an enterprise asset & resource management system. The system is built on Linear's surface-ladder + hairline depth philosophy over a near-black canvas, with a single chromatic brand accent (Linear lavender-blue) reserved strictly for interaction chrome (brand mark, primary CTA, focus rings, link emphasis) and a separate semantic spectrum reserved strictly for data states (asset lifecycle, workflow stages, severity). Type runs a single sans family (Inter) with Apple-tight negative tracking on display sizes; JetBrains Mono carries asset IDs, audit codes, and timestamps. Shape language is rounded-rect at 8px for every action, with the pill reserved exclusively for state tokens — rounded-rect reads as "action," pill reads as "state." Motion is functional and restrained (spring-physics Kanban drags, staggered entrance, route view transitions, KPI count-ups), degrading cleanly under prefers-reduced-motion. No drop shadows on chrome — depth comes from the four-step surface ladder and three hairline weights.
 
 colors:
-  # --- Brand / interaction accent (the ONE chromatic interaction color) ---
-  primary: "#5e6ad2"
-  primary-hover: "#828fff"
-  primary-focus: "#5e69d1"
-  on-primary: "#ffffff"
-  brand-secure: "#7a7fad"
+  # ──────────────────────────────────────────────────────────────────────────
+  # Dual-theme tokens. Every color carries BOTH a `dark` and `light` value so the
+  # rest of this file keeps resolving `{colors.token-name}` regardless of active
+  # theme. Implementation maps each token to a CSS custom property whose value
+  # flips with `[data-theme]` on <html> (see "Theming & Toggle Implementation").
+  #
+  # `primary` is intentionally identical in both themes — the brand mark must
+  # read the same against black and white. Surfaces, hairlines, ink, and the
+  # semantic spectrum are theme-specific; semantic values are deepened for light
+  # mode so they clear WCAG AA on a near-white canvas (the dark values were tuned
+  # for near-black and several would fail unchanged).
+  # ──────────────────────────────────────────────────────────────────────────
 
-  # --- Dark surface ladder (canvas → 4 lifts) ---
-  canvas: "#010102"
-  surface-1: "#0f1011"
-  surface-2: "#141516"
-  surface-3: "#18191a"
-  surface-4: "#191a1b"
+  # --- Brand / interaction accent (the ONE chromatic interaction color) ---
+  primary:        { dark: "#5e6ad2", light: "#5e6ad2" }
+  primary-hover:  { dark: "#828fff", light: "#4c56b8" }
+  primary-focus:  { dark: "#5e69d1", light: "#5e69d1" }
+  on-primary:     { dark: "#ffffff", light: "#ffffff" }
+  brand-secure:   { dark: "#7a7fad", light: "#5f6491" }
+
+  # --- Surface ladder (canvas → 4 lifts) — inverts in light mode ---
+  canvas:    { dark: "#010102", light: "#fafbfc" }
+  surface-1: { dark: "#0f1011", light: "#f4f5f7" }
+  surface-2: { dark: "#141516", light: "#eef0f3" }
+  surface-3: { dark: "#18191a", light: "#e8eaee" }
+  surface-4: { dark: "#191a1b", light: "#e3e5ea" }
 
   # --- Hairlines (three weights) ---
-  hairline: "#23252a"
-  hairline-strong: "#34343a"
-  hairline-tertiary: "#3e3e44"
+  hairline:          { dark: "#23252a", light: "#e2e4e8" }
+  hairline-strong:   { dark: "#34343a", light: "#d1d4da" }
+  hairline-tertiary: { dark: "#3e3e44", light: "#c2c6ce" }
 
-  # --- Text on dark ---
-  ink: "#f7f8f8"
-  ink-muted: "#d0d6e0"
-  ink-subtle: "#8a8f98"
-  ink-tertiary: "#62666d"
-
-  # --- Inverse (light) escape hatch: printable reports & light data tables ONLY ---
-  inverse-canvas: "#ffffff"
-  inverse-surface-1: "#f5f6f6"
-  inverse-ink: "#000000"
-  inverse-hairline: "#e0e0e0"
+  # --- Text ramp ---
+  ink:          { dark: "#f7f8f8", light: "#14151a" }
+  ink-muted:    { dark: "#d0d6e0", light: "#3d4048" }
+  ink-subtle:   { dark: "#8a8f98", light: "#6b6f78" }
+  ink-tertiary: { dark: "#62666d", light: "#8a8e97" }
 
   # --- Semantic spectrum (data states & system feedback; NEVER on chrome/buttons) ---
-  semantic-success: "#3fb950"
-  semantic-info: "#58a6ff"
-  semantic-warning: "#d29922"
-  semantic-error: "#f85149"
-  semantic-overlay: "#000000"
+  semantic-success: { dark: "#3fb950", light: "#1a7f37" }
+  semantic-info:    { dark: "#58a6ff", light: "#0969da" }
+  semantic-warning: { dark: "#d29922", light: "#9a6700" }
+  semantic-error:   { dark: "#f85149", light: "#cf222e" }
+  # Overlay stays black in both themes — a modal scrim must recede the background regardless of theme.
+  semantic-overlay: { dark: "#000000", light: "#000000" }
 
   # --- Asset-lifecycle state palette (maps onto the semantic spectrum + neutral) ---
-  status-available: "#3fb950"
-  status-allocated: "#58a6ff"
-  status-maintenance: "#d29922"
-  status-disposed: "#8b949e"
+  # status-available / -allocated / -maintenance alias semantic-success / -info / -warning
+  # in BOTH themes, so they inherit the theme-correct value automatically.
+  status-available:   "{colors.semantic-success}"
+  status-allocated:   "{colors.semantic-info}"
+  status-maintenance: "{colors.semantic-warning}"
+  status-disposed:    { dark: "#8b949e", light: "#6e7781" }
+
+  # --- Print / PDF export escape hatch (NOT the light theme — see Print / PDF Export) ---
+  # Opaque, full-strength, no alpha compositing — tuned for ink on paper, not pixels.
+  inverse-canvas:   "#ffffff"
+  inverse-surface-1: "#f5f6f6"
+  inverse-ink:      "#000000"
+  inverse-hairline: "#e0e0e0"
 
 typography:
   hero-display:
@@ -439,50 +456,72 @@ Type is a **single sans family — Inter** — at display (weight 600, Apple-tig
 > **Synthesis basis:** Surface ladder, hairlines, text ramp, and the lavender accent are inherited from Linear. The semantic spectrum and asset-lifecycle palette adapt Claude's documented semantic colors (the only source with a semantic system) to GitHub-dark-derived values chosen for contrast on near-black. Apple contributes the *discipline* of a single interaction accent (transferred from blue to lavender) — not a hue.
 
 ### Brand / Interaction Accent
-- **Lavender-Blue** (`{colors.primary}` — #5e6ad2): The single interaction-chrome color. Primary CTA fill, brand mark, link emphasis, active-nav indicator. Inherited from Linear because it is cool, precise, and instrument-panel in feel — correct for an operational tool. Coral (Claude) was rejected as too warm/humanist for asset allocation; Apple's blue was rejected as too generically corporate and too close to a default link blue.
-- **Lavender Hover** (`{colors.primary-hover}` — #828fff): Hovered state of the primary CTA — a brighter sibling that reads on dark.
-- **Lavender Focus** (`{colors.primary-focus}` — #5e69d1): Focus-ring tint for focused inputs and buttons. Used as a 2px outline at ~50% opacity, never as a fill.
-- **Brand Secure** (`{colors.brand-secure}` — #7a7fad): A muted lavender-gray reserved for security/audit surfaces.
-- **On Primary** (`{colors.on-primary}` — #ffffff): Text on lavender fills.
+- **Lavender-Blue** (`{colors.primary}` — #5e6ad2, identical in both themes): The single interaction-chrome color. Primary CTA fill, brand mark, link emphasis, active-nav indicator. Inherited from Linear because it is cool, precise, and instrument-panel in feel — correct for an operational tool. Coral (Claude) was rejected as too warm/humanist for asset allocation; Apple's blue was rejected as too generically corporate and too close to a default link blue. The brand mark keeps the same hue in light and dark so the brand reads identically either way (Linear does the same in production).
+- **Lavender Hover** (`{colors.primary-hover}` — dark #828fff / light #4c56b8): Hovered state of the primary CTA. Dark brightens (a brighter sibling that reads on near-black); light *deepens* — brightening a mid-tone lavender further would wash out against a white fill, so deepening preserves contrast the same way brightening does against black.
+- **Lavender Focus** (`{colors.primary-focus}` — #5e69d1, identical in both themes): Focus-ring tint for focused inputs and buttons. Used as a 2px outline at ~50% opacity, never as a fill.
+- **Brand Secure** (`{colors.brand-secure}` — dark #7a7fad / light #5f6491): A muted lavender-gray reserved for security/audit surfaces.
+- **On Primary** (`{colors.on-primary}` — #ffffff, identical in both themes): Text on lavender fills.
 
 ### Surface Ladder (depth without shadow)
-- **Canvas** (`{colors.canvas}` — #010102): The page floor — near-pure-black with Linear's faint blue tint. The anchor surface.
-- **Surface 1** (`{colors.surface-1}` — #0f1011): One lift — feature cards, KPI cards, data-table shells, Kanban columns, sidebar items.
-- **Surface 2** (`{colors.surface-2}` — #141516): Two lifts — Kanban cards, modal panels, hovered table rows, selected filter tabs.
-- **Surface 3** (`{colors.surface-3}` — #18191a): Three lifts — command palette, toasts, dropdown menus.
-- **Surface 4** (`{colors.surface-4}` — #191a1b): Four lifts — the deepest floating chrome.
+- **Canvas** (`{colors.canvas}` — dark #010102 / light #fafbfc): The page floor. Dark: near-pure-black with Linear's faint blue tint. Light: near-white with the same faint cool tint. The anchor surface.
+- **Surface 1** (`{colors.surface-1}` — dark #0f1011 / light #f4f5f7): One lift — feature cards, KPI cards, data-table shells, Kanban columns, sidebar items.
+- **Surface 2** (`{colors.surface-2}` — dark #141516 / light #eef0f3): Two lifts — Kanban cards, modal panels, hovered table rows, selected filter tabs.
+- **Surface 3** (`{colors.surface-3}` — dark #18191a / light #e8eaee): Three lifts — command palette, toasts, dropdown menus.
+- **Surface 4** (`{colors.surface-4}` — dark #191a1b / light #e3e5ea): Four lifts — the deepest floating chrome.
+
+In dark, each step *lifts* (brightens) toward the viewer; in light, each step *deepens* (darkens). The light steps are tighter together than dark's because white surfaces contrast against each other more sharply than near-black ones — the values are tuned to keep the ladder legible without banding.
 
 ### Hairlines (three weights — the other half of the depth system)
-- **Hairline** (`{colors.hairline}` — #23252a): Default 1px border on cards, dividers, sidebar edge.
-- **Hairline Strong** (`{colors.hairline-strong}` — #34343a): Heavier 1px on modal/command-palette borders and table headers.
-- **Hairline Tertiary** (`{colors.hairline-tertiary}` — #3e3e44): For nested surfaces inside already-lifted panels.
+- **Hairline** (`{colors.hairline}` — dark #23252a / light #e2e4e8): Default 1px border on cards, dividers, sidebar edge.
+- **Hairline Strong** (`{colors.hairline-strong}` — dark #34343a / light #d1d4da): Heavier 1px on modal/command-palette borders and table headers.
+- **Hairline Tertiary** (`{colors.hairline-tertiary}` — dark #3e3e44 / light #c2c6ce): For nested surfaces inside already-lifted panels.
 
-### Text on Dark
-- **Ink** (`{colors.ink}` — #f7f8f8): Headlines, KPI values, primary data.
-- **Ink Muted** (`{colors.ink-muted}` — #d0d6e0): Secondary copy, descriptions.
-- **Ink Subtle** (`{colors.ink-subtle}` — #8a8f98): Meta info, inactive nav, footer columns.
-- **Ink Tertiary** (`{colors.ink-tertiary}` — #62666d): Disabled text, footnotes.
+### Text Ramp
+- **Ink** (`{colors.ink}` — dark #f7f8f8 / light #14151a): Headlines, KPI values, primary data.
+- **Ink Muted** (`{colors.ink-muted}` — dark #d0d6e0 / light #3d4048): Secondary copy, descriptions.
+- **Ink Subtle** (`{colors.ink-subtle}` — dark #8a8f98 / light #6b6f78): Meta info, inactive nav, footer columns.
+- **Ink Tertiary** (`{colors.ink-tertiary}` — dark #62666d / light #8a8e97): Disabled text, footnotes.
 
-### Inverse (Light) Escape Hatch
+### Light Theme (full parity with the dark theme)
+
+AssetFlow ships **two themes**, switchable at runtime via a single toggle with no page reload — the same pattern GitHub, Linear, and Vercel use. Dark is the default/root identity; light is a first-class override, not an afterthought. Both themes resolve through the **exact same token names** (`{colors.canvas}`, `{colors.surface-1}`, `{colors.ink}`, `{colors.primary}`, the semantic spectrum, …) — only the *values* differ, so every `{colors.*}` reference elsewhere in this file reads correctly in either theme. There is no parallel set of light-only component specs to maintain.
+
+The light palette mirrors the dark palette's structure rather than being invented from scratch: the **same surface ladder** (five steps, canvas → surface-4), the **same three hairline weights**, and the **same ink ramp** (four steps) — inverted in luminance direction. Light surface steps are tighter together than dark's because white surfaces read contrast against each other more sharply than near-black ones; the values are tuned to keep the ladder legible without banding.
+
+- **Canvas** (`{colors.canvas}` — #fafbfc light): a near-white page floor with a faint cool tint, mirroring the dark canvas's faint blue tint.
+- **Surface ladder** (`{colors.surface-1}` #f4f5f7 → `{colors.surface-4}` #e3e5ea): each lift darkens the canvas slightly — the inverse of the dark ladder, where each lift brightens it. Depth still comes from surface lift + hairlines, never shadows on chrome.
+- **Hairlines** (`{colors.hairline}` #e2e4e8 → `{colors.hairline-tertiary}` #c2c6ce): three weights, darker on the lighter canvas.
+- **Ink ramp** (`{colors.ink}` #14151a → `{colors.ink-tertiary}` #8a8e97): four steps, inverted from the dark ramp. Headlines and primary data on the near-white canvas use the deepest ink; meta and disabled text use the lightest.
+
+A few non-obvious rules govern the light values:
+
+- **`{colors.primary}` is identical in both themes** (#5e6ad2). The brand mark must read the same against black and white — Linear does this in production. Only `{colors.primary-hover}` deepens (#4c56b8) instead of brightening, because brightening a mid-tone lavender further would wash out against a white fill; deepening preserves contrast the same way brightening does against black.
+- **The semantic spectrum and `status-disposed` are deepened** for light mode (success #1a7f37, info #0969da, warning #9a6700, error #cf222e, disposed #6e7781), not reused verbatim. The dark values were tuned for contrast on near-black (see Known Gaps); several would fail WCAG AA unchanged against white. The deepened values are GitHub-light-derived.
+- **`{colors.semantic-overlay}` stays black** (#000000) in both themes. A modal scrim's job is to recede the background regardless of theme.
+- **Two heavy shadows are reduced, not reused** for light mode. The dark alphas (modal `rgba(0,0,0,0.44)`, palette `rgba(0,0,0,0.56)`) exist because shadows barely register on near-black; on white they would be oppressive. Light mode starts at ~`rgba(0,0,0,0.12)` (modal) and ~`rgba(0,0,0,0.16)` (palette), tuned by eye. See Elevation.
+- **`{component.sticky-filter-bar}` gets a white-based frosted fill** (`rgba(255,255,255,0.75)`) in light mode, not the near-black `rgba(15,16,17,0.80)`. The blur + saturate stays the same.
+
+### Print / PDF Export
+
 - **Inverse Canvas** (`{colors.inverse-canvas}` — #ffffff), **Inverse Surface 1** (`{colors.inverse-surface-1}` — #f5f6f6), **Inverse Ink** (`{colors.inverse-ink}` — #000000), **Inverse Hairline** (`{colors.inverse-hairline}` — #e0e0e0).
 
-These exist for **one purpose only**: printable audit reports and the rare light-background data table that must export to paper or PDF. They are **not a second theme** — AssetFlow ships dark-only. The inverse tokens are a deliberate, named accommodation of a real ERP need (auditable, printable artifacts), not a light-mode system.
+These exist for **one purpose only**: printable audit reports and the rare data export that must render to paper or PDF. Print has different constraints from an on-screen light theme — **ink economy and no alpha compositing** — so these tokens are opaque, full-strength values (`#ffffff` / `#000000`, no translucency) rather than the light theme's tinted neutrals. The values are close to the light theme's, but the two systems are deliberately separate: do not conflate them, and do not use the print tokens as a substitute for the light theme on screen.
 
 ### Semantic Spectrum (data states & system feedback)
-- **Success** (`{colors.semantic-success}` — #3fb950): "Available" assets, completed operations, positive KPI deltas, success toasts.
-- **Info** (`{colors.semantic-info}` — #58a6ff): "Allocated" assets, informational alerts, active-but-neutral status.
-- **Warning** (`{colors.semantic-warning}` — #d29922): "Maintenance" assets, pending approvals, attention flags.
-- **Error** (`{colors.semantic-error}` — #f85149): Validation errors, rejected requests, destructive-action buttons.
-- **Overlay** (`{colors.semantic-overlay}` — #000000): Modal scrim.
+- **Success** (`{colors.semantic-success}` — dark #3fb950 / light #1a7f37): "Available" assets, completed operations, positive KPI deltas, success toasts.
+- **Info** (`{colors.semantic-info}` — dark #58a6ff / light #0969da): "Allocated" assets, informational alerts, active-but-neutral status.
+- **Warning** (`{colors.semantic-warning}` — dark #d29922 / light #9a6700): "Maintenance" assets, pending approvals, attention flags.
+- **Error** (`{colors.semantic-error}` — dark #f85149 / light #cf222e): Validation errors, rejected requests, destructive-action buttons.
+- **Overlay** (`{colors.semantic-overlay}` — #000000, both themes): Modal scrim. Stays black regardless of theme — a scrim's job is to recede the background, which a translucent black does equally well on either canvas.
 
-These values are GitHub-dark-derived, chosen specifically for contrast and distinguishability on `{colors.canvas}` — the spectrum must remain legible when several states appear on screen simultaneously (a Kanban board, an asset table).
+The dark values are GitHub-dark-derived, chosen specifically for contrast and distinguishability on `{colors.canvas}`; the light values are GitHub-light-derived and *deepened* (not reused verbatim) because the dark values were tuned for near-black and several would fail WCAG AA against white. The spectrum must remain legible when several states appear on screen simultaneously (a Kanban board, an asset table) in **both** themes.
 
 ### Asset-Lifecycle State Palette
 The four asset states map onto the semantic spectrum plus one neutral:
 - **Available** (`{colors.status-available}` = `{colors.semantic-success}`): ready for allocation.
 - **Allocated** (`{colors.status-allocated}` = `{colors.semantic-info}`): in active use.
 - **Maintenance** (`{colors.status-maintenance}` = `{colors.semantic-warning}`): under service.
-- **Disposed** (`{colors.status-disposed}` — #8b949e): terminal/inactive. **Deliberately neutral slate, not red** — disposal is "done," not "danger." This is a considered call: reflexively red would cry wolf on a routine lifecycle event.
+- **Disposed** (`{colors.status-disposed}` — dark #8b949e / light #6e7781): terminal/inactive. **Deliberately neutral slate, not red** — disposal is "done," not "danger." This is a considered call: reflexively red would cry wolf on a routine lifecycle event.
 
 ### Discipline
 - **Lavender never colors data.** No lavender status pill, no lavender KPI delta.
@@ -567,8 +606,21 @@ This is a clean adoption of **Linear's elevation philosophy**, not an average. T
 
 The one deliberate exception — where Claude's rarity discipline wins out over Linear's total rejection — is **truly floating chrome**: `{component.modal-panel}` and `{component.command-palette}` carry a real, heavy shadow (`0 16px 48px rgba(0,0,0,0.44)` and `0 24px 64px rgba(0,0,0,0.56)` respectively). These elements must read as *floating above* the page, and on a dark canvas only a deep, high-alpha shadow achieves that detachment. This is the only shadow in the system, it lives only on floating chrome, and it never touches a card, button, or input. The rule: **surface lift for cards; shadow only for things that float.**
 
+In **light mode** those two shadow alphas are *reduced, not reused* — the dark alphas exist specifically because shadows barely register on near-black, which is not true on white, where they would read as oppressive. Light mode starts at ~`rgba(0,0,0,0.12)` (modal) and ~`rgba(0,0,0,0.16)` (palette), tuned by eye. `{component.modal-backdrop}` and `{colors.semantic-overlay}` stay black-based in both themes — a scrim must recede the background regardless of canvas color.
+
+### Theming & Toggle Implementation
+
+AssetFlow is dual-theme: **dark is the default/root identity, light is a runtime override.** The two are switchable from a single toggle button in `{component.top-nav}` (next to the notification bell) with no page reload — the same pattern GitHub, Linear, and Vercel use. The mechanism, documented so future contributors don't have to reverse-engineer it from source:
+
+- **One CSS custom property per token.** Every entry under `colors:` (both the theme-bearing ones and the constant ones like `primary`) is emitted as a `--color-<token>` custom property. `:root, [data-theme="dark"]` carry the dark values; `[data-theme="light"]` overrides only the ones that change. `data-theme` lives on `<html>`.
+- **Tailwind points at the variables, not static hex.** `canvas: 'var(--color-canvas)'`, `surface-1: 'var(--color-surface-1)'`, … so every `bg-surface-1` / `text-ink` / `border-hairline` className resolves to whichever theme is active. **No `dark:` variant prefix is used anywhere** — that would mean duplicating every className instead of letting the variables do the work.
+- **No flash-of-wrong-theme.** A small inline `<script>` at the very top of `<head>` synchronously reads `localStorage` / `matchMedia` and sets `data-theme` on `<html>` before first paint.
+- **`ThemeProvider`** (React Context) exposes `{ theme, toggleTheme, setTheme }`. Resolution order: `localStorage.getItem('assetflow-theme')` → `window.matchMedia('(prefers-color-scheme: dark)')` → fall back to `'dark'`. `toggleTheme()` flips the value, persists it, and writes `data-theme` to `<html>`.
+- **The toggle button** follows `{component.button-icon-circular}` (36px, surface-2 fill, hairline border, rounded-full), cross-fading `Sun`/`Moon` over `{motion.duration-fast}` with `{motion.ease-standard}`, gated by `prefers-reduced-motion`.
+- **What does NOT theme-swap:** the modal backdrop scrim and overlay stay black in both themes; the two heavy shadows and `{component.sticky-filter-bar}`'s frosted fill get light-specific values (white-based `rgba(255,255,255,0.75)` for the filter bar) rather than reusing the dark near-black.
+
 ### Decorative Depth
-- **Backdrop-blur on `{component.sticky-filter-bar}`** — `blur(20px) saturate(180%)` at 80% surface alpha. Borrowed from Apple's frosted sub-nav. Functional (keeps context visible behind a sticky filter/sort bar), not decorative.
+- **Backdrop-blur on `{component.sticky-filter-bar}`** — `blur(20px) saturate(180%)` at 80% surface alpha (dark: near-black `rgba(15,16,17,0.80)`; light: white-based `rgba(255,255,255,0.75)`). Borrowed from Apple's frosted sub-nav. Functional (keeps context visible behind a sticky filter/sort bar), not decorative.
 - **Subtle top-edge highlight on lifted panels** — Linear's faint lighter edge that gives dark surfaces a "pixel-rendered" feel. Optional in implementation.
 - **Data is the protagonist** — the equivalent of Linear's product screenshots. Dense, real tables and Kanban boards do the visual work; the chrome stays out of the way.
 
@@ -722,7 +774,7 @@ The pill is retained, but **only where its shape carries semantic meaning**: a s
 ## Do's and Don'ts
 
 ### Do
-- Anchor every screen on `{colors.canvas}` (#010102). The dark canvas is the system; the faint blue tint is intentional.
+- Anchor every screen on `{colors.canvas}`. Both themes resolve through the same token — dark is `#010102`, light is `#fafbfc`, and the faint cool tint is intentional in each. Never reach for a literal hex in a component; reference `{colors.*}` so the runtime toggle works.
 - Carry hierarchy with the **surface ladder** (`surface-1` → `surface-3`) and **hairline weights** (`hairline` → `hairline-tertiary`), not shadows. This is the depth system.
 - Reserve `{colors.primary}` (lavender) for **interaction chrome only** — brand mark, primary CTA, focus rings, links, active nav.
 - Reserve the **semantic spectrum** for **data state only** — asset lifecycle, workflow stage, severity, validation.
@@ -733,7 +785,10 @@ The pill is retained, but **only where its shape carries semantic meaning**: a s
 - Use `prefers-reduced-motion` gating on every animation; the Kanban drag must remain functional (snap instead of spring) when reduced motion is set.
 
 ### Don't
-- Don't introduce a light mode for the application. The inverse tokens exist only for printable reports/PDFs.
+- Every new component must define **both** a dark and light value for any non-token color it introduces — never ship a component that only renders correctly in one theme. In practice this means: don't introduce a non-token color at all; extend the `{colors.*}` set instead.
+- `{colors.primary}` stays **identical** across both themes; only surfaces, hairlines, ink, and the semantic spectrum carry theme-specific values. Don't theme-tint the brand mark.
+- Don't hardcode hex/`rgb()` values or Tailwind arbitrary-value classes (`bg-[#…]`) in components. Anything that bypasses the `{colors.*}` token system will silently ignore the theme toggle. (The inverse/print tokens are the only literal hex outside the runtime theme.)
+- Don't use Tailwind's `dark:` variant prefix to theming — the CSS-variable-per-token approach means every className resolves to the active theme automatically. Duplicating each class with `dark:` would defeat that.
 - Don't use lavender as a data color, or a semantic color as a chrome color. The two systems never cross.
 - Don't add drop shadows to cards, buttons, inputs, or text. Shadow is reserved for floating chrome.
 - Don't use Apple's full-pill CTA, Claude's serif display, or any marketing-surface convention (full-bleed tiles, 80px section padding) — this is a working tool, not a gallery.
@@ -790,9 +845,9 @@ The structural breakpoints that matter: 1280px (desktop full layout), 1024px (si
 ## Known Gaps
 
 - The semantic spectrum values (success/info/warning/error and the four asset-state colors) are synthesized for contrast on `{colors.canvas}` rather than extracted from a shipping AssetFlow instance; confirm WCAG AA contrast against the dark surface once the components are implemented, especially the low-alpha status-badge fills against their full-strength text.
+- Light-theme semantic and status-badge values were derived by contrast logic (deepened from the GitHub-dark-derived dark values), not extracted from a shipping instance — confirm WCAG AA once rendered, especially the low-alpha badge fills against their full-strength text on a white canvas.
 - Form validation states beyond `{component.text-input-focused}` are described in prose (error border + inline message) but not yet tokenized as separate component entries; a real validation flow (allocation form, audit discrepancy form) should drive formalizing them.
 - Recharts theming (grid line color, axis label type, series colors) is specified in principle under *Shapes → Data Visualization Geometry* but not formalized as component tokens; a chart-theme config should be derived from those rules.
 - The `motion:` tokens and named patterns are original design work and have not been validated against a live Motion implementation in this repo; the spring constants (`stiffness 320 / damping 30 / mass 1`) in particular should be tuned by feel once the Kanban drag is built.
-- Dark mode is the only shipped theme; the inverse (light) tokens are intentionally minimal and cover only printable reports/PDFs. A genuine light theme is explicitly out of scope.
 - The asset-lifecycle state → color mapping (Available=green, Allocated=blue, Maintenance=amber, Disposed=slate) is a design decision; confirm it matches the actual `status` enum in the Prisma schema before locking it in, and adjust the neutral "Disposed" choice if the product team reads disposal as destructive.
 - The library versions for Motion / GSAP / R3F were not live-verified (web check timed out during synthesis); confirm current versions at install time.
