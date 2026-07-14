@@ -5,7 +5,7 @@
       (function() {
         try {
           var storedTheme = localStorage.getItem('assetflow-theme');
-          var theme = 'dark';
+          var theme = 'light'; // Default to light
           if (storedTheme === 'light' || storedTheme === 'dark') {
             theme = storedTheme;
           } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
@@ -15,7 +15,7 @@
           }
           document.documentElement.setAttribute('data-theme', theme);
         } catch (e) {
-          document.documentElement.setAttribute('data-theme', 'dark');
+          document.documentElement.setAttribute('data-theme', 'light'); // Fallback to light
         }
       })();
     </script>

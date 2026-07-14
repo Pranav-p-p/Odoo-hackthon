@@ -15,9 +15,9 @@ export function ThemeProvider({ children }) {
       if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
         return 'light';
       }
-      return 'dark';
+      return 'light'; // Default to light
     } catch (e) {
-      return 'dark';
+      return 'light'; // Fallback to light
     }
   });
 
