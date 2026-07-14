@@ -93,7 +93,7 @@ export default function LoginPage() {
     /* ── Full-page dark canvas ─────────────────────────────────────────────── */
     <div style={{
       minHeight:       '100vh',
-      backgroundColor: '#010102',       /* canvas */
+      backgroundColor: 'var(--color-canvas)',       /* canvas */
       position:        'relative',
       overflow:        'hidden',
       display:         'flex',
@@ -132,7 +132,7 @@ export default function LoginPage() {
             width:           44,
             height:          44,
             borderRadius:    10,
-            backgroundColor: '#5e6ad2',
+            backgroundColor: 'var(--color-primary)',
             marginBottom:    16,
           }}>
             <svg viewBox="0 0 20 20" fill="none" width={20} height={20} aria-hidden="true">
@@ -143,17 +143,17 @@ export default function LoginPage() {
             </svg>
           </div>
 
-          <h1 className="type-display-md" style={{ color: '#f7f8f8', margin: 0 }}>
+          <h1 className="type-display-md" style={{ color: 'var(--color-ink)', margin: 0 }}>
             AssetFlow
           </h1>
-          <p className="type-body-sm" style={{ color: '#8a8f98', marginTop: 6 }}>
+          <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)', marginTop: 6 }}>
             Sign in to your workspace
           </p>
         </div>
 
         {/* ── Form card — surface-1 lift, hairline border ──────────────────── */}
         <div style={{
-          backgroundColor: '#0f1011',    /* surface-1 */
+          backgroundColor: 'var(--color-surface-1)',    /* surface-1 */
           border:          '1px solid #23252a',
           borderRadius:    12,
           padding:         '32px 28px',
@@ -183,7 +183,7 @@ export default function LoginPage() {
                   />
                   <Mail
                     size={15}
-                    color="#62666d"
+                    color='var(--color-ink-tertiary)'
                     style={{
                       position:      'absolute',
                       left:          11,
@@ -238,7 +238,7 @@ export default function LoginPage() {
                         WebkitAppearance: 'none',
                         width: 16,
                         height: 16,
-                        backgroundColor: rememberMe ? '#5e6ad2' : '#141516',
+                        backgroundColor: rememberMe ? 'var(--color-primary)' : 'var(--color-surface-2)',
                         border: rememberMe ? '1px solid #5e6ad2' : '1px solid #30363d',
                         borderRadius: 4,
                         margin: 0,
@@ -252,7 +252,7 @@ export default function LoginPage() {
                       </svg>
                     )}
                   </div>
-                  <span className="type-body-sm" style={{ color: '#8a8f98', marginLeft: 8 }}>
+                  <span className="type-body-sm" style={{ color: 'var(--color-ink-subtle)', marginLeft: 8 }}>
                     Remember me
                   </span>
                 </label>
@@ -265,11 +265,11 @@ export default function LoginPage() {
                     display:         'flex',
                     alignItems:      'flex-start',
                     gap:             8,
-                    backgroundColor: 'rgba(248,81,73,0.10)',
+                    backgroundColor: 'var(--color-semantic-error-bg)',
                     border:          '1px solid rgba(248,81,73,0.30)',
                     borderRadius:    8,
                     padding:         '10px 12px',
-                    color:           '#f85149',
+                    color:           'var(--color-semantic-error)',
                     fontSize:        13,
                   }}>
                     <AlertCircle size={14} style={{ flexShrink: 0, marginTop: 1 }} aria-hidden="true" />
@@ -301,7 +301,7 @@ export default function LoginPage() {
 
           {/* ── Sign up link ─────────────────────────────────────────────────── */}
           <div style={{ marginTop: 24, textAlign: 'center' }}>
-            <span className="type-body-sm" style={{ color: '#8a8f98' }}>
+            <span className="type-body-sm" style={{ color: 'var(--color-ink-subtle)' }}>
               Don't have an account?{' '}
               <Link to="/register" className="text-link" style={{ fontWeight: 500 }}>
                 Sign up
@@ -311,7 +311,7 @@ export default function LoginPage() {
         </div>
 
         {/* ── Footer microcopy ──────────────────────────────────────────────── */}
-        <p className="type-caption" style={{ marginTop: 24, textAlign: 'center', color: '#62666d' }}>
+        <p className="type-caption" style={{ marginTop: 24, textAlign: 'center', color: 'var(--color-ink-tertiary)' }}>
           Contact your administrator for account access.
         </p>
       </div>

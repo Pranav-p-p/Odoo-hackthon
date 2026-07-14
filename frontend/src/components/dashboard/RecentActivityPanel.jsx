@@ -15,19 +15,19 @@ function getActionConfig(action) {
   switch (action) {
     case 'USER_SIGNUP':
     case 'USER_LOGIN':
-      return { icon: User,        dotColor: '#58a6ff', title: 'User Event' };
+      return { icon: User,        dotColor: 'var(--color-status-allocated)', title: 'User Event' };
     case 'ASSET_REGISTERED':
     case 'ASSET_UPDATED':
-      return { icon: Monitor,     dotColor: '#3fb950', title: 'Asset Core' };
+      return { icon: Monitor,     dotColor: 'var(--color-status-available)', title: 'Asset Core' };
     case 'ALLOCATION_CREATED':
     case 'ALLOCATION_RETURNED':
-      return { icon: Key,         dotColor: '#5e6ad2', title: 'Allocation' };
+      return { icon: Key,         dotColor: 'var(--color-primary)', title: 'Allocation' };
     case 'AUDIT_CYCLE_CREATED':
     case 'AUDIT_CYCLE_CLOSED':
     case 'AUDIT_ITEM_VERIFIED':
-      return { icon: CheckCircle2, dotColor: '#d29922', title: 'Audit System' };
+      return { icon: CheckCircle2, dotColor: 'var(--color-status-maintenance)', title: 'Audit System' };
     default:
-      return { icon: FileText,    dotColor: '#8a8f98', title: 'System Activity' };
+      return { icon: FileText,    dotColor: 'var(--color-ink-subtle)', title: 'System Activity' };
   }
 }
 
@@ -73,12 +73,12 @@ export default function RecentActivityPanel({ logs = [] }) {
         marginBottom:  20,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Activity size={16} color="#8a8f98" />
-          <h2 className="type-card-title" style={{ margin: 0, color: '#f7f8f8' }}>
+          <Activity size={16} color='var(--color-ink-subtle)' />
+          <h2 className="type-card-title" style={{ margin: 0, color: 'var(--color-ink)' }}>
             Recent Activity
           </h2>
         </div>
-        <span className="type-caption" style={{ color: '#62666d' }}>Real-time logs</span>
+        <span className="type-caption" style={{ color: 'var(--color-ink-tertiary)' }}>Real-time logs</span>
       </div>
 
       {/* ── Log list ─────────────────────────────────────────────────────── */}
@@ -90,10 +90,10 @@ export default function RecentActivityPanel({ logs = [] }) {
           justifyContent: 'center',
           padding:        '32px 0',
           gap:            10,
-          color:          '#62666d',
+          color:          'var(--color-ink-tertiary)',
         }}>
-          <Activity size={28} color="#3e3e44" />
-          <p className="type-body-sm" style={{ color: '#62666d', margin: 0 }}>
+          <Activity size={28} color='var(--color-hairline-tertiary)' />
+          <p className="type-body-sm" style={{ color: 'var(--color-ink-tertiary)', margin: 0 }}>
             No activity recorded yet.
           </p>
         </div>
@@ -115,7 +115,7 @@ export default function RecentActivityPanel({ logs = [] }) {
                       left:       14,
                       bottom:     0,
                       width:      1,
-                      backgroundColor: '#23252a', /* hairline */
+                      backgroundColor: 'var(--color-hairline)', /* hairline */
                     }}
                   />
                 )}
@@ -139,11 +139,11 @@ export default function RecentActivityPanel({ logs = [] }) {
 
                   {/* ── Content ───────────────────────────────────────── */}
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 13, color: '#f7f8f8', margin: 0 }}>
+                    <p style={{ fontSize: 13, color: 'var(--color-ink)', margin: 0 }}>
                       <span style={{ fontWeight: 600, marginRight: 6 }}>{title}</span>
                       {getActionText(log)}
                     </p>
-                    <p className="type-mono" style={{ color: '#62666d', marginTop: 3 }}>
+                    <p className="type-mono" style={{ color: 'var(--color-ink-tertiary)', marginTop: 3 }}>
                       {formatTimestamp(log.createdAt)}
                     </p>
                   </div>

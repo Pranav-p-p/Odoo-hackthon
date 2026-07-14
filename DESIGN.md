@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: AssetFlow-design-system
-description: A dark-canvas operations interface for AssetFlow, an enterprise asset & resource management system. The system is built on Linear's surface-ladder + hairline depth philosophy over a near-black canvas, with a single chromatic brand accent (Linear lavender-blue) reserved strictly for interaction chrome (brand mark, primary CTA, focus rings, link emphasis) and a separate semantic spectrum reserved strictly for data states (asset lifecycle, workflow stages, severity). Type runs a single sans family (Inter) with Apple-tight negative tracking on display sizes; JetBrains Mono carries asset IDs, audit codes, and timestamps. Shape language is rounded-rect at 8px for every action, with the pill reserved exclusively for state tokens — rounded-rect reads as "action," pill reads as "state." Motion is functional and restrained (spring-physics Kanban drags, staggered entrance, route view transitions, KPI count-ups), degrading cleanly under prefers-reduced-motion. No drop shadows on chrome — depth comes from the four-step surface ladder and three hairline weights.
+description: A dual-theme (dark/light, runtime-toggleable) operations interface for AssetFlow, an enterprise asset & resource management system. Dark is the native/default identity; light is a first-class runtime override — both resolve through the same token vocabulary. The system is built on Linear's surface-ladder + hairline depth philosophy, with a single chromatic brand accent (Linear lavender-blue, identical in both themes) reserved strictly for interaction chrome (brand mark, primary CTA, focus rings, link emphasis) and a separate semantic spectrum reserved strictly for data states (asset lifecycle, workflow stages, severity). Type runs a single sans family (Inter) with Apple-tight negative tracking on display sizes; JetBrains Mono carries asset IDs, audit codes, and timestamps. Shape language is rounded-rect at 8px for every action, with the pill reserved exclusively for state tokens — rounded-rect reads as "action," pill reads as "state." Motion is functional and restrained (spring-physics Kanban drags, staggered entrance, route view transitions, KPI count-ups), degrading cleanly under prefers-reduced-motion. No drop shadows on chrome in either theme — depth comes from the four-step surface ladder and three hairline weights.
 
 colors:
   # ──────────────────────────────────────────────────────────────────────────
@@ -189,6 +189,15 @@ motion:
   spring-mass: 1
 
 components:
+  # ──────────────────────────────────────────────────────────────────────────
+  # Most values below are {colors.*} token references and need no per-theme
+  # handling — they resolve automatically via the CSS custom properties the
+  # token carries. A small number of entries (sticky-filter-bar, modal-backdrop,
+  # modal-panel, command-palette, and the four status-badge fills) previously
+  # hardcoded a single literal rgba()/shadow value tuned only for dark mode;
+  # these now carry explicit { dark: ..., light: ... } pairs, same pattern as
+  # `colors:`, so the runtime theme toggle actually reaches them.
+  # ──────────────────────────────────────────────────────────────────────────
   button-primary:
     backgroundColor: "{colors.primary}"
     textColor: "{colors.on-primary}"
@@ -265,7 +274,7 @@ components:
     typography: "{typography.eyebrow}"
     padding: 16px 12px 4px
   sticky-filter-bar:
-    backgroundColor: "rgba(15, 16, 17, 0.80)"
+    backgroundColor: { dark: "rgba(15, 16, 17, 0.80)", light: "rgba(244, 245, 247, 0.80)" }
     textColor: "{colors.ink}"
     typography: "{typography.body-sm}"
     height: 52px
@@ -327,7 +336,7 @@ components:
     padding: 12px
     border: "1px solid {colors.hairline}"
   modal-backdrop:
-    backgroundColor: "rgba(0, 0, 0, 0.72)"
+    backgroundColor: { dark: "rgba(0, 0, 0, 0.72)", light: "rgba(0, 0, 0, 0.72)" }
     textColor: "{colors.ink}"
     rounded: "{rounded.none}"
   modal-panel:
@@ -337,7 +346,7 @@ components:
     rounded: "{rounded.xl}"
     padding: 24px
     border: "1px solid {colors.hairline-strong}"
-    boxShadow: "0 16px 48px rgba(0, 0, 0, 0.44)"
+    boxShadow: { dark: "0 16px 48px rgba(0, 0, 0, 0.44)", light: "0 16px 48px rgba(0, 0, 0, 0.12)" }
   command-palette:
     backgroundColor: "{colors.surface-3}"
     textColor: "{colors.ink}"
@@ -345,7 +354,7 @@ components:
     rounded: "{rounded.lg}"
     padding: 8px
     border: "1px solid {colors.hairline-strong}"
-    boxShadow: "0 24px 64px rgba(0, 0, 0, 0.56)"
+    boxShadow: { dark: "0 24px 64px rgba(0, 0, 0, 0.56)", light: "0 24px 64px rgba(0, 0, 0, 0.16)" }
   text-input:
     backgroundColor: "{colors.surface-1}"
     textColor: "{colors.ink}"
@@ -376,25 +385,25 @@ components:
     padding: 6px 14px
     border: "1px solid {colors.hairline-strong}"
   status-badge-available:
-    backgroundColor: "rgba(63, 185, 80, 0.14)"
+    backgroundColor: { dark: "rgba(63, 185, 80, 0.14)", light: "rgba(26, 127, 55, 0.14)" }
     textColor: "{colors.status-available}"
     typography: "{typography.eyebrow}"
     rounded: "{rounded.pill}"
     padding: 3px 10px
   status-badge-allocated:
-    backgroundColor: "rgba(88, 166, 255, 0.14)"
+    backgroundColor: { dark: "rgba(88, 166, 255, 0.14)", light: "rgba(9, 105, 218, 0.14)" }
     textColor: "{colors.status-allocated}"
     typography: "{typography.eyebrow}"
     rounded: "{rounded.pill}"
     padding: 3px 10px
   status-badge-maintenance:
-    backgroundColor: "rgba(210, 153, 34, 0.16)"
+    backgroundColor: { dark: "rgba(210, 153, 34, 0.16)", light: "rgba(154, 103, 0, 0.16)" }
     textColor: "{colors.status-maintenance}"
     typography: "{typography.eyebrow}"
     rounded: "{rounded.pill}"
     padding: 3px 10px
   status-badge-disposed:
-    backgroundColor: "rgba(139, 148, 158, 0.16)"
+    backgroundColor: { dark: "rgba(139, 148, 158, 0.16)", light: "rgba(110, 119, 129, 0.16)" }
     textColor: "{colors.status-disposed}"
     typography: "{typography.eyebrow}"
     rounded: "{rounded.pill}"
@@ -443,7 +452,7 @@ The rule is non-negotiable: lavender never colors data, and the semantic spectru
 Type is a **single sans family — Inter** — at display (weight 600, Apple-tight negative letter-spacing) and body (weight 400, 16px, tabular numerals for data). Apple and Linear are both single-family systems; Claude's serif-display pairing was considered and rejected — a literary serif voice slows the scanning that defines a working dashboard, and Inter is already wired into the Tailwind config as the project's sans. JetBrains Mono (borrowed from both Claude and Linear) carries asset IDs, audit codes, and timestamps. Shape language is **rounded-rect at `{rounded.md}` (8px) for every action**, with the **pill reserved exclusively for state tokens** — rounded-rect reads "action," pill reads "state." This grammar is consistent across the entire system.
 
 **Key Characteristics:**
-- Dark-canvas operations interface on Linear's `{colors.canvas}` (#010102), with a four-step surface ladder carrying all visual hierarchy.
+- Dual-theme operations interface (dark native/default, light a runtime override) on Linear's `{colors.canvas}` (`#010102` dark / `#fafbfc` light), with a four-step surface ladder carrying all visual hierarchy in both themes.
 - Two accents, divided: **lavender = interaction chrome**; **semantic spectrum = data state**. Never crossed.
 - Single sans family (Inter), Apple-tight negative tracking on display, 16px body with tabular numerals for data. JetBrains Mono for IDs and code.
 - Rounded-rect (`{rounded.md}`) for every button/input/card; pill (`{rounded.pill}`) reserved for status badges and filter tabs — the shape encodes the grammar.
@@ -499,7 +508,7 @@ A few non-obvious rules govern the light values:
 - **The semantic spectrum and `status-disposed` are deepened** for light mode (success #1a7f37, info #0969da, warning #9a6700, error #cf222e, disposed #6e7781), not reused verbatim. The dark values were tuned for contrast on near-black (see Known Gaps); several would fail WCAG AA unchanged against white. The deepened values are GitHub-light-derived.
 - **`{colors.semantic-overlay}` stays black** (#000000) in both themes. A modal scrim's job is to recede the background regardless of theme.
 - **Two heavy shadows are reduced, not reused** for light mode. The dark alphas (modal `rgba(0,0,0,0.44)`, palette `rgba(0,0,0,0.56)`) exist because shadows barely register on near-black; on white they would be oppressive. Light mode starts at ~`rgba(0,0,0,0.12)` (modal) and ~`rgba(0,0,0,0.16)` (palette), tuned by eye. See Elevation.
-- **`{component.sticky-filter-bar}` gets a white-based frosted fill** (`rgba(255,255,255,0.75)`) in light mode, not the near-black `rgba(15,16,17,0.80)`. The blur + saturate stays the same.
+- **`{component.sticky-filter-bar}`'s frosted fill is `{colors.surface-1}` at a fixed 80% alpha** (see Components → `sticky-filter-bar`) — it inherits the near-black tint in dark mode and the near-white tint in light mode automatically, with no separate hardcoded value needed per theme. The blur + saturate stays the same.
 
 ### Print / PDF Export
 
@@ -617,10 +626,10 @@ AssetFlow is dual-theme: **dark is the default/root identity, light is a runtime
 - **No flash-of-wrong-theme.** A small inline `<script>` at the very top of `<head>` synchronously reads `localStorage` / `matchMedia` and sets `data-theme` on `<html>` before first paint.
 - **`ThemeProvider`** (React Context) exposes `{ theme, toggleTheme, setTheme }`. Resolution order: `localStorage.getItem('assetflow-theme')` → `window.matchMedia('(prefers-color-scheme: dark)')` → fall back to `'dark'`. `toggleTheme()` flips the value, persists it, and writes `data-theme` to `<html>`.
 - **The toggle button** follows `{component.button-icon-circular}` (36px, surface-2 fill, hairline border, rounded-full), cross-fading `Sun`/`Moon` over `{motion.duration-fast}` with `{motion.ease-standard}`, gated by `prefers-reduced-motion`.
-- **What does NOT theme-swap:** the modal backdrop scrim and overlay stay black in both themes; the two heavy shadows and `{component.sticky-filter-bar}`'s frosted fill get light-specific values (white-based `rgba(255,255,255,0.75)` for the filter bar) rather than reusing the dark near-black.
+- **What does NOT theme-swap:** the modal backdrop scrim and overlay stay black in both themes; the two heavy shadows get light-specific reduced-alpha values; `{component.sticky-filter-bar}`'s frosted fill needs no separate light value at all — it's `{colors.surface-1}` at a fixed 80% alpha, so it inherits each theme's surface color automatically.
 
 ### Decorative Depth
-- **Backdrop-blur on `{component.sticky-filter-bar}`** — `blur(20px) saturate(180%)` at 80% surface alpha (dark: near-black `rgba(15,16,17,0.80)`; light: white-based `rgba(255,255,255,0.75)`). Borrowed from Apple's frosted sub-nav. Functional (keeps context visible behind a sticky filter/sort bar), not decorative.
+- **Backdrop-blur on `{component.sticky-filter-bar}`** — `blur(20px) saturate(180%)` at a fixed `{colors.surface-1}` 80% alpha, which resolves to near-black in dark mode and near-white in light mode automatically, since `surface-1` itself already carries both theme values. Borrowed from Apple's frosted sub-nav. Functional (keeps context visible behind a sticky filter/sort bar), not decorative.
 - **Subtle top-edge highlight on lifted panels** — Linear's faint lighter edge that gives dark surfaces a "pixel-rendered" feel. Optional in implementation.
 - **Data is the protagonist** — the equivalent of Linear's product screenshots. Dense, real tables and Kanban boards do the visual work; the chrome stays out of the way.
 
@@ -715,7 +724,9 @@ The pill is retained, but **only where its shape carries semantic meaning**: a s
 
 ### Navigation
 
-**`top-nav`** — Sticky 56px bar. `{colors.canvas}` background, 1px `{colors.hairline}` bottom border. Left: AssetFlow wordmark in `{colors.ink}` (with a small lavender mark glyph). Center-left: breadcrumb of current view (`Dashboard / Assets / AST-00482`) in `{typography.nav-link}`. Right: global search trigger, notifications bell, and the signed-in user's avatar. The bar is dense and quiet — Linear's pattern.
+**`top-nav`** — Sticky 56px bar. `{colors.canvas}` background, 1px `{colors.hairline}` bottom border. Left: AssetFlow wordmark in `{colors.ink}` (with a small lavender mark glyph). Center-left: breadcrumb of current view (`Dashboard / Assets / AST-00482`) in `{typography.nav-link}`. Right: global search trigger, `{component.theme-toggle}`, notifications bell, and the signed-in user's avatar. The bar is dense and quiet — Linear's pattern.
+
+**`theme-toggle`** — 36px circular icon button in `{component.top-nav}`, right side, next to the notification bell. Follows `{component.button-icon-circular}` exactly (`{colors.surface-2}` fill, 1px `{colors.hairline}` border, `{rounded.full}`). Cross-fades between `Sun`/`Moon` (lucide-react) over `{motion.duration-fast}` with `{motion.ease-standard}` on click; swaps instantly with no fade under `prefers-reduced-motion`. See *Theming & Toggle Implementation* for the full mechanism.
 
 **`sidebar-nav`** — Fixed 240px left rail. `{colors.canvas}` background, 1px `{colors.hairline}` right border. Organized by role-relevant sections (`{component.sidebar-section-label}` in `{typography.eyebrow}` uppercase — Dashboard, Assets, Allocations, Resources, Maintenance, Audits, Analytics, Admin). Nav items in `{typography.nav-link}` at `{colors.ink-subtle}`; active item lifts to `{component.sidebar-nav-item-active}` (`{colors.surface-1}` fill, `{colors.ink}` text, `{colors.primary}` 2px left accent bar). Collapses to an icon rail below tablet; to a hamburger drawer at mobile.
 

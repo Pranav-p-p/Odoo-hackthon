@@ -66,7 +66,7 @@ export default function RegisterPage() {
   return (
     <div style={{
       minHeight:       '100vh',
-      backgroundColor: '#010102',
+      backgroundColor: 'var(--color-canvas)',
       position:        'relative',
       overflow:        'hidden',
       display:         'flex',
@@ -99,7 +99,7 @@ export default function RegisterPage() {
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <div style={{
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            width: 44, height: 44, borderRadius: 10, backgroundColor: '#5e6ad2', marginBottom: 16,
+            width: 44, height: 44, borderRadius: 10, backgroundColor: 'var(--color-primary)', marginBottom: 16,
           }}>
             <svg viewBox="0 0 20 20" fill="none" width={20} height={20} aria-hidden="true">
               <rect x="3" y="3" width="6" height="6" rx="1" fill="white" fillOpacity="0.9" />
@@ -108,13 +108,13 @@ export default function RegisterPage() {
               <rect x="11" y="11" width="6" height="6" rx="1" fill="white" fillOpacity="0.9" />
             </svg>
           </div>
-          <h1 className="type-display-md" style={{ color: '#f7f8f8', margin: 0 }}>Create Account</h1>
-          <p className="type-body-sm" style={{ color: '#8a8f98', marginTop: 6 }}>Register as an Employee</p>
+          <h1 className="type-display-md" style={{ color: 'var(--color-ink)', margin: 0 }}>Create Account</h1>
+          <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)', marginTop: 6 }}>Register as an Employee</p>
         </div>
 
         {/* ── Form card ─────────────────────────────────────────────────── */}
         <div style={{
-          backgroundColor: '#0f1011',
+          backgroundColor: 'var(--color-surface-1)',
           border:          '1px solid #23252a',
           borderRadius:    12,
           padding:         '32px 28px',
@@ -135,7 +135,7 @@ export default function RegisterPage() {
                     className={`input-field ${fieldErrors.name ? 'error' : ''}`}
                     style={{ paddingLeft: 36 }}
                   />
-                  <User size={15} color="#62666d" style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} aria-hidden="true" />
+                  <User size={15} color='var(--color-ink-tertiary)' style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} aria-hidden="true" />
                 </div>
                 {fieldErrors.name && <p id="name-error" className="field-error">{fieldErrors.name}</p>}
               </div>
@@ -153,7 +153,7 @@ export default function RegisterPage() {
                     className={`input-field ${fieldErrors.email ? 'error' : ''}`}
                     style={{ paddingLeft: 36 }}
                   />
-                  <Mail size={15} color="#62666d" style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} aria-hidden="true" />
+                  <Mail size={15} color='var(--color-ink-tertiary)' style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} aria-hidden="true" />
                 </div>
                 {fieldErrors.email && <p id="email-error" className="field-error">{fieldErrors.email}</p>}
               </div>
@@ -172,10 +172,10 @@ export default function RegisterPage() {
                 {serverError && (
                   <div style={{
                     display: 'flex', alignItems: 'flex-start', gap: 8,
-                    backgroundColor: 'rgba(248,81,73,0.10)',
+                    backgroundColor: 'var(--color-semantic-error-bg)',
                     border: '1px solid rgba(248,81,73,0.30)',
                     borderRadius: 8, padding: '10px 12px',
-                    color: '#f85149', fontSize: 13,
+                    color: 'var(--color-semantic-error)', fontSize: 13,
                   }}>
                     <AlertCircle size={14} style={{ flexShrink: 0, marginTop: 1 }} aria-hidden="true" />
                     <span>{serverError}</span>
@@ -202,14 +202,14 @@ export default function RegisterPage() {
           </form>
 
           <div style={{ marginTop: 24, textAlign: 'center' }}>
-            <span className="type-body-sm" style={{ color: '#8a8f98' }}>
+            <span className="type-body-sm" style={{ color: 'var(--color-ink-subtle)' }}>
               Already have an account?{' '}
               <Link to="/login" className="text-link" style={{ fontWeight: 500 }}>Sign in</Link>
             </span>
           </div>
         </div>
 
-        <p className="type-caption" style={{ marginTop: 24, textAlign: 'center', color: '#62666d' }}>
+        <p className="type-caption" style={{ marginTop: 24, textAlign: 'center', color: 'var(--color-ink-tertiary)' }}>
           Contact your administrator for account access.
         </p>
       </div>

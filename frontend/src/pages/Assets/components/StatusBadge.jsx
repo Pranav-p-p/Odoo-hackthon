@@ -16,33 +16,33 @@
 /* ── Inline styles per status — avoids light-mode Tailwind color classes ── */
 const STYLES = {
   /* Asset lifecycle */
-  AVAILABLE:           { background: 'rgba(63,185,80,0.14)',   color: '#3fb950' },
-  ALLOCATED:           { background: 'rgba(88,166,255,0.14)',  color: '#58a6ff' },
-  RESERVED:            { background: 'rgba(94,106,210,0.16)',  color: '#828fff' },
-  UNDER_MAINTENANCE:   { background: 'rgba(210,153,34,0.16)',  color: '#d29922' },
-  LOST:                { background: 'rgba(248,81,73,0.14)',   color: '#f85149' },
-  RETIRED:             { background: 'rgba(139,148,158,0.16)', color: '#8b949e' },
-  DISPOSED:            { background: 'rgba(139,148,158,0.16)', color: '#8b949e' },
+  AVAILABLE:           { background: 'var(--color-status-available-bg)',   color: 'var(--color-status-available)' },
+  ALLOCATED:           { background: 'var(--color-status-allocated-bg)',  color: 'var(--color-status-allocated)' },
+  RESERVED:            { background: 'var(--color-badge-brand-bg)',  color: 'var(--color-primary-hover)' },
+  UNDER_MAINTENANCE:   { background: 'var(--color-status-maintenance-bg)',  color: 'var(--color-status-maintenance)' },
+  LOST:                { background: 'rgba(248,81,73,0.14)',   color: 'var(--color-semantic-error)' },
+  RETIRED:             { background: 'var(--color-status-disposed-bg)', color: 'var(--color-status-disposed)' },
+  DISPOSED:            { background: 'var(--color-status-disposed-bg)', color: 'var(--color-status-disposed)' },
 
   /* Allocation statuses */
-  ACTIVE:              { background: 'rgba(88,166,255,0.14)',  color: '#58a6ff' },
-  RETURNED:            { background: 'rgba(63,185,80,0.14)',   color: '#3fb950' },
-  OVERDUE:             { background: 'rgba(248,81,73,0.14)',   color: '#f85149' },
+  ACTIVE:              { background: 'var(--color-status-allocated-bg)',  color: 'var(--color-status-allocated)' },
+  RETURNED:            { background: 'var(--color-status-available-bg)',   color: 'var(--color-status-available)' },
+  OVERDUE:             { background: 'rgba(248,81,73,0.14)',   color: 'var(--color-semantic-error)' },
 
   /* Transfer statuses */
-  REQUESTED:           { background: 'rgba(210,153,34,0.16)',  color: '#d29922' },
-  APPROVED:            { background: 'rgba(63,185,80,0.14)',   color: '#3fb950' },
-  REJECTED:            { background: 'rgba(248,81,73,0.14)',   color: '#f85149' },
-  COMPLETED:           { background: 'rgba(139,148,158,0.16)', color: '#8b949e' },
+  REQUESTED:           { background: 'var(--color-status-maintenance-bg)',  color: 'var(--color-status-maintenance)' },
+  APPROVED:            { background: 'var(--color-status-available-bg)',   color: 'var(--color-status-available)' },
+  REJECTED:            { background: 'rgba(248,81,73,0.14)',   color: 'var(--color-semantic-error)' },
+  COMPLETED:           { background: 'var(--color-status-disposed-bg)', color: 'var(--color-status-disposed)' },
 
   /* Maintenance statuses */
-  PENDING_APPROVAL:    { background: 'rgba(210,153,34,0.16)',  color: '#d29922' },
-  TECHNICIAN_ASSIGNED: { background: 'rgba(94,106,210,0.16)',  color: '#828fff' },
-  IN_PROGRESS:         { background: 'rgba(88,166,255,0.14)',  color: '#58a6ff' },
-  RESOLVED:            { background: 'rgba(63,185,80,0.14)',   color: '#3fb950' },
+  PENDING_APPROVAL:    { background: 'var(--color-status-maintenance-bg)',  color: 'var(--color-status-maintenance)' },
+  TECHNICIAN_ASSIGNED: { background: 'var(--color-badge-brand-bg)',  color: 'var(--color-primary-hover)' },
+  IN_PROGRESS:         { background: 'var(--color-status-allocated-bg)',  color: 'var(--color-status-allocated)' },
+  RESOLVED:            { background: 'var(--color-status-available-bg)',   color: 'var(--color-status-available)' },
 };
 
-const FALLBACK = { background: 'rgba(139,148,158,0.16)', color: '#8b949e' };
+const FALLBACK = { background: 'var(--color-status-disposed-bg)', color: 'var(--color-status-disposed)' };
 
 /* Formats "UNDER_MAINTENANCE" → "Under Maintenance" */
 function formatLabel(status) {

@@ -40,16 +40,16 @@ function Pill({ label, cls }) {
 }
 
 const TRANSFER_STATUS_STYLES = {
-  REQUESTED: 'bg-[rgba(210,153,34,0.16)] text-[#d29922] ring-0',
-  APPROVED:  'bg-[rgba(88,166,255,0.14)] text-[#58a6ff] ring-0',
-  REJECTED:  'bg-[rgba(248,81,73,0.14)] text-[#f85149] ring-0',
-  COMPLETED: 'bg-[rgba(63,185,80,0.14)] text-[#3fb950] ring-0',
+  REQUESTED: 'bg-status-maintenance-bg text-status-maintenance ring-0',
+  APPROVED:  'bg-status-allocated-bg text-status-allocated ring-0',
+  REJECTED:  'bg-[var(--color-semantic-error-bg)] text-semantic-error ring-0',
+  COMPLETED: 'bg-status-available-bg text-status-available ring-0',
 };
 
 const ALLOC_STATUS_STYLES = {
-  ACTIVE:   'bg-[rgba(88,166,255,0.14)] text-[#58a6ff] ring-0',
-  RETURNED: 'bg-[rgba(63,185,80,0.14)] text-[#3fb950] ring-0',
-  OVERDUE:  'bg-[rgba(248,81,73,0.14)] text-[#f85149] ring-0',
+  ACTIVE:   'bg-status-allocated-bg text-status-allocated ring-0',
+  RETURNED: 'bg-status-available-bg text-status-available ring-0',
+  OVERDUE:  'bg-[var(--color-semantic-error-bg)] text-semantic-error ring-0',
 };
 
 function formatDate(iso) {
@@ -62,8 +62,8 @@ function SectionTitle({ icon: Icon, title, subtitle }) {
     <div className="flex items-center gap-2 mb-4">
       <Icon className="h-4 w-4 text-indigo-600 flex-shrink-0" />
       <div>
-        <h2 className="text-sm font-semibold text-[#f7f8f8]">{title}</h2>
-        {subtitle && <p className="text-xs text-[#8a8f98]">{subtitle}</p>}
+        <h2 className="text-sm font-semibold text-ink">{title}</h2>
+        {subtitle && <p className="text-xs text-ink-subtle">{subtitle}</p>}
       </div>
     </div>
   );
@@ -71,7 +71,7 @@ function SectionTitle({ icon: Icon, title, subtitle }) {
 
 function SuccessAlert({ message, onDismiss }) {
   return (
-    <div className="flex items-start gap-3 bg-[rgba(63,185,80,0.06)] border border-[rgba(63,185,80,0.2)] text-[#3fb950] rounded-lg px-4 py-3 text-sm">
+    <div className="flex items-start gap-3 bg-status-available-bg border border-status-available text-status-available rounded-lg px-4 py-3 text-sm">
       <CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0 text-emerald-600" />
       <span className="flex-1">{message}</span>
       <button onClick={onDismiss} className="text-emerald-500 hover:text-emerald-700">
@@ -84,7 +84,7 @@ function SuccessAlert({ message, onDismiss }) {
 function ErrorAlert({ message }) {
   if (!message) return null;
   return (
-    <div className="flex items-start gap-3 bg-[rgba(248,81,73,0.06)] border border-[rgba(248,81,73,0.2)] text-[#f85149] rounded-lg px-4 py-3 text-sm">
+    <div className="flex items-start gap-3 bg-[var(--color-semantic-error-bg)] border border-semantic-error text-semantic-error rounded-lg px-4 py-3 text-sm">
       <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
       <span>{message}</span>
     </div>
@@ -114,7 +114,7 @@ function ReturnForm({ allocation, onCancel, onSuccess }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="border border-[#23252a] rounded-lg p-4 bg-slate-50 space-y-3">
+    <form onSubmit={handleSubmit} className="border border-hairline rounded-lg p-4 bg-slate-50 space-y-3">
       <p className="field-label">Return Asset</p>
       {error && <ErrorAlert message={error} />}
       <div>
@@ -130,7 +130,7 @@ function ReturnForm({ allocation, onCancel, onSuccess }) {
         </select>
       </div>
       <div>
-        <label className="field-label">Notes <span className="text-[#62666d]">(optional)</span></label>
+        <label className="field-label">Notes <span className="text-ink-tertiary">(optional)</span></label>
         <textarea
           value={returnNotes}
           onChange={e => setReturnNotes(e.target.value)}
@@ -151,7 +151,7 @@ function ReturnForm({ allocation, onCancel, onSuccess }) {
         <button
           type="button"
           onClick={onCancel}
-          className="text-sm text-[#62666d] hover:text-[#f7f8f8] px-3 py-2 rounded-md border border-[#23252a] hover:border-[#23252a] transition-colors"
+          className="text-sm text-ink-tertiary hover:text-ink px-3 py-2 rounded-md border border-hairline hover:border-hairline transition-colors"
         >
           Cancel
         </button>
@@ -167,8 +167,8 @@ function ActiveAllocationsList({ allocations, loading, onReturnSuccess }) {
   if (loading) {
     return (
       <div className="py-8 text-center">
-        <Loader2 className="h-6 w-6 animate-spin text-[#5e6ad2] mx-auto mb-2" />
-        <p className="text-sm text-[#8a8f98]">Loading active allocations…</p>
+        <Loader2 className="h-6 w-6 animate-spin text-primary mx-auto mb-2" />
+        <p className="text-sm text-ink-subtle">Loading active allocations…</p>
       </div>
     );
   }
@@ -177,7 +177,7 @@ function ActiveAllocationsList({ allocations, loading, onReturnSuccess }) {
     return (
       <div className="py-8 text-center">
         <Layers className="h-7 w-7 text-slate-200 mx-auto mb-2" />
-        <p className="text-sm text-[#8a8f98]">No active allocations at the moment.</p>
+        <p className="text-sm text-ink-subtle">No active allocations at the moment.</p>
       </div>
     );
   }
@@ -189,17 +189,17 @@ function ActiveAllocationsList({ allocations, loading, onReturnSuccess }) {
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-sm font-semibold text-[#f7f8f8]">
+                <span className="text-sm font-semibold text-ink">
                   {a.asset?.name ?? a.assetId}
                 </span>
                 {a.asset?.assetTag && (
-                  <span className="font-mono text-xs text-[#62666d] bg-slate-100 px-1.5 py-0.5 rounded">
+                  <span className="font-mono text-xs text-ink-tertiary bg-slate-100 px-1.5 py-0.5 rounded">
                     {a.asset.assetTag}
                   </span>
                 )}
-                <Pill label={a.status} cls={ALLOC_STATUS_STYLES[a.status] ?? 'bg-slate-100 text-[#8a8f98] ring-1 ring-slate-200'} />
+                <Pill label={a.status} cls={ALLOC_STATUS_STYLES[a.status] ?? 'bg-slate-100 text-ink-subtle ring-1 ring-slate-200'} />
               </div>
-              <div className="mt-1 text-xs text-[#8a8f98] flex items-center gap-3 flex-wrap">
+              <div className="mt-1 text-xs text-ink-subtle flex items-center gap-3 flex-wrap">
                 <span className="flex items-center gap-1">
                   <User className="h-3 w-3" />
                   {a.user?.name ?? 'Unknown'}
@@ -279,8 +279,8 @@ function PendingTransfersList({ transfers, departments = [], loading, onAction }
   if (loading) {
     return (
       <div className="py-8 text-center">
-        <Loader2 className="h-6 w-6 animate-spin text-[#5e6ad2] mx-auto mb-2" />
-        <p className="text-sm text-[#8a8f98]">Loading pending transfers…</p>
+        <Loader2 className="h-6 w-6 animate-spin text-primary mx-auto mb-2" />
+        <p className="text-sm text-ink-subtle">Loading pending transfers…</p>
       </div>
     );
   }
@@ -289,7 +289,7 @@ function PendingTransfersList({ transfers, departments = [], loading, onAction }
     return (
       <div className="py-8 text-center">
         <ArrowLeftRight className="h-7 w-7 text-slate-200 mx-auto mb-2" />
-        <p className="text-sm text-[#8a8f98]">No pending transfer requests.</p>
+        <p className="text-sm text-ink-subtle">No pending transfer requests.</p>
       </div>
     );
   }
@@ -304,38 +304,38 @@ function PendingTransfersList({ transfers, departments = [], loading, onAction }
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-sm font-semibold text-[#f7f8f8]">
+                  <span className="text-sm font-semibold text-ink">
                     {t.asset?.name ?? t.assetId}
                   </span>
                   {t.asset?.assetTag && (
-                    <span className="font-mono text-xs text-[#62666d] bg-slate-100 px-1.5 py-0.5 rounded">
+                    <span className="font-mono text-xs text-ink-tertiary bg-slate-100 px-1.5 py-0.5 rounded">
                       {t.asset.assetTag}
                     </span>
                   )}
                   <Pill
                     label={t.status}
-                    cls={TRANSFER_STATUS_STYLES[t.status] ?? 'bg-slate-100 text-[#8a8f98] ring-1 ring-slate-200'}
+                    cls={TRANSFER_STATUS_STYLES[t.status] ?? 'bg-slate-100 text-ink-subtle ring-1 ring-slate-200'}
                   />
                 </div>
-                <div className="mt-1 text-xs text-[#8a8f98] space-y-0.5">
+                <div className="mt-1 text-xs text-ink-subtle space-y-0.5">
                   <div className="flex items-center gap-1">
                     <User className="h-3 w-3" />
                     Requested by {t.requestedBy?.name ?? 'Unknown'} · {formatDate(t.createdAt)}
                   </div>
                   {t.toUser && (
                     <div className="flex items-center gap-1">
-                      <User className="h-3 w-3 text-[#5e6ad2]" />
+                      <User className="h-3 w-3 text-primary" />
                       To: {t.toUser.name}
                     </div>
                   )}
                   {t.toDeptId && !t.toUser && (
                     <div className="flex items-center gap-1">
-                      <Building2 className="h-3 w-3 text-[#5e6ad2]" />
+                      <Building2 className="h-3 w-3 text-primary" />
                       To dept: {departments.find(d => d.id === t.toDeptId)?.name ?? t.toDeptId}
                     </div>
                   )}
                   {t.reason && (
-                    <div className="italic text-[#62666d]">"{t.reason}"</div>
+                    <div className="italic text-ink-tertiary">"{t.reason}"</div>
                   )}
                 </div>
               </div>
@@ -386,7 +386,7 @@ function PendingTransfersList({ transfers, departments = [], loading, onAction }
                 </button>
                 <button
                   onClick={() => setRejectingId(null)}
-                  className="text-xs text-[#8a8f98] hover:text-[#c9d1d9] px-3 py-2"
+                  className="text-xs text-ink-subtle hover:text-[#c9d1d9] px-3 py-2"
                 >
                   Cancel
                 </button>
@@ -499,11 +499,11 @@ function AllocatePanel({ assets, users, departments, onSuccess }) {
 
       {/* Selected asset info */}
       {selectedAsset && (
-        <div className="flex items-center gap-3 bg-[#141516] border border-[#23252a] rounded-lg px-4 py-3">
-          <Package className="h-5 w-5 text-[#5e6ad2] flex-shrink-0" />
+        <div className="flex items-center gap-3 bg-surface-2 border border-hairline rounded-lg px-4 py-3">
+          <Package className="h-5 w-5 text-primary flex-shrink-0" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-[#f7f8f8]">{selectedAsset.name}</p>
-            <p className="text-xs text-[#8a8f98]">{selectedAsset.assetTag} · {selectedAsset.category?.name ?? '—'}</p>
+            <p className="text-sm font-semibold text-ink">{selectedAsset.name}</p>
+            <p className="text-xs text-ink-subtle">{selectedAsset.assetTag} · {selectedAsset.category?.name ?? '—'}</p>
           </div>
           <StatusBadge type="asset" status={selectedAsset.status} />
         </div>
@@ -513,7 +513,7 @@ function AllocatePanel({ assets, users, departments, onSuccess }) {
       {conflictHolder && (
         <>
           <ConflictBanner currentHolder={conflictHolder} />
-          <form onSubmit={handleTransfer} className="space-y-4 border border-[#23252a] rounded-lg p-4 bg-[#010102]">
+          <form onSubmit={handleTransfer} className="space-y-4 border border-hairline rounded-lg p-4 bg-canvas">
             <p className="field-label">Transfer Request</p>
             {transferError && <ErrorAlert message={transferError} />}
 
@@ -601,7 +601,7 @@ function AllocatePanel({ assets, users, departments, onSuccess }) {
 
       {/* ── AVAILABLE PATH — Allocation form ───────────────────── */}
       {selectedAsset && isAvailable && !conflictHolder && (
-        <form onSubmit={handleAllocate} className="space-y-4 border border-[#23252a] rounded-lg p-4 bg-[#010102]">
+        <form onSubmit={handleAllocate} className="space-y-4 border border-hairline rounded-lg p-4 bg-canvas">
           <p className="field-label">Allocate Asset</p>
           {allocError && <ErrorAlert message={allocError} />}
           <div>
@@ -618,13 +618,13 @@ function AllocatePanel({ assets, users, departments, onSuccess }) {
             </select>
           </div>
           <div>
-            <label className="field-label">Expected Return Date <span className="text-[#62666d]">(optional)</span></label>
+            <label className="field-label">Expected Return Date <span className="text-ink-tertiary">(optional)</span></label>
             <input
               type="date"
               value={expectedReturn}
               onChange={e => setExpectedReturn(e.target.value)}
               min={new Date().toISOString().split('T')[0]}
-              className="w-full border border-[#23252a] rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full border border-hairline rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
           <button
@@ -640,19 +640,19 @@ function AllocatePanel({ assets, users, departments, onSuccess }) {
 
       {/* Already allocated — hint before conflict is triggered */}
       {selectedAsset && isAllocated && !conflictHolder && (
-        <div className="flex items-start gap-3 bg-[rgba(88,166,255,0.06)] border border-[rgba(88,166,255,0.2)] rounded-lg px-4 py-3 text-sm">
-          <AlertCircle className="h-4 w-4 text-[#58a6ff] mt-0.5 flex-shrink-0" />
+        <div className="flex items-start gap-3 bg-status-allocated-bg border border-status-allocated rounded-lg px-4 py-3 text-sm">
+          <AlertCircle className="h-4 w-4 text-status-allocated mt-0.5 flex-shrink-0" />
           <div className="text-[#c9d1d9]">
             <p className="font-medium">This asset is currently allocated.</p>
-            <p className="text-[#8a8f98] mt-0.5">To move it, click "Try Allocate" — a conflict will be detected and you'll be prompted to submit a transfer request.</p>
+            <p className="text-ink-subtle mt-0.5">To move it, click "Try Allocate" — a conflict will be detected and you'll be prompted to submit a transfer request.</p>
           </div>
         </div>
       )}
 
       {/* Non-available, non-allocated status — no action possible */}
       {selectedAsset && !isAvailable && !isAllocated && (
-        <div className="flex items-start gap-3 bg-[#141516] border border-[#23252a] rounded-lg px-4 py-3 text-sm text-[#62666d]">
-          <AlertCircle className="h-4 w-4 text-[#62666d] mt-0.5 flex-shrink-0" />
+        <div className="flex items-start gap-3 bg-surface-2 border border-hairline rounded-lg px-4 py-3 text-sm text-ink-tertiary">
+          <AlertCircle className="h-4 w-4 text-ink-tertiary mt-0.5 flex-shrink-0" />
           <p>This asset cannot be allocated in its current status (<strong>{selectedAsset.status}</strong>).</p>
         </div>
       )}
@@ -755,10 +755,10 @@ export default function AllocationTransferPage() {
       {/* ── Page Header ──────────────────────────────────────────────────────── */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 28, flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <ArrowLeftRight size={18} color="#5e6ad2" style={{ flexShrink: 0 }} />
+          <ArrowLeftRight size={18} color='var(--color-primary)' style={{ flexShrink: 0 }} />
           <div>
-            <h1 className="type-display-md" style={{ color: '#f7f8f8', margin: 0 }}>Allocation & Transfers</h1>
-            <p className="type-body-sm" style={{ color: '#8a8f98', marginTop: 6 }}>Manage asset allocation, returns, and transfer requests</p>
+            <h1 className="type-display-md" style={{ color: 'var(--color-ink)', margin: 0 }}>Allocation & Transfers</h1>
+            <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)', marginTop: 6 }}>Manage asset allocation, returns, and transfer requests</p>
           </div>
         </div>
       </div>
@@ -769,7 +769,7 @@ export default function AllocationTransferPage() {
         {errorMsg && <ErrorAlert message={errorMsg} />}
 
         {/* Tab bar container */}
-        <div style={{ backgroundColor: '#0f1011', border: '1px solid #23252a', borderRadius: 12, overflow: 'visible' }}>
+        <div style={{ backgroundColor: 'var(--color-surface-1)', border: '1px solid #23252a', borderRadius: 12, overflow: 'visible' }}>
           <div style={{ display: 'flex', borderBottom: '1px solid #23252a' }} role="tablist">
             {tabs.map(tab => {
               const isActive = activeTab === tab.key;
@@ -783,14 +783,14 @@ export default function AllocationTransferPage() {
                     display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', fontSize: 14, fontWeight: 500,
                     backgroundColor: 'transparent', border: 'none', cursor: 'pointer',
                     borderBottom: isActive ? '2px solid #5e6ad2' : '2px solid transparent',
-                    color: isActive ? '#f7f8f8' : '#8a8f98',
+                    color: isActive ? 'var(--color-ink)' : 'var(--color-ink-subtle)',
                     transition: 'all 0.2s ease',
                   }}
                 >
                   <tab.icon size={16} aria-hidden="true" />
                   {tab.label}
                   {tab.count > 0 && (
-                    <span style={{ fontSize: 11, fontWeight: 600, borderRadius: 9999, padding: '2px 6px', backgroundColor: isActive ? 'rgba(94,106,210,0.15)' : '#23252a', color: isActive ? '#5e6ad2' : '#8a8f98' }}>
+                    <span style={{ fontSize: 11, fontWeight: 600, borderRadius: 9999, padding: '2px 6px', backgroundColor: isActive ? 'rgba(94,106,210,0.15)' : 'var(--color-hairline)', color: isActive ? 'var(--color-primary)' : 'var(--color-ink-subtle)' }}>
                       {tab.count}
                     </span>
                   )}
@@ -804,8 +804,8 @@ export default function AllocationTransferPage() {
             <div style={{ padding: 24 }}>
               {loadingData ? (
                 <div style={{ padding: '40px 0', textAlign: 'center' }}>
-                  <Loader2 size={28} color="#5e6ad2" style={{ margin: '0 auto 12px', animation: 'spin 1s linear infinite' }} />
-                  <p style={{ fontSize: 14, color: '#8a8f98', margin: 0 }}>Loading assets and users…</p>
+                  <Loader2 size={28} color='var(--color-primary)' style={{ margin: '0 auto 12px', animation: 'spin 1s linear infinite' }} />
+                  <p style={{ fontSize: 14, color: 'var(--color-ink-subtle)', margin: 0 }}>Loading assets and users…</p>
                 </div>
               ) : (
                 <AllocatePanel assets={assets} users={users} departments={departments} onSuccess={showSuccess} />
@@ -835,7 +835,7 @@ export default function AllocationTransferPage() {
 
         {/* Role notice */}
         {!isManager && (
-          <p style={{ fontSize: 12, color: '#62666d', textAlign: 'center' }}>
+          <p style={{ fontSize: 12, color: 'var(--color-ink-tertiary)', textAlign: 'center' }}>
             Transfer approvals and allocations are restricted to Asset Managers and Admins.
           </p>
         )}

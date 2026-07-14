@@ -13,41 +13,36 @@ export default {
       },
 
       // ── Color Tokens (DESIGN.md §Colors) ──────────────────────────────────
-      colors: {
-        // Brand / Interaction accent — the ONE chromatic interaction color
+            colors: {
         primary: {
-          DEFAULT: '#5e6ad2',
-          hover:   '#828fff',
-          focus:   '#5e69d1',
+          DEFAULT: 'var(--color-primary)',
+          hover:   'var(--color-primary-hover)',
+          focus:   'var(--color-primary-focus)',
         },
-        'on-primary': '#ffffff',
-        'brand-secure': '#7a7fad',
+        'on-primary': 'var(--color-on-primary)',
+        'brand-secure': 'var(--color-brand-secure)',
 
-        // Dark surface ladder
-        canvas:    '#010102',
+        canvas:    'var(--color-canvas)',
         surface: {
-          1: '#0f1011',
-          2: '#141516',
-          3: '#18191a',
-          4: '#191a1b',
+          1: 'var(--color-surface-1)',
+          2: 'var(--color-surface-2)',
+          3: 'var(--color-surface-3)',
+          4: 'var(--color-surface-4)',
         },
 
-        // Hairlines — three weights
         hairline: {
-          DEFAULT:  '#23252a',
-          strong:   '#34343a',
-          tertiary: '#3e3e44',
+          DEFAULT:  'var(--color-hairline)',
+          strong:   'var(--color-hairline-strong)',
+          tertiary: 'var(--color-hairline-tertiary)',
         },
 
-        // Text on dark
         ink: {
-          DEFAULT:  '#f7f8f8',
-          muted:    '#d0d6e0',
-          subtle:   '#8a8f98',
-          tertiary: '#62666d',
+          DEFAULT:  'var(--color-ink)',
+          muted:    'var(--color-ink-muted)',
+          subtle:   'var(--color-ink-subtle)',
+          tertiary: 'var(--color-ink-tertiary)',
         },
 
-        // Inverse (light) — printable reports ONLY
         inverse: {
           canvas:  '#ffffff',
           surface: '#f5f6f6',
@@ -55,21 +50,23 @@ export default {
           hairline:'#e0e0e0',
         },
 
-        // Semantic spectrum — data states & system feedback; NEVER on chrome
         semantic: {
-          success: '#3fb950',
-          info:    '#58a6ff',
-          warning: '#d29922',
-          error:   '#f85149',
-          overlay: '#000000',
+          success: 'var(--color-semantic-success)',
+          info:    'var(--color-semantic-info)',
+          warning: 'var(--color-semantic-warning)',
+          error:   'var(--color-semantic-error)',
+          overlay: 'var(--color-semantic-overlay)',
         },
 
-        // Asset-lifecycle state palette — maps onto semantic spectrum
         status: {
-          available:   '#3fb950',
-          allocated:   '#58a6ff',
-          maintenance: '#d29922',
-          disposed:    '#8b949e',
+          available:   'var(--color-status-available)',
+          allocated:   'var(--color-status-allocated)',
+          maintenance: 'var(--color-status-maintenance)',
+          disposed:    'var(--color-status-disposed)',
+          'available-bg': 'var(--color-status-available-bg)',
+          'allocated-bg': 'var(--color-status-allocated-bg)',
+          'maintenance-bg': 'var(--color-status-maintenance-bg)',
+          'disposed-bg': 'var(--color-status-disposed-bg)',
         },
       },
 
@@ -129,9 +126,9 @@ export default {
       },
 
       // ── Box Shadows — ONLY for modal-panel and command-palette ────────────
-      boxShadow: {
-        modal:   '0 16px 48px rgba(0, 0, 0, 0.44)',
-        palette: '0 24px 64px rgba(0, 0, 0, 0.56)',
+            boxShadow: {
+        modal:   'var(--shadow-modal)',
+        palette: 'var(--shadow-palette)',
       },
 
       // ── Backdrop Blur — sticky filter bar ─────────────────────────────────

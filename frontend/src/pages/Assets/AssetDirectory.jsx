@@ -35,8 +35,8 @@ function SelectFilter({ id, label, value, onChange, children }) {
         style={{
           borderRadius:    8,
           border:          '1px solid #23252a',
-          backgroundColor: '#0f1011',
-          color:           '#f7f8f8',
+          backgroundColor: 'var(--color-surface-1)',
+          color:           'var(--color-ink)',
           padding:         '6px 12px',
           fontSize:        13,
           outline:         'none',
@@ -171,10 +171,10 @@ export default function AssetDirectory() {
       {/* ── Page Header ──────────────────────────────────────────────────────── */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <Package size={18} color="#5e6ad2" aria-hidden="true" />
+          <Package size={18} color='var(--color-primary)' aria-hidden="true" />
           <div>
-            <h1 className="type-display-md" style={{ color: '#f7f8f8', margin: 0 }}>Asset Directory</h1>
-            <p className="type-body-sm" style={{ color: '#8a8f98', marginTop: 4 }}>
+            <h1 className="type-display-md" style={{ color: 'var(--color-ink)', margin: 0 }}>Asset Directory</h1>
+            <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)', marginTop: 4 }}>
               {pagination.total > 0
                 ? `${pagination.total} asset${pagination.total !== 1 ? 's' : ''} total`
                 : 'All registered assets'}
@@ -202,7 +202,7 @@ export default function AssetDirectory() {
           {/* Search */}
           <div style={{ flex: '1 1 200px', position: 'relative' }}>
             <label htmlFor="asset-search" className="sr-only">Search assets</label>
-            <Search size={14} color="#62666d" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+            <Search size={14} color='var(--color-ink-tertiary)' style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
             <input
               id="asset-search"
               type="text"
@@ -246,7 +246,7 @@ export default function AssetDirectory() {
             </button>
           )}
 
-          <SlidersHorizontal size={14} color="#8a8f98" aria-hidden="true" />
+          <SlidersHorizontal size={14} color='var(--color-ink-subtle)' aria-hidden="true" />
         </div>
 
         {/* ── Error state ──────────────────────────────────────────────────────── */}
@@ -254,7 +254,7 @@ export default function AssetDirectory() {
           <div
             role="alert"
             aria-live="polite"
-            style={{ display: 'flex', alignItems: 'flex-start', gap: 10, backgroundColor: 'rgba(248,81,73,0.10)', border: '1px solid rgba(248,81,73,0.25)', borderRadius: 8, padding: '10px 14px', color: '#f85149', fontSize: 13 }}
+            style={{ display: 'flex', alignItems: 'flex-start', gap: 10, backgroundColor: 'var(--color-semantic-error-bg)', border: '1px solid var(--color-semantic-error)', borderRadius: 8, padding: '10px 14px', color: 'var(--color-semantic-error)', fontSize: 13 }}
           >
             <AlertCircle size={14} style={{ flexShrink: 0, marginTop: 1 }} />
             <span>{error}</span>
@@ -266,7 +266,7 @@ export default function AssetDirectory() {
           <div style={{ overflowX: 'auto' }}>
             <table style={{ minWidth: '100%', borderCollapse: 'collapse' }} aria-label="Asset directory">
               <thead>
-                <tr style={{ backgroundColor: '#141516' }}>
+                <tr style={{ backgroundColor: 'var(--color-surface-2)' }}>
                   {['Tag','Name','Category','Status','Department','Location','Bookable',''].map((h, i) => (
                     <th key={i} className="data-table-header" style={{ textAlign: i === 6 ? 'center' : 'left', width: i === 7 ? 40 : undefined }}>
                       {h || <span className="sr-only">Actions</span>}
@@ -280,8 +280,8 @@ export default function AssetDirectory() {
                 {loading && (
                   <tr>
                     <td colSpan={8} style={{ padding: '48px 16px', textAlign: 'center' }}>
-                      <Loader2 size={22} color="#5e6ad2" style={{ animation: 'spin 1s linear infinite', margin: '0 auto 8px' }} />
-                      <p className="type-body-sm" style={{ color: '#8a8f98' }}>Loading assets…</p>
+                      <Loader2 size={22} color='var(--color-primary)' style={{ animation: 'spin 1s linear infinite', margin: '0 auto 8px' }} />
+                      <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)' }}>Loading assets…</p>
                     </td>
                   </tr>
                 )}
@@ -290,15 +290,15 @@ export default function AssetDirectory() {
                 {!loading && assets.length === 0 && !error && (
                   <tr>
                     <td colSpan={8} style={{ padding: '48px 16px', textAlign: 'center' }}>
-                      <Package size={32} color="#3e3e44" style={{ margin: '0 auto 12px' }} />
+                      <Package size={32} color='var(--color-hairline-tertiary)' style={{ margin: '0 auto 12px' }} />
                       {hasFilters ? (
                         <>
-                          <p className="type-body-sm" style={{ color: '#8a8f98' }}>No assets match your filters.</p>
+                          <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)' }}>No assets match your filters.</p>
                           <button onClick={clearFilters} className="text-link" style={{ marginTop: 8, fontSize: 13 }}>Clear filters</button>
                         </>
                       ) : (
                         <>
-                          <p className="type-body-sm" style={{ color: '#8a8f98' }}>No assets registered yet.</p>
+                          <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)' }}>No assets registered yet.</p>
                           {isAssetManager && (
                             <button onClick={() => navigate('/assets/new')} className="text-link" style={{ marginTop: 8, fontSize: 13 }}>Register the first asset →</button>
                           )}
@@ -324,22 +324,22 @@ export default function AssetDirectory() {
                   >
                     {/* Asset Tag — mono font per DESIGN.md */}
                     <td style={{ padding: '12px 16px' }}>
-                      <span className="type-mono" style={{ color: '#8a8f98', backgroundColor: '#141516', padding: '2px 6px', borderRadius: 4 }}>
+                      <span className="type-mono" style={{ color: 'var(--color-ink-subtle)', backgroundColor: 'var(--color-surface-2)', padding: '2px 6px', borderRadius: 4 }}>
                         {asset.assetTag}
                       </span>
                     </td>
 
                     {/* Name */}
                     <td style={{ padding: '12px 16px' }}>
-                      <p style={{ fontWeight: 500, fontSize: 13, color: '#f7f8f8', margin: 0 }}>{asset.name}</p>
+                      <p style={{ fontWeight: 500, fontSize: 13, color: 'var(--color-ink)', margin: 0 }}>{asset.name}</p>
                       {asset.serialNumber && (
-                        <p className="type-mono" style={{ color: '#62666d', marginTop: 2 }}>{asset.serialNumber}</p>
+                        <p className="type-mono" style={{ color: 'var(--color-ink-tertiary)', marginTop: 2 }}>{asset.serialNumber}</p>
                       )}
                     </td>
 
                     {/* Category */}
-                    <td style={{ padding: '12px 16px', fontSize: 13, color: '#d0d6e0' }}>
-                      {asset.category?.name ?? <span style={{ color: '#3e3e44' }}>—</span>}
+                    <td style={{ padding: '12px 16px', fontSize: 13, color: 'var(--color-ink-muted)' }}>
+                      {asset.category?.name ?? <span style={{ color: 'var(--color-hairline-tertiary)' }}>—</span>}
                     </td>
 
                     {/* Status */}
@@ -348,29 +348,29 @@ export default function AssetDirectory() {
                     </td>
 
                     {/* Department */}
-                    <td style={{ padding: '12px 16px', fontSize: 13, color: '#d0d6e0' }}>
-                      {asset.department?.name ?? <span style={{ color: '#3e3e44' }}>—</span>}
+                    <td style={{ padding: '12px 16px', fontSize: 13, color: 'var(--color-ink-muted)' }}>
+                      {asset.department?.name ?? <span style={{ color: 'var(--color-hairline-tertiary)' }}>—</span>}
                     </td>
 
                     {/* Location */}
-                    <td style={{ padding: '12px 16px', fontSize: 13, color: '#d0d6e0' }}>
-                      {asset.location ?? <span style={{ color: '#3e3e44' }}>—</span>}
+                    <td style={{ padding: '12px 16px', fontSize: 13, color: 'var(--color-ink-muted)' }}>
+                      {asset.location ?? <span style={{ color: 'var(--color-hairline-tertiary)' }}>—</span>}
                     </td>
 
                     {/* Bookable */}
                     <td style={{ padding: '12px 16px', textAlign: 'center' }}>
                       {asset.isBookable ? (
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, color: '#5e6ad2' }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--color-primary)' }}>
                           <BookOpen size={12} />
                           Yes
                         </span>
                       ) : (
-                        <span style={{ fontSize: 12, color: '#3e3e44' }}>—</span>
+                        <span style={{ fontSize: 12, color: 'var(--color-hairline-tertiary)' }}>—</span>
                       )}
                     </td>
 
                     {/* Detail icon */}
-                    <td style={{ padding: '12px 16px', color: '#62666d' }}>
+                    <td style={{ padding: '12px 16px', color: 'var(--color-ink-tertiary)' }}>
                       <ExternalLink size={13} />
                     </td>
                   </tr>
@@ -381,8 +381,8 @@ export default function AssetDirectory() {
 
           {/* ── Pagination ─────────────────────────────────────────────────── */}
           {!loading && assets.length > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #23252a', padding: '10px 16px', backgroundColor: '#0f1011' }}>
-              <span className="type-caption" style={{ color: '#8a8f98' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #23252a', padding: '10px 16px', backgroundColor: 'var(--color-surface-1)' }}>
+              <span className="type-caption" style={{ color: 'var(--color-ink-subtle)' }}>
                 Showing {(pagination.page - 1) * pagination.limit + 1}–{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}
               </span>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -394,7 +394,7 @@ export default function AssetDirectory() {
                 >
                   <ChevronLeft size={14} />
                 </button>
-                <span className="type-caption" style={{ color: '#8a8f98' }}>
+                <span className="type-caption" style={{ color: 'var(--color-ink-subtle)' }}>
                   {pagination.page} / {totalPages}
                 </span>
                 <button

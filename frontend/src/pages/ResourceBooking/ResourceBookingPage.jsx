@@ -55,7 +55,7 @@ function dateToMinutes(date) {
 const STATUS_COLORS = {
   UPCOMING:  { bg: '#1f6feb', text: '#ffffff' },
   ONGOING:   { bg: '#238636', text: '#ffffff' },
-  COMPLETED: { bg: '#30363d', text: '#8b949e' },
+  COMPLETED: { bg: '#30363d', text: 'var(--color-status-disposed)' },
   CANCELLED: { bg: '#6e040f', text: '#ffa198' },
 };
 
@@ -79,13 +79,13 @@ const CALENDAR_RANGE = CALENDAR_END - CALENDAR_START;
 function CalendarTimeline({ bookings }) {
   const hourSlots = Array.from({ length: 12 }, (_, i) => i + 8);
   return (
-    <div style={{ position: 'relative', border: '1px solid #23252a', borderRadius: 8, overflow: 'hidden', backgroundColor: '#0f1011' }}>
+    <div style={{ position: 'relative', border: '1px solid #23252a', borderRadius: 8, overflow: 'hidden', backgroundColor: 'var(--color-surface-1)' }}>
       <div style={{ display: 'flex' }}>
         {/* Time labels */}
         <div style={{ width: 52, flexShrink: 0, borderRight: '1px solid #23252a' }}>
           {hourSlots.map(hour => (
             <div key={hour} style={{ height: 48, display: 'flex', alignItems: 'flex-start', padding: '4px 6px' }}>
-              <span style={{ fontSize: 10, color: '#62666d', fontFamily: 'var(--font-mono)' }}>
+              <span style={{ fontSize: 10, color: 'var(--color-ink-tertiary)', fontFamily: 'var(--font-mono)' }}>
                 {hour === 12 ? '12 PM' : hour > 12 ? `${hour - 12} PM` : `${hour} AM`}
               </span>
             </div>
@@ -117,7 +117,7 @@ function CalendarTimeline({ bookings }) {
         </div>
       </div>
       {bookings.filter(b => b.status !== 'CANCELLED').length === 0 && (
-        <p style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: '#62666d', pointerEvents: 'none' }}>
+        <p style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: 'var(--color-ink-tertiary)', pointerEvents: 'none' }}>
           No bookings on this day
         </p>
       )}
@@ -128,10 +128,10 @@ function CalendarTimeline({ bookings }) {
 /** 409 Conflict banner */
 function ConflictBanner({ conflict, requestedStart, requestedEnd, onDismiss }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '12px 14px', backgroundColor: 'rgba(248,81,73,0.10)', border: '1px solid rgba(248,81,73,0.25)', borderRadius: 8 }}>
-      <AlertTriangle size={16} style={{ color: '#f85149', flexShrink: 0, marginTop: 1 }} />
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '12px 14px', backgroundColor: 'var(--color-semantic-error-bg)', border: '1px solid var(--color-semantic-error)', borderRadius: 8 }}>
+      <AlertTriangle size={16} style={{ color: 'var(--color-semantic-error)', flexShrink: 0, marginTop: 1 }} />
       <div style={{ flex: 1, fontSize: 13 }}>
-        <p style={{ fontWeight: 600, color: '#f85149', margin: 0 }}>Time slot unavailable</p>
+        <p style={{ fontWeight: 600, color: 'var(--color-semantic-error)', margin: 0 }}>Time slot unavailable</p>
         <p style={{ color: '#ffa198', marginTop: 4 }}>
           Requested {formatTime(requestedStart)} – {formatTime(requestedEnd)} conflicts with an existing booking:
         </p>
@@ -139,7 +139,7 @@ function ConflictBanner({ conflict, requestedStart, requestedEnd, onDismiss }) {
           <strong>{conflict.bookedBy}</strong> — {formatTime(conflict.startTime)} – {formatTime(conflict.endTime)}
         </p>
       </div>
-      <button onClick={onDismiss} style={{ color: '#f85149', background: 'none', border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0 }} aria-label="Dismiss conflict">
+      <button onClick={onDismiss} style={{ color: 'var(--color-semantic-error)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0 }} aria-label="Dismiss conflict">
         <X size={15} />
       </button>
     </div>
@@ -151,15 +151,15 @@ function BookingCard({ booking, onCancel }) {
   const canCancel = booking.status === 'UPCOMING' || booking.status === 'ONGOING';
   const c = STATUS_COLORS[booking.status] ?? STATUS_COLORS.UPCOMING;
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', backgroundColor: '#141516', border: '1px solid #23252a', borderRadius: 8 }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', backgroundColor: 'var(--color-surface-2)', border: '1px solid #23252a', borderRadius: 8 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', backgroundColor: c.bg, flexShrink: 0 }} />
         <div>
-          <p style={{ fontSize: 13, fontWeight: 500, color: '#d0d6e0', margin: 0 }}>
+          <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--color-ink-muted)', margin: 0 }}>
             {formatTime(booking.startTime)} – {formatTime(booking.endTime)}
           </p>
           {booking.purpose && (
-            <p style={{ fontSize: 11, color: '#8a8f98', marginTop: 2 }}>{booking.purpose}</p>
+            <p style={{ fontSize: 11, color: 'var(--color-ink-subtle)', marginTop: 2 }}>{booking.purpose}</p>
           )}
         </div>
       </div>
@@ -180,19 +180,19 @@ function BookingCard({ booking, onCancel }) {
 function CalendarSkeleton() {
   const hourSlots = Array.from({ length: 12 }, (_, i) => i + 8);
   return (
-    <div style={{ position: 'relative', border: '1px solid #23252a', borderRadius: 8, overflow: 'hidden', backgroundColor: '#0f1011' }}>
+    <div style={{ position: 'relative', border: '1px solid #23252a', borderRadius: 8, overflow: 'hidden', backgroundColor: 'var(--color-surface-1)' }}>
       <div style={{ display: 'flex' }}>
         <div style={{ width: 52, flexShrink: 0, borderRight: '1px solid #23252a' }}>
           {hourSlots.map(h => (
             <div key={h} style={{ height: 48, display: 'flex', alignItems: 'flex-start', padding: '4px 6px' }}>
-              <div style={{ height: 10, width: 28, borderRadius: 4, backgroundColor: '#23252a' }} />
+              <div style={{ height: 10, width: 28, borderRadius: 4, backgroundColor: 'var(--color-hairline)' }} />
             </div>
           ))}
         </div>
         <div style={{ flex: 1, position: 'relative', height: `${hourSlots.length * 48}px` }}>
           {hourSlots.map((_, i) => <div key={i} style={{ position: 'absolute', width: '100%', borderTop: '1px solid #1c1e22', top: `${i * 48}px` }} />)}
-          <div style={{ position: 'absolute', left: 4, right: 4, top: '10%', height: '15%', borderRadius: 4, backgroundColor: '#23252a', animation: 'pulse 2s infinite' }} />
-          <div style={{ position: 'absolute', left: '33%', top: '40%', height: '20%', width: '25%', borderRadius: 4, backgroundColor: '#23252a', animation: 'pulse 2s infinite' }} />
+          <div style={{ position: 'absolute', left: 4, right: 4, top: '10%', height: '15%', borderRadius: 4, backgroundColor: 'var(--color-hairline)', animation: 'pulse 2s infinite' }} />
+          <div style={{ position: 'absolute', left: '33%', top: '40%', height: '20%', width: '25%', borderRadius: 4, backgroundColor: 'var(--color-hairline)', animation: 'pulse 2s infinite' }} />
         </div>
       </div>
     </div>
@@ -312,10 +312,10 @@ export default function ResourceBookingPage() {
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <Calendar size={18} color="#5e6ad2" />
+          <Calendar size={18} color='var(--color-primary)' />
           <div>
-            <h1 style={{ fontSize: 20, fontWeight: 700, color: '#f7f8f8', margin: 0 }}>Resource Booking</h1>
-            <p style={{ fontSize: 13, color: '#8a8f98', marginTop: 6 }}>Book shared resources like conference rooms and projectors.</p>
+            <h1 style={{ fontSize: 20, fontWeight: 700, color: 'var(--color-ink)', margin: 0 }}>Resource Booking</h1>
+            <p style={{ fontSize: 13, color: 'var(--color-ink-subtle)', marginTop: 6 }}>Book shared resources like conference rooms and projectors.</p>
           </div>
         </div>
         <button onClick={fetchBookings} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, padding: '6px 12px', borderRadius: 6, border: '1px solid #30363d', backgroundColor: '#21262d', color: '#c9d1d9', cursor: 'pointer' }}>
@@ -324,10 +324,10 @@ export default function ResourceBookingPage() {
       </div>
 
       {assetLoadError ? (
-        <div style={{ backgroundColor: '#141516', border: '1px solid rgba(248,81,73,0.25)', borderRadius: 12, padding: '48px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-          <AlertTriangle size={40} color="#f85149" style={{ marginBottom: 16 }} />
-          <h2 style={{ fontSize: 16, fontWeight: 600, color: '#f7f8f8', margin: 0 }}>Failed to load resources</h2>
-          <p style={{ fontSize: 13, color: '#8a8f98', marginTop: 6, marginBottom: 16 }}>{assetLoadError}</p>
+        <div style={{ backgroundColor: 'var(--color-surface-2)', border: '1px solid var(--color-semantic-error)', borderRadius: 12, padding: '48px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+          <AlertTriangle size={40} color='var(--color-semantic-error)' style={{ marginBottom: 16 }} />
+          <h2 style={{ fontSize: 16, fontWeight: 600, color: 'var(--color-ink)', margin: 0 }}>Failed to load resources</h2>
+          <p style={{ fontSize: 13, color: 'var(--color-ink-subtle)', marginTop: 6, marginBottom: 16 }}>{assetLoadError}</p>
           <button onClick={() => window.location.reload()} style={{ padding: '8px 16px', backgroundColor: '#da3633', color: '#ffffff', borderRadius: 6, border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: 13 }}>Reload Page</button>
         </div>
       ) : (
@@ -335,9 +335,9 @@ export default function ResourceBookingPage() {
           {/* ── Selectors ─────────────────────────────────────────────── */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <div>
-              <label style={{ display: 'block', fontSize: 12, color: '#8a8f98', marginBottom: 6 }}>Select Resource</label>
+              <label style={{ display: 'block', fontSize: 12, color: 'var(--color-ink-subtle)', marginBottom: 6 }}>Select Resource</label>
               {loading ? (
-                <div style={{ height: 36, backgroundColor: '#23252a', borderRadius: 8, animation: 'pulse 2s infinite' }} />
+                <div style={{ height: 36, backgroundColor: 'var(--color-hairline)', borderRadius: 8, animation: 'pulse 2s infinite' }} />
               ) : (
                 <select
                   id="resource-selector"
@@ -355,7 +355,7 @@ export default function ResourceBookingPage() {
               )}
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: 12, color: '#8a8f98', marginBottom: 6 }}>Select Date</label>
+              <label style={{ display: 'block', fontSize: 12, color: 'var(--color-ink-subtle)', marginBottom: 6 }}>Select Date</label>
               <input
                 id="booking-date"
                 type="date"
@@ -373,21 +373,21 @@ export default function ResourceBookingPage() {
             {/* Calendar timeline */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <h2 style={{ fontSize: 13, fontWeight: 600, color: '#d0d6e0', display: 'flex', alignItems: 'center', gap: 6, margin: 0 }}>
+                <h2 style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-ink-muted)', display: 'flex', alignItems: 'center', gap: 6, margin: 0 }}>
                   <Clock size={13} />
                   {selectedAsset ? `${selectedAsset.name} — ${selectedDate}` : 'Select a resource'}
                 </h2>
                 {fetchingBookings && !calendarError && (
-                  <span style={{ fontSize: 11, color: '#5e6ad2', animation: 'pulse 2s infinite' }}>Loading…</span>
+                  <span style={{ fontSize: 11, color: 'var(--color-primary)', animation: 'pulse 2s infinite' }}>Loading…</span>
                 )}
               </div>
 
               <div style={{ position: 'relative' }}>
                 {fetchingBookings && !calendarError ? <CalendarSkeleton /> : <CalendarTimeline bookings={bookings} />}
                 {calendarError && (
-                  <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(15,16,17,0.85)', backdropFilter: 'blur(2px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: 16, zIndex: 10, borderRadius: 8, border: '1px solid rgba(248,81,73,0.25)' }}>
-                    <AlertTriangle size={28} color="#f85149" style={{ marginBottom: 8 }} />
-                    <p style={{ fontSize: 13, fontWeight: 600, color: '#f85149', margin: 0 }}>Calendar Error</p>
+                  <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(15,16,17,0.85)', backdropFilter: 'blur(2px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: 16, zIndex: 10, borderRadius: 8, border: '1px solid var(--color-semantic-error)' }}>
+                    <AlertTriangle size={28} color='var(--color-semantic-error)' style={{ marginBottom: 8 }} />
+                    <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-semantic-error)', margin: 0 }}>Calendar Error</p>
                     <p style={{ fontSize: 12, color: '#ffa198', marginTop: 4, marginBottom: 12 }}>{calendarError}</p>
                     <button onClick={fetchBookings} style={{ fontSize: 12, padding: '6px 12px', borderRadius: 6, border: '1px solid #30363d', backgroundColor: '#21262d', color: '#c9d1d9', cursor: 'pointer' }}>Retry</button>
                   </div>
@@ -396,42 +396,42 @@ export default function ResourceBookingPage() {
 
               {bookings.length > 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <p style={{ fontSize: 11, fontWeight: 600, color: '#8a8f98', textTransform: 'uppercase' }}>Existing Bookings ({bookings.length})</p>
+                  <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-ink-subtle)', textTransform: 'uppercase' }}>Existing Bookings ({bookings.length})</p>
                   {bookings.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancel} />)}
                 </div>
               )}
             </div>
 
             {/* Booking form */}
-            <div style={{ backgroundColor: '#141516', padding: 16, borderRadius: 12, border: '1px solid #23252a' }}>
-              <h2 style={{ fontSize: 14, fontWeight: 600, color: '#f7f8f8', margin: '0 0 16px' }}>New Booking</h2>
+            <div style={{ backgroundColor: 'var(--color-surface-2)', padding: 16, borderRadius: 12, border: '1px solid #23252a' }}>
+              <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-ink)', margin: '0 0 16px' }}>New Booking</h2>
 
               {conflict && (
                 <ConflictBanner conflict={conflict} requestedStart={conflictRequested.start} requestedEnd={conflictRequested.end} onDismiss={() => setConflict(null)} />
               )}
               {success && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', backgroundColor: 'rgba(63,185,80,0.10)', border: '1px solid rgba(63,185,80,0.25)', borderRadius: 8, fontSize: 13, color: '#3fb950', marginTop: conflict ? 12 : 0, marginBottom: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px', backgroundColor: 'var(--color-status-available-bg)', border: '1px solid var(--color-status-available)', borderRadius: 8, fontSize: 13, color: 'var(--color-status-available)', marginTop: conflict ? 12 : 0, marginBottom: 12 }}>
                   <CheckCircle size={14} />{success}
                 </div>
               )}
               {error && (
-                <div style={{ padding: '10px 12px', backgroundColor: 'rgba(248,81,73,0.10)', border: '1px solid rgba(248,81,73,0.25)', borderRadius: 8, fontSize: 13, color: '#f85149', marginBottom: 12 }}>
+                <div style={{ padding: '10px 12px', backgroundColor: 'var(--color-semantic-error-bg)', border: '1px solid var(--color-semantic-error)', borderRadius: 8, fontSize: 13, color: 'var(--color-semantic-error)', marginBottom: 12 }}>
                   {error}
                 </div>
               )}
 
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }} id="booking-form">
                 <div>
-                  <label htmlFor="start-time" style={{ display: 'block', fontSize: 12, color: '#8a8f98', marginBottom: 6 }}>Start Time</label>
+                  <label htmlFor="start-time" style={{ display: 'block', fontSize: 12, color: 'var(--color-ink-subtle)', marginBottom: 6 }}>Start Time</label>
                   <input id="start-time" type="time" value={startTime} required style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #30363d', backgroundColor: '#0d1117', color: '#c9d1d9', outline: 'none' }}
                     onChange={e => { setStartTime(e.target.value); setConflict(null); setSuccess(''); setError(''); }} />
                 </div>
                 <div>
-                  <label htmlFor="end-time" style={{ display: 'block', fontSize: 12, color: '#8a8f98', marginBottom: 6 }}>End Time</label>
+                  <label htmlFor="end-time" style={{ display: 'block', fontSize: 12, color: 'var(--color-ink-subtle)', marginBottom: 6 }}>End Time</label>
                   <input id="end-time" type="time" value={endTime} required style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #30363d', backgroundColor: '#0d1117', color: '#c9d1d9', outline: 'none' }}
                     onChange={e => { setEndTime(e.target.value); setConflict(null); setSuccess(''); setError(''); }} />
                   {startTime && endTime && (
-                    <p style={{ fontSize: 11, color: '#62666d', marginTop: 4 }}>
+                    <p style={{ fontSize: 11, color: 'var(--color-ink-tertiary)', marginTop: 4 }}>
                       Duration: {Math.max(0, timeToMinutes(endTime) - timeToMinutes(startTime))} min (min 15, max 8h)
                     </p>
                   )}

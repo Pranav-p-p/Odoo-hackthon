@@ -18,6 +18,7 @@ import {
   ChevronDown,
   User,
 } from 'lucide-react';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Sidebar navigation — grouped by section (DESIGN.md §Navigation → sidebar-nav)
@@ -98,7 +99,7 @@ export default function DashboardLayout() {
   const initials  = currentUser?.name?.charAt(0)?.toUpperCase() ?? '?';
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', backgroundColor: '#010102' }}>
+    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', backgroundColor: 'var(--color-canvas)' }}>
 
       {/* ── Mobile overlay ────────────────────────────────────────────────── */}
       {sidebarOpen && (
@@ -121,7 +122,7 @@ export default function DashboardLayout() {
           bottom:          0,
           left:            sidebarOpen ? 0 : undefined,
           width:           240,
-          backgroundColor: '#010102',           /* canvas */
+          backgroundColor: 'var(--color-canvas)',           /* canvas */
           borderRight:     '1px solid #23252a', /* hairline */
           display:         'flex',
           flexDirection:   'column',
@@ -152,7 +153,7 @@ export default function DashboardLayout() {
             width:           28,
             height:          28,
             borderRadius:    6,
-            backgroundColor: '#5e6ad2',
+            backgroundColor: 'var(--color-primary)',
             flexShrink:      0,
           }}>
             <svg viewBox="0 0 16 16" fill="none" width={14} height={14} aria-hidden="true">
@@ -165,7 +166,7 @@ export default function DashboardLayout() {
           <span style={{
             fontSize:      18,
             fontWeight:    600,
-            color:         '#f7f8f8',
+            color:         'var(--color-ink)',
             letterSpacing: '-0.3px',
           }}>AssetFlow</span>
 
@@ -218,8 +219,8 @@ export default function DashboardLayout() {
               width:           32,
               height:          32,
               borderRadius:    '9999px',
-              backgroundColor: 'rgba(94,106,210,0.16)',
-              color:           '#828fff',
+              backgroundColor: 'var(--color-badge-brand-bg)',
+              color:           'var(--color-primary-hover)',
               fontSize:        13,
               fontWeight:      600,
               flexShrink:      0,
@@ -230,7 +231,7 @@ export default function DashboardLayout() {
               <p style={{
                 fontSize:    13,
                 fontWeight:  500,
-                color:       '#f7f8f8',
+                color:       'var(--color-ink)',
                 margin:      0,
                 overflow:    'hidden',
                 textOverflow:'ellipsis',
@@ -274,7 +275,7 @@ export default function DashboardLayout() {
             <span style={{
               fontSize:    13,
               fontWeight:  400,
-              color:       '#62666d',  /* ink-tertiary */
+              color:       'var(--color-ink-tertiary)',  /* ink-tertiary */
               letterSpacing: 0,
             }}>
               {breadcrumb}
@@ -297,6 +298,9 @@ export default function DashboardLayout() {
               <Bell size={16} />
             </button>
 
+            {/* Theme Toggle */}
+            <ThemeToggle />
+
             {/* Profile dropdown */}
             <div style={{ position: 'relative' }}>
               <button
@@ -313,15 +317,15 @@ export default function DashboardLayout() {
                   cursor:          'pointer',
                   transition:      `background-color var(--duration-fast) var(--ease-standard)`,
                 }}
-                onMouseEnter={e => e.currentTarget.style.backgroundColor = '#0f1011'}
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--color-surface-1)'}
                 onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
               >
                 <div style={{
                   width:           28,
                   height:          28,
                   borderRadius:    '9999px',
-                  backgroundColor: 'rgba(94,106,210,0.16)',
-                  color:           '#828fff',
+                  backgroundColor: 'var(--color-badge-brand-bg)',
+                  color:           'var(--color-primary-hover)',
                   fontSize:        12,
                   fontWeight:      600,
                   display:         'flex',
@@ -331,10 +335,10 @@ export default function DashboardLayout() {
                 }}>
                   {initials}
                 </div>
-                <span style={{ fontSize: 14, fontWeight: 500, color: '#d0d6e0' }}>
+                <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--color-ink-muted)' }}>
                   {currentUser?.name ?? 'User'}
                 </span>
-                <ChevronDown size={14} color="#8a8f98" />
+                <ChevronDown size={14} color='var(--color-ink-subtle)' />
               </button>
 
               {profileOpen && (
@@ -348,7 +352,7 @@ export default function DashboardLayout() {
                     top:             'calc(100% + 6px)',
                     right:           0,
                     width:           200,
-                    backgroundColor: '#18191a',    /* surface-3 */
+                    backgroundColor: 'var(--color-surface-3)',    /* surface-3 */
                     border:          '1px solid #34343a',
                     borderRadius:    10,
                     boxShadow:       '0 16px 48px rgba(0,0,0,0.44)',
@@ -356,10 +360,10 @@ export default function DashboardLayout() {
                     overflow:        'hidden',
                   }}>
                     <div style={{ padding: '12px 14px', borderBottom: '1px solid #23252a' }}>
-                      <p style={{ margin: 0, fontSize: 13, fontWeight: 500, color: '#f7f8f8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <p style={{ margin: 0, fontSize: 13, fontWeight: 500, color: 'var(--color-ink)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {currentUser?.email ?? ''}
                       </p>
-                      <p style={{ margin: '2px 0 0', fontSize: 12, color: '#8a8f98' }}>{roleLabel}</p>
+                      <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--color-ink-subtle)' }}>{roleLabel}</p>
                     </div>
                     <button
                       id="af-signout"
@@ -372,7 +376,7 @@ export default function DashboardLayout() {
                         padding:         '10px 14px',
                         fontSize:        14,
                         fontWeight:      500,
-                        color:           '#f85149',   /* semantic-error */
+                        color:           'var(--color-semantic-error)',   /* semantic-error */
                         background:      'transparent',
                         border:          'none',
                         cursor:          'pointer',

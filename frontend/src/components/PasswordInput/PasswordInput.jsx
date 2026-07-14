@@ -58,12 +58,12 @@ export default function PasswordInput({
             background:      'transparent',
             border:          'none',
             cursor:          'pointer',
-            color:           '#62666d',
+            color:           'var(--color-ink-tertiary)',
             borderRadius:    '0 8px 8px 0',
             transition:      'color var(--duration-fast) var(--ease-standard)',
           }}
-          onMouseEnter={e => e.currentTarget.style.color = '#828fff'}
-          onMouseLeave={e => e.currentTarget.style.color = '#62666d'}
+          onMouseEnter={e => e.currentTarget.style.color = 'var(--color-primary-hover)'}
+          onMouseLeave={e => e.currentTarget.style.color = 'var(--color-ink-tertiary)'}
           tabIndex={0}
         >
           {visible ? <EyeOff size={15} aria-hidden="true" /> : <Eye size={15} aria-hidden="true" />}

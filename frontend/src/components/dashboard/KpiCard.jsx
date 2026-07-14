@@ -51,18 +51,18 @@ export default function KpiCard({ title, value, icon, delta, deltaDir }) {
   }, [value]);
 
   const deltaColor = deltaDir === 'up'
-    ? '#3fb950'   /* semantic-success */
+    ? 'var(--color-status-available)'   /* semantic-success */
     : deltaDir === 'down'
-    ? '#f85149'   /* semantic-error */
-    : '#8a8f98';  /* ink-subtle */
+    ? 'var(--color-semantic-error)'   /* semantic-error */
+    : 'var(--color-ink-subtle)';  /* ink-subtle */
 
   return (
     <div className="kpi-card" aria-label={`${title}: ${value}`}>
       {/* ── Header row: label + icon ─────────────────────────────────────── */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-        <span className="type-eyebrow" style={{ color: '#8a8f98' }}>{title}</span>
+        <span className="type-eyebrow" style={{ color: 'var(--color-ink-subtle)' }}>{title}</span>
         {icon && (
-          <span style={{ color: '#8a8f98', display: 'flex', alignItems: 'center' }}>
+          <span style={{ color: 'var(--color-ink-subtle)', display: 'flex', alignItems: 'center' }}>
             {icon}
           </span>
         )}
@@ -77,7 +77,7 @@ export default function KpiCard({ title, value, icon, delta, deltaDir }) {
           fontWeight:  600,
           lineHeight:  1.12,
           letterSpacing: '-1.0px',
-          color:       '#f7f8f8',
+          color:       'var(--color-ink)',
           margin:      0,
         }}
       >

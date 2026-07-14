@@ -19,10 +19,10 @@ const TABS = [
 
 /* Category → icon + color */
 const CATEGORY_CONFIG = {
-  ALERTS:    { icon: AlertTriangle, color: '#f85149' },  /* semantic-error */
-  APPROVALS: { icon: FileText,      color: '#d29922' },  /* semantic-warning */
-  BOOKINGS:  { icon: Calendar,      color: '#58a6ff' },  /* semantic-info */
-  default:   { icon: Inbox,         color: '#8a8f98' },  /* ink-subtle */
+  ALERTS:    { icon: AlertTriangle, color: 'var(--color-semantic-error)' },  /* semantic-error */
+  APPROVALS: { icon: FileText,      color: 'var(--color-status-maintenance)' },  /* semantic-warning */
+  BOOKINGS:  { icon: Calendar,      color: 'var(--color-status-allocated)' },  /* semantic-info */
+  default:   { icon: Inbox,         color: 'var(--color-ink-subtle)' },  /* ink-subtle */
 };
 
 function getCategoryConfig(cat) {
@@ -86,19 +86,19 @@ export default function NotificationsPage() {
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 28, flexWrap: 'wrap' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Bell size={18} color="#5e6ad2" />
-            <h1 className="type-display-md" style={{ color: '#f7f8f8', margin: 0 }}>Notifications</h1>
+            <Bell size={18} color='var(--color-primary)' />
+            <h1 className="type-display-md" style={{ color: 'var(--color-ink)', margin: 0 }}>Notifications</h1>
             {unreadCount > 0 && (
               <span style={{
                 display: 'inline-flex', alignItems: 'center',
-                backgroundColor: 'rgba(94,106,210,0.16)', color: '#828fff',
+                backgroundColor: 'var(--color-badge-brand-bg)', color: 'var(--color-primary-hover)',
                 borderRadius: 9999, padding: '2px 8px', fontSize: 11, fontWeight: 600,
               }}>
                 {unreadCount} unread
               </span>
             )}
           </div>
-          <p className="type-body-sm" style={{ color: '#8a8f98', marginTop: 6 }}>
+          <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)', marginTop: 6 }}>
             Inbox for approvals, booking flags, and system alerts.
           </p>
         </div>
@@ -130,13 +130,13 @@ export default function NotificationsPage() {
                 padding:          '10px 16px',
                 fontSize:         13,
                 fontWeight:       activeTab === tab.id ? 600 : 400,
-                color:            activeTab === tab.id ? '#f7f8f8' : '#8a8f98',
-                borderBottom:     `2px solid ${activeTab === tab.id ? '#5e6ad2' : 'transparent'}`,
+                color:            activeTab === tab.id ? 'var(--color-ink)' : 'var(--color-ink-subtle)',
+                borderBottom:     `2px solid ${activeTab === tab.id ? 'var(--color-primary)' : 'transparent'}`,
                 background:       'transparent',
                 border:           'none',
                 borderBottomStyle:'solid',
                 borderBottomWidth: 2,
-                borderBottomColor: activeTab === tab.id ? '#5e6ad2' : 'transparent',
+                borderBottomColor: activeTab === tab.id ? 'var(--color-primary)' : 'transparent',
                 cursor:           'pointer',
                 transition:       'color var(--duration-fast) var(--ease-standard)',
                 whiteSpace:       'nowrap',
@@ -154,14 +154,14 @@ export default function NotificationsPage() {
         <div style={{
           display: 'flex', flexDirection: 'column', alignItems: 'center',
           justifyContent: 'center', padding: '64px 16px', textAlign: 'center',
-          backgroundColor: '#0f1011', border: '1px solid #23252a', borderRadius: 12,
+          backgroundColor: 'var(--color-surface-1)', border: '1px solid #23252a', borderRadius: 12,
         }}>
-          <BellOff size={36} color="#3e3e44" style={{ marginBottom: 16 }} />
-          <h3 style={{ fontSize: 16, fontWeight: 600, color: '#f7f8f8', margin: 0 }}>Your inbox is clear</h3>
-          <p className="type-body-sm" style={{ color: '#8a8f98', marginTop: 6 }}>No notifications found in this tab.</p>
+          <BellOff size={36} color='var(--color-hairline-tertiary)' style={{ marginBottom: 16 }} />
+          <h3 style={{ fontSize: 16, fontWeight: 600, color: 'var(--color-ink)', margin: 0 }}>Your inbox is clear</h3>
+          <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)', marginTop: 6 }}>No notifications found in this tab.</p>
         </div>
       ) : (
-        <div style={{ backgroundColor: '#0f1011', border: '1px solid #23252a', borderRadius: 12, overflow: 'hidden' }}>
+        <div style={{ backgroundColor: 'var(--color-surface-1)', border: '1px solid #23252a', borderRadius: 12, overflow: 'hidden' }}>
           {notifications.map((notif, idx) => {
             const { icon: Icon, color } = getCategoryConfig(notif.category);
             const isLast = idx === notifications.length - 1;
@@ -193,14 +193,14 @@ export default function NotificationsPage() {
                   <div>
                     <p style={{
                       fontSize: 13, fontWeight: notif.isRead ? 400 : 600,
-                      color: notif.isRead ? '#d0d6e0' : '#f7f8f8', margin: 0,
+                      color: notif.isRead ? 'var(--color-ink-muted)' : 'var(--color-ink)', margin: 0,
                     }}>
                       {notif.title}
                     </p>
-                    <p style={{ fontSize: 13, color: '#8a8f98', margin: '3px 0 0' }}>
+                    <p style={{ fontSize: 13, color: 'var(--color-ink-subtle)', margin: '3px 0 0' }}>
                       {notif.message}
                     </p>
-                    <span className="type-mono" style={{ color: '#62666d', display: 'block', marginTop: 4 }}>
+                    <span className="type-mono" style={{ color: 'var(--color-ink-tertiary)', display: 'block', marginTop: 4 }}>
                       {formatTime(notif.createdAt)}
                     </span>
                   </div>

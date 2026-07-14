@@ -33,9 +33,9 @@ function Modal({ isOpen, onClose, title, children }) {
         onClick={onClose}
       />
       <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-        <div style={{ backgroundColor: '#18191a', border: '1px solid #34343a', borderRadius: 12, boxShadow: '0 24px 64px rgba(0,0,0,0.60)', width: '100%', maxWidth: 440, maxHeight: '90vh', overflowY: 'auto' }}>
+        <div style={{ backgroundColor: 'var(--color-surface-3)', border: '1px solid #34343a', borderRadius: 12, boxShadow: '0 24px 64px rgba(0,0,0,0.60)', width: '100%', maxWidth: 440, maxHeight: '90vh', overflowY: 'auto' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #23252a' }}>
-            <h2 style={{ fontSize: 15, fontWeight: 600, color: '#f7f8f8', margin: 0 }}>{title}</h2>
+            <h2 style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-ink)', margin: 0 }}>{title}</h2>
             <button onClick={onClose} className="btn-icon-row" aria-label="Close"><X size={16} /></button>
           </div>
           <div style={{ padding: '20px' }}>{children}</div>
@@ -96,7 +96,7 @@ function DepartmentsTab() {
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-        <p className="type-body-sm" style={{ color: '#8a8f98' }}>{departments.length} department(s)</p>
+        <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)' }}>{departments.length} department(s)</p>
         {isAdmin && (
           <button onClick={() => setShowModal(true)} className="btn-primary">
             <Plus size={14} /> Add Department
@@ -109,21 +109,21 @@ function DepartmentsTab() {
       <div className="data-table">
         <table style={{ minWidth: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ backgroundColor: '#141516' }}>
+            <tr style={{ backgroundColor: 'var(--color-surface-2)' }}>
               {['Name','Head','Parent','Status'].map(h => <th key={h} className="data-table-header">{h}</th>)}
             </tr>
           </thead>
           <tbody>
             {departments.map(dept => (
               <tr key={dept.id} className="data-table-row">
-                <td style={{ padding: '10px 14px', fontSize: 13, fontWeight: 500, color: '#f7f8f8' }}>{dept.name}</td>
-                <td style={{ padding: '10px 14px', fontSize: 13, color: '#8a8f98' }}>{dept.head?.name || '—'}</td>
-                <td style={{ padding: '10px 14px', fontSize: 13, color: '#8a8f98' }}>{dept.parentDepartment?.name || '—'}</td>
+                <td style={{ padding: '10px 14px', fontSize: 13, fontWeight: 500, color: 'var(--color-ink)' }}>{dept.name}</td>
+                <td style={{ padding: '10px 14px', fontSize: 13, color: 'var(--color-ink-subtle)' }}>{dept.head?.name || '—'}</td>
+                <td style={{ padding: '10px 14px', fontSize: 13, color: 'var(--color-ink-subtle)' }}>{dept.parentDepartment?.name || '—'}</td>
                 <td style={{ padding: '10px 14px' }}><StatusBadge status={dept.status} /></td>
               </tr>
             ))}
             {departments.length === 0 && (
-              <tr><td colSpan={4} style={{ padding: '32px', textAlign: 'center', color: '#62666d', fontSize: 13 }}>No departments yet.</td></tr>
+              <tr><td colSpan={4} style={{ padding: '32px', textAlign: 'center', color: 'var(--color-ink-tertiary)', fontSize: 13 }}>No departments yet.</td></tr>
             )}
           </tbody>
         </table>
@@ -194,7 +194,7 @@ function CategoriesTab() {
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-        <p className="type-body-sm" style={{ color: '#8a8f98' }}>{categories.length} category(ies)</p>
+        <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)' }}>{categories.length} category(ies)</p>
         {isAdmin && (
           <button onClick={() => setShowModal(true)} className="btn-primary">
             <Plus size={14} /> Add Category
@@ -208,18 +208,18 @@ function CategoriesTab() {
         {categories.map(cat => (
           <div key={cat.id} className="feature-card" style={{ padding: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: 8, backgroundColor: 'rgba(94,106,210,0.16)' }}>
-                <FolderOpen size={16} color="#828fff" />
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: 8, backgroundColor: 'var(--color-badge-brand-bg)' }}>
+                <FolderOpen size={16} color='var(--color-primary-hover)' />
               </div>
-              <h3 style={{ fontSize: 13, fontWeight: 600, color: '#f7f8f8', margin: 0 }}>{cat.name}</h3>
+              <h3 style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-ink)', margin: 0 }}>{cat.name}</h3>
             </div>
-            <p className="type-body-sm" style={{ color: '#8a8f98', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+            <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
               {cat.description || 'No description'}
             </p>
           </div>
         ))}
         {categories.length === 0 && (
-          <p style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#62666d', padding: '32px 0', fontSize: 13 }}>No categories yet.</p>
+          <p style={{ gridColumn: '1 / -1', textAlign: 'center', color: 'var(--color-ink-tertiary)', padding: '32px 0', fontSize: 13 }}>No categories yet.</p>
         )}
       </div>
 
@@ -328,7 +328,7 @@ function EmployeesTab() {
     <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, gap: 12, flexWrap: 'wrap' }}>
         <div style={{ position: 'relative', flex: 1, minWidth: 200, maxWidth: 360 }}>
-          <Search size={14} color="#62666d" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+          <Search size={14} color='var(--color-ink-tertiary)' style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
           <input
             type="text"
             placeholder="Search by name or email…"
@@ -338,22 +338,22 @@ function EmployeesTab() {
             style={{ paddingLeft: 32 }}
           />
         </div>
-        <p className="type-body-sm" style={{ color: '#8a8f98' }}>{filteredUsers.length} user(s)</p>
+        <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)' }}>{filteredUsers.length} user(s)</p>
       </div>
 
       <div className="data-table">
         <table style={{ minWidth: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ backgroundColor: '#141516' }}>
+            <tr style={{ backgroundColor: 'var(--color-surface-2)' }}>
               {['Name','Email','Department','Role','Status', isAdmin ? 'Actions' : null].filter(Boolean).map(h => <th key={h} className="data-table-header">{h}</th>)}
             </tr>
           </thead>
           <tbody>
             {filteredUsers.map(user => (
               <tr key={user.id} className="data-table-row">
-                <td style={{ padding: '10px 14px', fontSize: 13, fontWeight: 500, color: '#f7f8f8' }}>{user.name}</td>
-                <td style={{ padding: '10px 14px', fontSize: 13, color: '#8a8f98' }}>{user.email}</td>
-                <td style={{ padding: '10px 14px', fontSize: 13, color: '#8a8f98' }}>{user.department?.name || '—'}</td>
+                <td style={{ padding: '10px 14px', fontSize: 13, fontWeight: 500, color: 'var(--color-ink)' }}>{user.name}</td>
+                <td style={{ padding: '10px 14px', fontSize: 13, color: 'var(--color-ink-subtle)' }}>{user.email}</td>
+                <td style={{ padding: '10px 14px', fontSize: 13, color: 'var(--color-ink-subtle)' }}>{user.department?.name || '—'}</td>
                 <td style={{ padding: '10px 14px' }}><RoleBadge role={user.role} /></td>
                 <td style={{ padding: '10px 14px' }}><StatusBadge status={user.status} /></td>
                 {isAdmin && (
@@ -368,7 +368,7 @@ function EmployeesTab() {
               </tr>
             ))}
             {filteredUsers.length === 0 && (
-              <tr><td colSpan={isAdmin ? 6 : 5} style={{ padding: '32px', textAlign: 'center', color: '#62666d', fontSize: 13 }}>No users found.</td></tr>
+              <tr><td colSpan={isAdmin ? 6 : 5} style={{ padding: '32px', textAlign: 'center', color: 'var(--color-ink-tertiary)', fontSize: 13 }}>No users found.</td></tr>
             )}
           </tbody>
         </table>
@@ -415,7 +415,7 @@ function EmployeesTab() {
 function LoadingSpinner() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 0' }}>
-      <Loader2 size={22} color="#5e6ad2" style={{ animation: 'spin 1s linear infinite' }} />
+      <Loader2 size={22} color='var(--color-primary)' style={{ animation: 'spin 1s linear infinite' }} />
       <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
     </div>
   );
@@ -423,11 +423,11 @@ function LoadingSpinner() {
 
 function ErrorBanner({ message, onDismiss }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, borderRadius: 8, border: '1px solid rgba(248,81,73,0.25)', backgroundColor: 'rgba(248,81,73,0.10)', padding: '10px 12px', marginBottom: 16, color: '#f85149', fontSize: 13 }}>
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, borderRadius: 8, border: '1px solid var(--color-semantic-error)', backgroundColor: 'var(--color-semantic-error-bg)', padding: '10px 12px', marginBottom: 16, color: 'var(--color-semantic-error)', fontSize: 13 }}>
       <AlertCircle size={13} style={{ flexShrink: 0, marginTop: 1 }} />
       <span style={{ flex: 1 }}>{message}</span>
       {onDismiss && (
-        <button onClick={onDismiss} style={{ color: '#f85149', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
+        <button onClick={onDismiss} style={{ color: 'var(--color-semantic-error)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
           <X size={13} />
         </button>
       )}
@@ -437,19 +437,19 @@ function ErrorBanner({ message, onDismiss }) {
 
 function StatusBadge({ status }) {
   const cfg = status === 'ACTIVE'
-    ? { bg: 'rgba(63,185,80,0.14)', color: '#3fb950' }
-    : { bg: 'rgba(139,148,158,0.16)', color: '#8b949e' };
+    ? { bg: 'var(--color-status-available-bg)', color: 'var(--color-status-available)' }
+    : { bg: 'var(--color-status-disposed-bg)', color: 'var(--color-status-disposed)' };
   return <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 9999, backgroundColor: cfg.bg, color: cfg.color }}>{status}</span>;
 }
 
 function RoleBadge({ role }) {
   const map = {
-    ADMIN:           { bg: 'rgba(248,81,73,0.14)',    color: '#f85149' },
-    ASSET_MANAGER:   { bg: 'rgba(88,166,255,0.14)',   color: '#58a6ff' },
-    DEPARTMENT_HEAD: { bg: 'rgba(210,153,34,0.16)',   color: '#d29922' },
-    EMPLOYEE:        { bg: 'rgba(63,185,80,0.14)',    color: '#3fb950' },
+    ADMIN:           { bg: 'rgba(248,81,73,0.14)',    color: 'var(--color-semantic-error)' },
+    ASSET_MANAGER:   { bg: 'var(--color-status-allocated-bg)',   color: 'var(--color-status-allocated)' },
+    DEPARTMENT_HEAD: { bg: 'var(--color-status-maintenance-bg)',   color: 'var(--color-status-maintenance)' },
+    EMPLOYEE:        { bg: 'var(--color-status-available-bg)',    color: 'var(--color-status-available)' },
   };
-  const cfg = map[role] || { bg: 'rgba(139,148,158,0.16)', color: '#8b949e' };
+  const cfg = map[role] || { bg: 'var(--color-status-disposed-bg)', color: 'var(--color-status-disposed)' };
   return <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 9999, backgroundColor: cfg.bg, color: cfg.color }}>{role?.replace('_', ' ')}</span>;
 }
 
@@ -478,8 +478,8 @@ export default function OrganizationSetupPage() {
     <div style={{ maxWidth: 1200, margin: '0 auto' }}>
       {/* Page header */}
       <div style={{ marginBottom: 24 }}>
-        <h1 className="type-display-md" style={{ color: '#f7f8f8', margin: 0 }}>Organization Setup</h1>
-        <p className="type-body-sm" style={{ color: '#8a8f98', marginTop: 6 }}>Manage departments, asset categories, and the employee directory.</p>
+        <h1 className="type-display-md" style={{ color: 'var(--color-ink)', margin: 0 }}>Organization Setup</h1>
+        <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)', marginTop: 6 }}>Manage departments, asset categories, and the employee directory.</p>
       </div>
 
       {/* Tab bar */}
@@ -493,9 +493,9 @@ export default function OrganizationSetupPage() {
                 display: 'flex', alignItems: 'center', gap: 6,
                 padding: '10px 16px',
                 fontSize: 13, fontWeight: activeTab === id ? 600 : 400,
-                color: activeTab === id ? '#f7f8f8' : '#8a8f98',
+                color: activeTab === id ? 'var(--color-ink)' : 'var(--color-ink-subtle)',
                 background: 'transparent', border: 'none',
-                borderBottom: `2px solid ${activeTab === id ? '#5e6ad2' : 'transparent'}`,
+                borderBottom: `2px solid ${activeTab === id ? 'var(--color-primary)' : 'transparent'}`,
                 cursor: 'pointer',
                 transition: 'color var(--duration-fast) var(--ease-standard)',
               }}
