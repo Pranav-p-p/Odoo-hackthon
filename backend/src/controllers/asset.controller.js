@@ -220,13 +220,14 @@ const createAsset = async (req, res, next) => {
     // ── Side effect: activity log (Member 4) ───────────────────────────────────
     // TODO (Member 4): createLog signature expected:
     //   createLog(userId, action, entityType, entityId, details)
-    await createLog(
-      req.user.id,
-      'ASSET_REGISTERED',
-      'Asset',
-      newAsset.id,
-      { assetTag: newAsset.assetTag, name: newAsset.name, categoryId: newAsset.categoryId }
-    );
+    await createLog({
+      prisma,
+      userId: req.user.id,
+      action: 'ASSET_REGISTERED',
+      entityType: 'Asset',
+      entityId: newAsset.id,
+      details: { assetTag: newAsset.assetTag, name: newAsset.name, categoryId: newAsset.categoryId }
+    });
 
     // ── 201 Created ────────────────────────────────────────────────────────────
     res.status(201).json({
@@ -378,13 +379,14 @@ const updateAsset = async (req, res, next) => {
     // ── Side effect: activity log (Member 4) ───────────────────────────────────
     // TODO (Member 4): createLog signature expected:
     //   createLog(userId, action, entityType, entityId, details)
-    await createLog(
-      req.user.id,
-      'ASSET_UPDATED',
-      'Asset',
-      updatedAsset.id,
-      { changedFields: Object.keys(updateData), assetTag: updatedAsset.assetTag }
-    );
+    await createLog({
+      prisma,
+      userId: req.user.id,
+      action: 'ASSET_UPDATED',
+      entityType: 'Asset',
+      entityId: updatedAsset.id,
+      details: { changedFields: Object.keys(updateData), assetTag: updatedAsset.assetTag }
+    });
 
     res.status(200).json({
       success: true,

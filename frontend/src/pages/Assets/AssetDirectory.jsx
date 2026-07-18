@@ -6,7 +6,7 @@ import {
   ExternalLink, BookOpen,
 } from 'lucide-react';
 import { getAssets, getCategories, getDepartments } from '../../api/assetApi';
-import { useCurrentUser } from '../../hooks/useCurrentUser';
+import useAuth from '../../hooks/useAuth';
 import StatusBadge from './components/StatusBadge';
 
 // ─── Constants (exact enum values from SHARED_ENUMS.md) ──────────────────────
@@ -61,7 +61,7 @@ function SelectFilter({ id, label, value, onChange, children }) {
  */
 export default function AssetDirectory() {
   const navigate = useNavigate();
-  const { user } = useCurrentUser();
+  const { currentUser: user } = useAuth();
   const isAssetManager = user?.role === 'ASSET_MANAGER' || user?.role === 'ADMIN';
 
   // ── Filter state ─────────────────────────────────────────────────────────────

@@ -4,18 +4,10 @@
  * Exact role strings (SHARED_ENUMS.md):
  * ADMIN, ASSET_MANAGER, DEPARTMENT_HEAD, EMPLOYEE
  */
-
-function getCurrentUser() {
-  try {
-    const raw = localStorage.getItem('assetflow_user');
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
+import useAuth from '../../hooks/useAuth';
 
 export default function RoleGate({ allow = [], children }) {
-  const user = getCurrentUser();
+  const { currentUser: user } = useAuth();
   
   if (!user || !user.role) return null;
   if (!allow.includes(user.role)) return null;

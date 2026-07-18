@@ -215,28 +215,30 @@ const createAllocation = async (req, res, next) => {
 
     // Side effect 1: Create notification for the assigned user (SHARED_ENUMS.md notification type ASSET_ASSIGNED)
     // createNotification(userId, title, message, type, category)
-    await createNotification(
+    await createNotification({
+      prisma,
       userId,
-      'Asset Assigned',
-      `Asset ${newAllocation.asset.assetTag} (${newAllocation.asset.name}) has been assigned to you.`,
-      'ASSET_ASSIGNED',
-      'ALERTS'
-    );
+      title: 'Asset Assigned',
+      message: `Asset ${newAllocation.asset.assetTag} (${newAllocation.asset.name}) has been assigned to you.`,
+      type: 'ASSET_ASSIGNED',
+      category: 'ALERTS'
+    });
 
     // Side effect 2: Log activity
     // createLog(userId, action, entityType, entityId, details)
-    await createLog(
-      req.user.id,
-      'ALLOCATION_CREATED',
-      'Allocation',
-      newAllocation.id,
-      {
+    await createLog({
+      prisma,
+      userId: req.user.id,
+      action: 'ALLOCATION_CREATED',
+      entityType: 'Allocation',
+      entityId: newAllocation.id,
+      details: {
         assetId: newAllocation.assetId,
         assetTag: newAllocation.asset.assetTag,
         userId: newAllocation.userId,
         userName: newAllocation.user.name,
       }
-    );
+    });
 
     res.status(201).json({
       success: true,
@@ -306,17 +308,18 @@ const returnAllocation = async (req, res, next) => {
     ]);
 
     // Side effect: Log activity
-    await createLog(
-      req.user.id,
-      'ALLOCATION_RETURNED',
-      'Allocation',
-      updatedAllocation.id,
-      {
+    await createLog({
+      prisma,
+      userId: req.user.id,
+      action: 'ALLOCATION_RETURNED',
+      entityType: 'Allocation',
+      entityId: updatedAllocation.id,
+      details: {
         assetId: updatedAllocation.assetId,
         assetTag: updatedAllocation.asset.assetTag,
         returnCondition: updatedAllocation.returnCondition,
       }
-    );
+    });
 
     res.status(200).json({
       success: true,

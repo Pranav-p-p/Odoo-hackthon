@@ -15,16 +15,9 @@ import StatusBadge from '../Assets/components/StatusBadge';
 import ConflictBanner from '../Assets/components/ConflictBanner';
 import AssetSelector from '../Assets/components/AssetSelector';
 import RoleGate from '../Assets/components/RoleGate';
+import useAuth from '../../hooks/useAuth';
 
 // ─── Role helpers ──────────────────────────────────────────────────────────────
-function getCurrentUser() {
-  try {
-    const raw = localStorage.getItem('assetflow_user');
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
 
 function canManage(user) {
   return user && (user.role === 'ASSET_MANAGER' || user.role === 'ADMIN');
@@ -662,7 +655,7 @@ function AllocatePanel({ assets, users, departments, onSuccess }) {
 
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 export default function AllocationTransferPage() {
-  const currentUser = getCurrentUser();
+  const { currentUser } = useAuth();
   const isManager = canManage(currentUser);
 
   // Global data

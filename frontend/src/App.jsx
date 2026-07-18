@@ -6,6 +6,7 @@ import DashboardLayout from './layouts/DashboardLayout';
 // ── Member 1: Identity & Foundation ─────────────────────────────────────────
 import LoginPage from './pages/Login/LoginPage';
 import RegisterPage from './pages/Register/RegisterPage';
+import ForgotPasswordPage from './pages/ForgotPassword/ForgotPasswordPage';
 import OrganizationSetupPage from './pages/OrganizationSetup/OrganizationSetupPage';
 
 // ── Member 2: Asset Core (Screen 4 & 5) ─────────────────────────────────────
@@ -34,6 +35,7 @@ export default function App() {
           {/* ── Public routes ──────────────────────────────────────────── */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
 
 

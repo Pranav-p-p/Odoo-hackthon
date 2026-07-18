@@ -60,6 +60,7 @@ const createAuditService = async (data) => {
 
   // Create audit activity log
   await createLog({
+    prisma,
     userId: data.auditorId,
     action: 'AUDIT_CYCLE_CREATED',
     entityType: 'AuditCycle',
@@ -122,6 +123,7 @@ const verifyItemService = async (auditId, itemId, { actualStatus, notes }, userI
   const updatedItem = await updateAuditItem(itemId, { actualStatus, notes });
 
   await createLog({
+    prisma,
     userId,
     action: 'AUDIT_ITEM_VERIFIED',
     entityType: 'AuditItem',
@@ -180,6 +182,7 @@ const closeAuditCycleService = async (auditId, userId) => {
 
   // Activity Log
   await createLog({
+    prisma,
     userId,
     action: 'AUDIT_CYCLE_CLOSED',
     entityType: 'AuditCycle',
@@ -209,6 +212,7 @@ const closeAuditCycleService = async (auditId, userId) => {
     for (const item of discrepancies) {
       for (const admin of admins) {
         await createNotification({
+          prisma,
           userId: admin.id,
           title: 'Audit Discrepancy Flagged',
           message: `Discrepancy flagged: Asset ${item.asset.assetTag} was marked ${item.actualStatus} during audit cycle ${audit.name}.`,

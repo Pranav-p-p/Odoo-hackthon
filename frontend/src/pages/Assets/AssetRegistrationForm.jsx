@@ -5,7 +5,7 @@ import {
   Tag, Hash, Building2, MapPin, DollarSign, Calendar, Link2,
 } from 'lucide-react';
 import { createAsset, getCategories, getDepartments } from '../../api/assetApi';
-import { useCurrentUser } from '../../hooks/useCurrentUser';
+import useAuth from '../../hooks/useAuth';
 
 // ─── Exact condition options (free-text per schema, but guided choices) ───────
 const CONDITION_OPTIONS = ['Good', 'Fair', 'Poor'];
@@ -54,7 +54,7 @@ function iconInputCls(hasError) {
  */
 export default function AssetRegistrationForm() {
   const navigate = useNavigate();
-  const { user } = useCurrentUser();
+  const { currentUser: user } = useAuth();
 
   // ── Dropdown data ────────────────────────────────────────────────────────────
   const [categories, setCategories] = useState([]);

@@ -299,28 +299,30 @@ const approveTransfer = async (req, res, next) => {
     });
 
     // Side effect 1: Create notification for the requester
-    await createNotification(
-      transfer.requestedById,
-      'Transfer Approved',
-      `Your transfer request for asset ${transfer.asset.assetTag} has been approved and completed.`,
-      'TRANSFER_APPROVED',
-      'APPROVALS'
-    );
+    await createNotification({
+      prisma,
+      userId: transfer.requestedById,
+      title: 'Transfer Approved',
+      message: `Your transfer request for asset ${transfer.asset.assetTag} has been approved and completed.`,
+      type: 'TRANSFER_APPROVED',
+      category: 'APPROVALS'
+    });
 
     // Side effect 2: Log activity
-    await createLog(
-      req.user.id,
-      'TRANSFER_APPROVED',
-      'Transfer',
-      completedTransfer.id,
-      {
+    await createLog({
+      prisma,
+      userId: req.user.id,
+      action: 'TRANSFER_APPROVED',
+      entityType: 'Transfer',
+      entityId: completedTransfer.id,
+      details: {
         assetId: transfer.assetId,
         assetTag: transfer.asset.assetTag,
         fromUserId: transfer.fromUserId,
         toUserId: transfer.toUserId,
         toDeptId: transfer.toDeptId,
       }
-    );
+    });
 
     res.status(200).json({
       success: true,
@@ -378,26 +380,28 @@ const rejectTransfer = async (req, res, next) => {
     });
 
     // Side effect 1: Create notification for the requester
-    await createNotification(
-      transfer.requestedById,
-      'Transfer Rejected',
-      `Your transfer request for asset ${transfer.asset.assetTag} was rejected. Reason: ${reason}`,
-      'TRANSFER_REJECTED',
-      'APPROVALS'
-    );
+    await createNotification({
+      prisma,
+      userId: transfer.requestedById,
+      title: 'Transfer Rejected',
+      message: `Your transfer request for asset ${transfer.asset.assetTag} was rejected. Reason: ${reason}`,
+      type: 'TRANSFER_REJECTED',
+      category: 'APPROVALS'
+    });
 
     // Side effect 2: Log activity
-    await createLog(
-      req.user.id,
-      'TRANSFER_REJECTED',
-      'Transfer',
-      rejectedTransfer.id,
-      {
+    await createLog({
+      prisma,
+      userId: req.user.id,
+      action: 'TRANSFER_REJECTED',
+      entityType: 'Transfer',
+      entityId: rejectedTransfer.id,
+      details: {
         assetId: transfer.assetId,
         assetTag: transfer.asset.assetTag,
         reason: rejectedTransfer.reason,
       }
-    );
+    });
 
     res.status(200).json({
       success: true,

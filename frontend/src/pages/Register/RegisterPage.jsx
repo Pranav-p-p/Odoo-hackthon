@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { User, Mail, Loader2, AlertCircle } from 'lucide-react';
 import apiClient from '../../api/authApi';
 import PasswordInput from '../../components/PasswordInput/PasswordInput';
+import useAuth from '../../hooks/useAuth';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -22,6 +23,7 @@ function validateForm({ name, email, password }) {
  */
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [fields, setFields]           = useState({ name: '', email: '', password: '' });
   const [fieldErrors, setFieldErrors] = useState({});
@@ -43,12 +45,14 @@ export default function RegisterPage() {
 
     setIsLoading(true);
     try {
-      await apiClient.post('/auth/signup', {
+      const response = await apiClient.post('/auth/signup', {
         name: fields.name.trim(),
         email: fields.email.trim(),
         password: fields.password,
       });
-      navigate('/login', { replace: true });
+      const { token, user } = response.data.data;
+      login(token, user, false);
+      navigate('/dashboard', { replace: true });
     } catch (err) {
       const apiMessage = err?.response?.data?.error?.message || err?.response?.data?.message || null;
       if (err?.response?.status === 400) {
