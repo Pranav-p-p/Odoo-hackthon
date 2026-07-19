@@ -20,19 +20,19 @@ const STYLES = {
   ALLOCATED:           { background: 'var(--color-status-allocated-bg)',  color: 'var(--color-status-allocated)' },
   RESERVED:            { background: 'var(--color-badge-brand-bg)',  color: 'var(--color-primary-hover)' },
   UNDER_MAINTENANCE:   { background: 'var(--color-status-maintenance-bg)',  color: 'var(--color-status-maintenance)' },
-  LOST:                { background: 'rgba(248,81,73,0.14)',   color: 'var(--color-semantic-error)' },
+  LOST:                { background: 'var(--color-semantic-error-bg)',   color: 'var(--color-semantic-error)' },
   RETIRED:             { background: 'var(--color-status-disposed-bg)', color: 'var(--color-status-disposed)' },
   DISPOSED:            { background: 'var(--color-status-disposed-bg)', color: 'var(--color-status-disposed)' },
 
   /* Allocation statuses */
   ACTIVE:              { background: 'var(--color-status-allocated-bg)',  color: 'var(--color-status-allocated)' },
   RETURNED:            { background: 'var(--color-status-available-bg)',   color: 'var(--color-status-available)' },
-  OVERDUE:             { background: 'rgba(248,81,73,0.14)',   color: 'var(--color-semantic-error)' },
+  OVERDUE:             { background: 'var(--color-semantic-error-bg)',   color: 'var(--color-semantic-error)' },
 
   /* Transfer statuses */
   REQUESTED:           { background: 'var(--color-status-maintenance-bg)',  color: 'var(--color-status-maintenance)' },
   APPROVED:            { background: 'var(--color-status-available-bg)',   color: 'var(--color-status-available)' },
-  REJECTED:            { background: 'rgba(248,81,73,0.14)',   color: 'var(--color-semantic-error)' },
+  REJECTED:            { background: 'var(--color-semantic-error-bg)',   color: 'var(--color-semantic-error)' },
   COMPLETED:           { background: 'var(--color-status-disposed-bg)', color: 'var(--color-status-disposed)' },
 
   /* Maintenance statuses */

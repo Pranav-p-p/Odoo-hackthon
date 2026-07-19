@@ -120,7 +120,7 @@ export default function NotificationsPage() {
       </div>
 
       {/* ── Tab bar ───────────────────────────────────────────────────────── */}
-      <div style={{ borderBottom: '1px solid #23252a', marginBottom: 24 }}>
+      <div style={{ borderBottom: '1px solid var(--color-hairline)', marginBottom: 24 }}>
         <nav style={{ display: 'flex', gap: 0 }} aria-label="Notification categories">
           {TABS.map(tab => (
             <button
@@ -154,14 +154,14 @@ export default function NotificationsPage() {
         <div style={{
           display: 'flex', flexDirection: 'column', alignItems: 'center',
           justifyContent: 'center', padding: '64px 16px', textAlign: 'center',
-          backgroundColor: 'var(--color-surface-1)', border: '1px solid #23252a', borderRadius: 12,
+          backgroundColor: 'var(--color-surface-1)', border: '1px solid var(--color-hairline)', borderRadius: 12,
         }}>
           <BellOff size={36} color='var(--color-hairline-tertiary)' style={{ marginBottom: 16 }} />
           <h3 style={{ fontSize: 16, fontWeight: 600, color: 'var(--color-ink)', margin: 0 }}>Your inbox is clear</h3>
           <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)', marginTop: 6 }}>No notifications found in this tab.</p>
         </div>
       ) : (
-        <div style={{ backgroundColor: 'var(--color-surface-1)', border: '1px solid #23252a', borderRadius: 12, overflow: 'hidden' }}>
+        <div style={{ backgroundColor: 'var(--color-surface-1)', border: '1px solid var(--color-hairline)', borderRadius: 12, overflow: 'hidden' }}>
           {notifications.map((notif, idx) => {
             const { icon: Icon, color } = getCategoryConfig(notif.category);
             const isLast = idx === notifications.length - 1;
@@ -174,8 +174,8 @@ export default function NotificationsPage() {
                   justifyContent:  'space-between',
                   gap:             16,
                   padding:         '16px 20px',
-                  backgroundColor: notif.isRead ? 'transparent' : 'rgba(94,106,210,0.04)',
-                  borderBottom:    isLast ? 'none' : '1px solid #23252a',
+                  backgroundColor: notif.isRead ? 'transparent' : 'rgba(204,120,92,0.18)',
+                  borderBottom:    isLast ? 'none' : '1px solid var(--color-hairline)',
                   transition:      'background-color var(--duration-fast) var(--ease-standard)',
                 }}
               >

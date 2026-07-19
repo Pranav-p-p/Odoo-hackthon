@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import {
@@ -19,6 +19,7 @@ import {
   User,
 } from 'lucide-react';
 import { ThemeToggle } from '../components/ThemeToggle';
+import CommandPalette from '../components/CommandPalette/CommandPalette';
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Sidebar navigation — grouped by section (DESIGN.md §Navigation → sidebar-nav)
@@ -88,6 +89,19 @@ export default function DashboardLayout() {
 
   const [sidebarOpen, setSidebarOpen]   = useState(false);
   const [profileOpen, setProfileOpen]   = useState(false);
+  const [paletteOpen, setPaletteOpen]   = useState(false);
+
+  /* Global Ctrl/⌘+K → command palette */
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        setPaletteOpen((o) => !o);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   function handleLogout() {
     logout();
@@ -123,7 +137,7 @@ export default function DashboardLayout() {
           left:            sidebarOpen ? 0 : undefined,
           width:           240,
           backgroundColor: 'var(--color-canvas)',           /* canvas */
-          borderRight:     '1px solid #23252a', /* hairline */
+          borderRight:     '1px solid var(--color-hairline)', /* hairline */
           display:         'flex',
           flexDirection:   'column',
           zIndex:          50,
@@ -142,7 +156,7 @@ export default function DashboardLayout() {
           gap:           10,
           padding:       '0 16px',
           height:        56,
-          borderBottom:  '1px solid #23252a',
+          borderBottom:  '1px solid var(--color-hairline)',
           flexShrink:    0,
         }}>
           {/* Lavender glyph mark */}
@@ -207,7 +221,7 @@ export default function DashboardLayout() {
         {/* ── User area at bottom ─────────────────────────────────────────── */}
         <div style={{
           padding:      '12px 12px',
-          borderTop:    '1px solid #23252a',
+          borderTop:    '1px solid var(--color-hairline)',
           flexShrink:   0,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -289,6 +303,7 @@ export default function DashboardLayout() {
               className="btn-icon-row"
               aria-label="Search (Ctrl+K)"
               style={{ width: 36 }}
+              onClick={() => setPaletteOpen(true)}
             >
               <Search size={16} />
             </button>
@@ -353,13 +368,13 @@ export default function DashboardLayout() {
                     right:           0,
                     width:           200,
                     backgroundColor: 'var(--color-surface-3)',    /* surface-3 */
-                    border:          '1px solid #34343a',
+                    border:          '1px solid var(--color-hairline-strong)',
                     borderRadius:    10,
-                    boxShadow:       '0 16px 48px rgba(0,0,0,0.44)',
+                    boxShadow:       'var(--shadow-modal)',
                     zIndex:          20,
                     overflow:        'hidden',
                   }}>
-                    <div style={{ padding: '12px 14px', borderBottom: '1px solid #23252a' }}>
+                    <div style={{ padding: '12px 14px', borderBottom: '1px solid var(--color-hairline)' }}>
                       <p style={{ margin: 0, fontSize: 13, fontWeight: 500, color: 'var(--color-ink)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {currentUser?.email ?? ''}
                       </p>
@@ -382,7 +397,7 @@ export default function DashboardLayout() {
                         cursor:          'pointer',
                         transition:      `background-color var(--duration-fast) var(--ease-standard)`,
                       }}
-                      onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(248,81,73,0.08)'}
+                      onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--color-semantic-error-bg)'}
                       onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
                       <LogOut size={14} />
@@ -404,6 +419,9 @@ export default function DashboardLayout() {
           <Outlet />
         </main>
       </div>
+
+      {/* ── Command palette (Ctrl/⌘+K) ── */}
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
 
       {/* ── Responsive overrides (inline style fallback for desktop/mobile) ─ */}
       <style>{`

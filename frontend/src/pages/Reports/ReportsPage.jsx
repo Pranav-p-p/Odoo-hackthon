@@ -91,9 +91,9 @@ export default function ReportsPage() {
 
   const getHeatmapStyle = (count) => {
     if (count === 0) return { backgroundColor: 'var(--color-surface-2)', color: 'transparent' };
-    if (count < 3)  return { backgroundColor: 'rgba(94,106,210,0.14)', color: 'var(--color-primary-hover)' };
-    if (count < 6)  return { backgroundColor: 'rgba(94,106,210,0.30)', color: 'var(--color-primary-hover)' };
-    return { backgroundColor: 'var(--color-primary)', color: '#ffffff', fontWeight: 700 };
+    if (count < 3)  return { backgroundColor: 'rgba(204,120,92,0.18)', color: 'var(--color-primary-hover)' };
+    if (count < 6)  return { backgroundColor: 'rgba(204,120,92,0.18)', color: 'var(--color-primary-hover)' };
+    return { backgroundColor: 'var(--color-primary)', color: 'var(--color-on-primary)', fontWeight: 700 };
   };
 
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -141,8 +141,8 @@ export default function ReportsPage() {
               key={item.type}
               onClick={() => handleExport(item.type)}
               disabled={downloading}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', backgroundColor: 'var(--color-surface-2)', border: '1px solid #23252a', borderRadius: 8, cursor: 'pointer', transition: 'background-color var(--duration-fast) var(--ease-standard)' }}
-              onMouseEnter={e => e.currentTarget.style.backgroundColor = '#1a1b1c'}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', backgroundColor: 'var(--color-surface-2)', border: '1px solid var(--color-hairline)', borderRadius: 8, cursor: 'pointer', transition: 'background-color var(--duration-fast) var(--ease-standard)' }}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--color-surface-1)'}
               onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'}
             >
               <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--color-ink)' }}>{item.label}</span>
@@ -217,7 +217,7 @@ export default function ReportsPage() {
             {idleAssets.length === 0 ? (
               <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)', padding: '16px 0', textAlign: 'center' }}>No idle assets flagged.</p>
             ) : idleAssets.map(asset => (
-              <div key={asset.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #23252a' }}>
+              <div key={asset.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid var(--color-hairline)' }}>
                 <div>
                   <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--color-ink)', margin: 0 }}>{asset.name}</p>
                   <p className="type-mono" style={{ color: 'var(--color-ink-tertiary)', marginTop: 2 }}>{asset.assetTag} — {asset.location}</p>
@@ -240,12 +240,12 @@ export default function ReportsPage() {
             {dueMaintenance.length === 0 ? (
               <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)', padding: '16px 0', textAlign: 'center' }}>All assets are in good condition.</p>
             ) : dueMaintenance.map(asset => (
-              <div key={asset.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #23252a' }}>
+              <div key={asset.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid var(--color-hairline)' }}>
                 <div>
                   <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--color-ink)', margin: 0 }}>{asset.name}</p>
                   <p className="type-mono" style={{ color: 'var(--color-ink-tertiary)', marginTop: 2 }}>{asset.assetTag} — {asset.location}</p>
                 </div>
-                <span style={{ flexShrink: 0, fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 9999, backgroundColor: 'rgba(248,81,73,0.14)', color: 'var(--color-semantic-error)' }}>
+                <span style={{ flexShrink: 0, fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 9999, backgroundColor: 'var(--color-semantic-error-bg)', color: 'var(--color-semantic-error)' }}>
                   {asset.condition} / {asset.status}
                 </span>
               </div>
@@ -290,8 +290,8 @@ export default function ReportsPage() {
         <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginTop: 16, flexWrap: 'wrap' }}>
           {[
             { style: { backgroundColor: 'var(--color-surface-2)' }, label: '0 bookings' },
-            { style: { backgroundColor: 'rgba(94,106,210,0.14)' }, label: '1–2' },
-            { style: { backgroundColor: 'rgba(94,106,210,0.30)' }, label: '3–5' },
+            { style: { backgroundColor: 'rgba(204,120,92,0.18)' }, label: '1–2' },
+            { style: { backgroundColor: 'rgba(204,120,92,0.18)' }, label: '3–5' },
             { style: { backgroundColor: 'var(--color-primary)' }, label: '6+' },
           ].map(l => (
             <span key={l.label} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--color-ink-subtle)' }}>

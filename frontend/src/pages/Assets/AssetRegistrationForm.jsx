@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { createAsset, getCategories, getDepartments } from '../../api/assetApi';
 import useAuth from '../../hooks/useAuth';
+import { useToast } from '../../components/Toast/ToastProvider';
 
 // ─── Exact condition options (free-text per schema, but guided choices) ───────
 const CONDITION_OPTIONS = ['Good', 'Fair', 'Poor'];
@@ -55,6 +56,7 @@ function iconInputCls(hasError) {
 export default function AssetRegistrationForm() {
   const navigate = useNavigate();
   const { currentUser: user } = useAuth();
+  const { success } = useToast();
 
   // ── Dropdown data ────────────────────────────────────────────────────────────
   const [categories, setCategories] = useState([]);
@@ -140,8 +142,10 @@ export default function AssetRegistrationForm() {
       const res = await createAsset(payload);
       // success envelope: { success: true, data: { assetTag, ... } }
       const created = res.data?.data ?? res.data;
-      setSuccessTag(created?.assetTag ?? 'AF-????');
+      const tag = created?.assetTag ?? 'AF-????';
+      setSuccessTag(tag);
       setFields(EMPTY);
+      success(`${fields.name || 'Asset'} registered`, { title: `Asset tag ${tag}` });
     } catch (err) {
       const msg =
         err?.response?.data?.error?.message ||
@@ -176,9 +180,9 @@ export default function AssetRegistrationForm() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-canvas)', color: '#c9d1d9' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-canvas)', color: 'var(--color-ink-muted)' }}>
       {/* ── Page header ─────────────────────────────────────────────────────── */}
-      <div style={{ backgroundColor: 'var(--color-surface-1)', borderBottom: '1px solid #23252a', padding: '16px 24px' }}>
+      <div style={{ backgroundColor: 'var(--color-surface-1)', borderBottom: '1px solid var(--color-hairline)', padding: '16px 24px' }}>
         <div style={{ maxWidth: 768, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 12 }}>
           <button
             type="button"
@@ -200,13 +204,13 @@ export default function AssetRegistrationForm() {
       <div style={{ maxWidth: 768, margin: '0 auto', padding: '32px 24px' }}>
         {/* Success banner */}
         {successTag && (
-          <div style={{ marginBottom: 24, display: 'flex', alignItems: 'flex-start', gap: 12, borderRadius: 8, border: '1px solid rgba(63,185,80,0.3)', backgroundColor: 'rgba(63,185,80,0.1)', padding: '12px 16px' }}>
+          <div style={{ marginBottom: 24, display: 'flex', alignItems: 'flex-start', gap: 12, borderRadius: 8, border: '1px solid var(--color-status-available-bg)', backgroundColor: 'var(--color-status-available-bg)', padding: '12px 16px' }}>
             <CheckCircle2 size={20} color='var(--color-status-available)' style={{ marginTop: 2, flexShrink: 0 }} />
             <div>
               <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--color-status-available)', margin: 0 }}>
                 Asset registered — Tag: <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>{successTag}</span>
               </p>
-              <p style={{ fontSize: 12, color: 'rgba(63,185,80,0.8)', margin: '2px 0 0' }}>
+              <p style={{ fontSize: 12, color: 'var(--color-status-available)', margin: '2px 0 0' }}>
                 Form cleared. You can register another asset or{' '}
                 <Link to="/assets" style={{ textDecoration: 'underline', color: 'inherit' }}>view the directory.</Link>
               </p>
@@ -219,7 +223,7 @@ export default function AssetRegistrationForm() {
           <div
             role="alert"
             aria-live="polite"
-            style={{ marginBottom: 24, display: 'flex', alignItems: 'flex-start', gap: 12, borderRadius: 8, border: '1px solid rgba(248,81,73,0.3)', backgroundColor: 'rgba(248,81,73,0.1)', padding: '12px 16px', fontSize: 14, color: 'var(--color-semantic-error)' }}
+            style={{ marginBottom: 24, display: 'flex', alignItems: 'flex-start', gap: 12, borderRadius: 8, border: '1px solid var(--color-semantic-error)', backgroundColor: 'var(--color-semantic-error-bg)', padding: '12px 16px', fontSize: 14, color: 'var(--color-semantic-error)' }}
           >
             <AlertCircle size={16} style={{ marginTop: 2, flexShrink: 0 }} />
             <span>{serverError}</span>
@@ -227,10 +231,10 @@ export default function AssetRegistrationForm() {
         )}
 
         <form onSubmit={handleSubmit} noValidate aria-label="Asset registration form">
-          <div style={{ backgroundColor: 'var(--color-surface-1)', border: '1px solid #23252a', borderRadius: 8 }}>
+          <div style={{ backgroundColor: 'var(--color-surface-1)', border: '1px solid var(--color-hairline)', borderRadius: 8 }}>
 
             {/* ── Section 1: Core identity ─────────────────────────────────── */}
-            <div style={{ padding: '20px 24px', borderBottom: '1px solid #23252a' }}>
+            <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--color-hairline)' }}>
               <h2 style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-ink-subtle)', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 16px' }}>
                 Asset Identity
               </h2>
@@ -238,10 +242,10 @@ export default function AssetRegistrationForm() {
 
                 {/* Asset Tag — read-only info */}
                 <div style={{ gridColumn: 'span 2' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, borderRadius: 6, border: '1px dashed #34343a', backgroundColor: 'var(--color-surface-2)', padding: '10px 12px', fontSize: 13, color: 'var(--color-ink-subtle)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, borderRadius: 6, border: '1px dashed var(--color-hairline-strong)', backgroundColor: 'var(--color-surface-2)', padding: '10px 12px', fontSize: 13, color: 'var(--color-ink-subtle)' }}>
                     <Tag size={16} color='var(--color-ink-subtle)' style={{ flexShrink: 0 }} />
                     <span>
-                      <span style={{ fontWeight: 500, color: '#c9d1d9' }}>Asset Tag</span> — automatically assigned by the system (e.g.{' '}
+                      <span style={{ fontWeight: 500, color: 'var(--color-ink-muted)' }}>Asset Tag</span> — automatically assigned by the system (e.g.{' '}
                       <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-ink)' }}>AF-0042</span>)
                     </span>
                   </div>
@@ -310,7 +314,7 @@ export default function AssetRegistrationForm() {
             </div>
 
             {/* ── Section 2: Assignment ─────────────────────────────────────── */}
-            <div style={{ padding: '20px 24px', borderBottom: '1px solid #23252a' }}>
+            <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--color-hairline)' }}>
               <h2 style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-ink-subtle)', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 16px' }}>
                 Assignment & Location
               </h2>
@@ -359,7 +363,7 @@ export default function AssetRegistrationForm() {
             </div>
 
             {/* ── Section 3: Acquisition details ────────────────────────────── */}
-            <div style={{ padding: '20px 24px', borderBottom: '1px solid #23252a' }}>
+            <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--color-hairline)' }}>
               <h2 style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-ink-subtle)', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 16px' }}>
                 Acquisition Details
               </h2>
@@ -443,7 +447,7 @@ export default function AssetRegistrationForm() {
             </div>
 
             {/* ── Section 4: Flags ─────────────────────────────────────────── */}
-            <div style={{ padding: '20px 24px', borderBottom: '1px solid #23252a' }}>
+            <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--color-hairline)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
                   <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--color-ink)', margin: 0 }}>Bookable Resource</p>
@@ -461,7 +465,7 @@ export default function AssetRegistrationForm() {
                     className="sr-only peer"
                   />
                   <div style={{ width: 40, height: 20, backgroundColor: fields.isBookable ? 'var(--color-primary)' : 'var(--color-hairline-strong)', borderRadius: 9999, transition: 'background-color 0.2s ease', position: 'relative' }}>
-                    <div style={{ position: 'absolute', top: 2, left: fields.isBookable ? 22 : 2, width: 16, height: 16, backgroundColor: '#ffffff', borderRadius: '50%', transition: 'left 0.2s ease' }} />
+                    <div style={{ position: 'absolute', top: 2, left: fields.isBookable ? 22 : 2, width: 16, height: 16, backgroundColor: 'var(--color-on-primary)', borderRadius: '50%', transition: 'left 0.2s ease' }} />
                   </div>
                 </label>
               </div>

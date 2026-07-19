@@ -19,6 +19,8 @@ import {
   createBooking,
   cancelBooking,
 } from '../../api/bookingApi.js';
+import ConfirmModal from '../../components/Modal/ConfirmModal';
+import { useToast } from '../../components/Toast/ToastProvider';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
@@ -55,7 +57,7 @@ function dateToMinutes(date) {
 const STATUS_COLORS = {
   UPCOMING:  { bg: '#1f6feb', text: '#ffffff' },
   ONGOING:   { bg: '#238636', text: '#ffffff' },
-  COMPLETED: { bg: '#30363d', text: 'var(--color-status-disposed)' },
+  COMPLETED: { bg: 'var(--color-hairline-strong)', text: 'var(--color-status-disposed)' },
   CANCELLED: { bg: '#6e040f', text: '#ffa198' },
 };
 
@@ -79,10 +81,10 @@ const CALENDAR_RANGE = CALENDAR_END - CALENDAR_START;
 function CalendarTimeline({ bookings }) {
   const hourSlots = Array.from({ length: 12 }, (_, i) => i + 8);
   return (
-    <div style={{ position: 'relative', border: '1px solid #23252a', borderRadius: 8, overflow: 'hidden', backgroundColor: 'var(--color-surface-1)' }}>
+    <div style={{ position: 'relative', border: '1px solid var(--color-hairline)', borderRadius: 8, overflow: 'hidden', backgroundColor: 'var(--color-surface-1)' }}>
       <div style={{ display: 'flex' }}>
         {/* Time labels */}
-        <div style={{ width: 52, flexShrink: 0, borderRight: '1px solid #23252a' }}>
+        <div style={{ width: 52, flexShrink: 0, borderRight: '1px solid var(--color-hairline)' }}>
           {hourSlots.map(hour => (
             <div key={hour} style={{ height: 48, display: 'flex', alignItems: 'flex-start', padding: '4px 6px' }}>
               <span style={{ fontSize: 10, color: 'var(--color-ink-tertiary)', fontFamily: 'var(--font-mono)' }}>
@@ -94,7 +96,7 @@ function CalendarTimeline({ bookings }) {
         {/* Booking area */}
         <div style={{ flex: 1, position: 'relative', height: `${hourSlots.length * 48}px` }}>
           {hourSlots.map((_, i) => (
-            <div key={i} style={{ position: 'absolute', width: '100%', borderTop: '1px solid #1c1e22', top: `${i * 48}px` }} />
+            <div key={i} style={{ position: 'absolute', width: '100%', borderTop: '1px solid var(--color-hairline-strong)', top: `${i * 48}px` }} />
           ))}
           {bookings.filter(b => b.status !== 'CANCELLED').map(b => {
             const startMins = Math.max(dateToMinutes(b.startTime), CALENDAR_START);
@@ -151,7 +153,7 @@ function BookingCard({ booking, onCancel }) {
   const canCancel = booking.status === 'UPCOMING' || booking.status === 'ONGOING';
   const c = STATUS_COLORS[booking.status] ?? STATUS_COLORS.UPCOMING;
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', backgroundColor: 'var(--color-surface-2)', border: '1px solid #23252a', borderRadius: 8 }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', backgroundColor: 'var(--color-surface-2)', border: '1px solid var(--color-hairline)', borderRadius: 8 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', backgroundColor: c.bg, flexShrink: 0 }} />
         <div>
@@ -180,9 +182,9 @@ function BookingCard({ booking, onCancel }) {
 function CalendarSkeleton() {
   const hourSlots = Array.from({ length: 12 }, (_, i) => i + 8);
   return (
-    <div style={{ position: 'relative', border: '1px solid #23252a', borderRadius: 8, overflow: 'hidden', backgroundColor: 'var(--color-surface-1)' }}>
+    <div style={{ position: 'relative', border: '1px solid var(--color-hairline)', borderRadius: 8, overflow: 'hidden', backgroundColor: 'var(--color-surface-1)' }}>
       <div style={{ display: 'flex' }}>
-        <div style={{ width: 52, flexShrink: 0, borderRight: '1px solid #23252a' }}>
+        <div style={{ width: 52, flexShrink: 0, borderRight: '1px solid var(--color-hairline)' }}>
           {hourSlots.map(h => (
             <div key={h} style={{ height: 48, display: 'flex', alignItems: 'flex-start', padding: '4px 6px' }}>
               <div style={{ height: 10, width: 28, borderRadius: 4, backgroundColor: 'var(--color-hairline)' }} />
@@ -190,7 +192,7 @@ function CalendarSkeleton() {
           ))}
         </div>
         <div style={{ flex: 1, position: 'relative', height: `${hourSlots.length * 48}px` }}>
-          {hourSlots.map((_, i) => <div key={i} style={{ position: 'absolute', width: '100%', borderTop: '1px solid #1c1e22', top: `${i * 48}px` }} />)}
+          {hourSlots.map((_, i) => <div key={i} style={{ position: 'absolute', width: '100%', borderTop: '1px solid var(--color-hairline-strong)', top: `${i * 48}px` }} />)}
           <div style={{ position: 'absolute', left: 4, right: 4, top: '10%', height: '15%', borderRadius: 4, backgroundColor: 'var(--color-hairline)', animation: 'pulse 2s infinite' }} />
           <div style={{ position: 'absolute', left: '33%', top: '40%', height: '20%', width: '25%', borderRadius: 4, backgroundColor: 'var(--color-hairline)', animation: 'pulse 2s infinite' }} />
         </div>
@@ -219,6 +221,8 @@ export default function ResourceBookingPage() {
   const [submitting, setSubmitting]     = useState(false);
   const [success, setSuccess]           = useState('');
   const [error, setError]               = useState('');
+  const { success: toastSuccess, error: toastError } = useToast();
+  const [pendingCancelId, setPendingCancelId] = useState(null);
 
   // Conflict state (from 409 response)
   const [conflict, setConflict]         = useState(null);
@@ -298,8 +302,11 @@ export default function ResourceBookingPage() {
     try {
       await cancelBooking(bookingId);
       await fetchBookings();
+      toastSuccess('Booking cancelled');
     } catch (err) {
-      setError(err.response?.data?.error?.message ?? 'Failed to cancel booking.');
+      const msg = err.response?.data?.error?.message ?? 'Failed to cancel booking.';
+      setError(msg);
+      toastError(msg);
     }
   };
 
@@ -318,7 +325,7 @@ export default function ResourceBookingPage() {
             <p style={{ fontSize: 13, color: 'var(--color-ink-subtle)', marginTop: 6 }}>Book shared resources like conference rooms and projectors.</p>
           </div>
         </div>
-        <button onClick={fetchBookings} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, padding: '6px 12px', borderRadius: 6, border: '1px solid #30363d', backgroundColor: '#21262d', color: '#c9d1d9', cursor: 'pointer' }}>
+        <button onClick={fetchBookings} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, padding: '6px 12px', borderRadius: 6, border: '1px solid var(--color-hairline-strong)', backgroundColor: 'var(--color-surface-1)', color: 'var(--color-ink-muted)', cursor: 'pointer' }}>
           <RefreshCw size={13} /> Refresh
         </button>
       </div>
@@ -347,7 +354,7 @@ export default function ResourceBookingPage() {
                     setSelectedAsset(asset ?? null);
                     setConflict(null); setError(''); setSuccess('');
                   }}
-                  style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #30363d', backgroundColor: '#0d1117', color: '#c9d1d9', outline: 'none' }}
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid var(--color-hairline-strong)', backgroundColor: 'var(--color-surface-1)', color: 'var(--color-ink-muted)', outline: 'none' }}
                 >
                   {assets.length === 0 && <option value="">No bookable resources found</option>}
                   {assets.map(a => <option key={a.id} value={a.id}>{a.assetTag} — {a.name}</option>)}
@@ -362,7 +369,7 @@ export default function ResourceBookingPage() {
                 value={selectedDate}
                 min={toLocalDateString(new Date())}
                 onChange={(e) => { setSelectedDate(e.target.value); setConflict(null); setError(''); setSuccess(''); }}
-                style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #30363d', backgroundColor: '#0d1117', color: '#c9d1d9', outline: 'none' }}
+                style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid var(--color-hairline-strong)', backgroundColor: 'var(--color-surface-1)', color: 'var(--color-ink-muted)', outline: 'none' }}
               />
             </div>
           </div>
@@ -389,7 +396,7 @@ export default function ResourceBookingPage() {
                     <AlertTriangle size={28} color='var(--color-semantic-error)' style={{ marginBottom: 8 }} />
                     <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-semantic-error)', margin: 0 }}>Calendar Error</p>
                     <p style={{ fontSize: 12, color: '#ffa198', marginTop: 4, marginBottom: 12 }}>{calendarError}</p>
-                    <button onClick={fetchBookings} style={{ fontSize: 12, padding: '6px 12px', borderRadius: 6, border: '1px solid #30363d', backgroundColor: '#21262d', color: '#c9d1d9', cursor: 'pointer' }}>Retry</button>
+                    <button onClick={fetchBookings} style={{ fontSize: 12, padding: '6px 12px', borderRadius: 6, border: '1px solid var(--color-hairline-strong)', backgroundColor: 'var(--color-surface-1)', color: 'var(--color-ink-muted)', cursor: 'pointer' }}>Retry</button>
                   </div>
                 )}
               </div>
@@ -397,13 +404,13 @@ export default function ResourceBookingPage() {
               {bookings.length > 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   <p style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-ink-subtle)', textTransform: 'uppercase' }}>Existing Bookings ({bookings.length})</p>
-                  {bookings.map(b => <BookingCard key={b.id} booking={b} onCancel={handleCancel} />)}
+                  {bookings.map(b => <BookingCard key={b.id} booking={b} onCancel={(id) => setPendingCancelId(id)} />)}
                 </div>
               )}
             </div>
 
             {/* Booking form */}
-            <div style={{ backgroundColor: 'var(--color-surface-2)', padding: 16, borderRadius: 12, border: '1px solid #23252a' }}>
+            <div style={{ backgroundColor: 'var(--color-surface-2)', padding: 16, borderRadius: 12, border: '1px solid var(--color-hairline)' }}>
               <h2 style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-ink)', margin: '0 0 16px' }}>New Booking</h2>
 
               {conflict && (
@@ -423,12 +430,12 @@ export default function ResourceBookingPage() {
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }} id="booking-form">
                 <div>
                   <label htmlFor="start-time" style={{ display: 'block', fontSize: 12, color: 'var(--color-ink-subtle)', marginBottom: 6 }}>Start Time</label>
-                  <input id="start-time" type="time" value={startTime} required style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #30363d', backgroundColor: '#0d1117', color: '#c9d1d9', outline: 'none' }}
+                  <input id="start-time" type="time" value={startTime} required style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid var(--color-hairline-strong)', backgroundColor: 'var(--color-surface-1)', color: 'var(--color-ink-muted)', outline: 'none' }}
                     onChange={e => { setStartTime(e.target.value); setConflict(null); setSuccess(''); setError(''); }} />
                 </div>
                 <div>
                   <label htmlFor="end-time" style={{ display: 'block', fontSize: 12, color: 'var(--color-ink-subtle)', marginBottom: 6 }}>End Time</label>
-                  <input id="end-time" type="time" value={endTime} required style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid #30363d', backgroundColor: '#0d1117', color: '#c9d1d9', outline: 'none' }}
+                  <input id="end-time" type="time" value={endTime} required style={{ width: '100%', padding: '8px 12px', borderRadius: 6, border: '1px solid var(--color-hairline-strong)', backgroundColor: 'var(--color-surface-1)', color: 'var(--color-ink-muted)', outline: 'none' }}
                     onChange={e => { setEndTime(e.target.value); setConflict(null); setSuccess(''); setError(''); }} />
                   {startTime && endTime && (
                     <p style={{ fontSize: 11, color: 'var(--color-ink-tertiary)', marginTop: 4 }}>
@@ -471,6 +478,19 @@ export default function ResourceBookingPage() {
           </div>
       </>
     )}
+
+    <ConfirmModal
+      open={pendingCancelId !== null}
+      title="Cancel this booking?"
+      message="The reserved slot will be released. You can book it again later if needed."
+      confirmLabel="Cancel booking"
+      onCancel={() => setPendingCancelId(null)}
+      onConfirm={async () => {
+        const id = pendingCancelId;
+        setPendingCancelId(null);
+        await handleCancel(id);
+      }}
+    />
   </div>
   );
 }

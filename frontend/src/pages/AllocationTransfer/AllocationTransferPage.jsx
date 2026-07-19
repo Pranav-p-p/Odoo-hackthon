@@ -4,7 +4,7 @@ import {
   ArrowLeftRight, User, Building2, Calendar, CheckCircle2,
   XCircle, AlertTriangle, Loader2, RotateCcw,
   AlertCircle, Clock, CheckCheck, Ban, RefreshCw, Send,
-  ClipboardList, Layers,
+  ClipboardList, Layers, Package,
 } from 'lucide-react';
 import {
   getAllocations, createAllocation, returnAllocation,
@@ -176,7 +176,7 @@ function ActiveAllocationsList({ allocations, loading, onReturnSuccess }) {
   }
 
   return (
-    <ul className="divide-y divide-[#23252a]">
+    <ul className="divide-y divide-hairline">
       {allocations.map(a => (
         <li key={a.id} className="py-4">
           <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -288,7 +288,7 @@ function PendingTransfersList({ transfers, departments = [], loading, onAction }
   }
 
   return (
-    <ul className="divide-y divide-[#23252a]">
+    <ul className="divide-y divide-hairline">
       {transfers.map(t => {
         const actState = actionStates[t.id];
         const isRejecting = rejectingId === t.id;
@@ -379,7 +379,7 @@ function PendingTransfersList({ transfers, departments = [], loading, onAction }
                 </button>
                 <button
                   onClick={() => setRejectingId(null)}
-                  className="text-xs text-ink-subtle hover:text-[#c9d1d9] px-3 py-2"
+                  className="text-xs text-ink-subtle hover:text-ink-muted px-3 py-2"
                 >
                   Cancel
                 </button>
@@ -514,7 +514,7 @@ function AllocatePanel({ assets, users, departments, onSuccess }) {
             <div>
               <label className="field-label">Transfer to</label>
               <div className="flex gap-3">
-                <label className="flex items-center gap-1.5 text-sm text-[#c9d1d9] cursor-pointer">
+                <label className="flex items-center gap-1.5 text-sm text-ink-muted cursor-pointer">
                   <input
                     type="radio"
                     name="toType"
@@ -525,7 +525,7 @@ function AllocatePanel({ assets, users, departments, onSuccess }) {
                   />
                   Employee
                 </label>
-                <label className="flex items-center gap-1.5 text-sm text-[#c9d1d9] cursor-pointer">
+                <label className="flex items-center gap-1.5 text-sm text-ink-muted cursor-pointer">
                   <input
                     type="radio"
                     name="toType"
@@ -635,7 +635,7 @@ function AllocatePanel({ assets, users, departments, onSuccess }) {
       {selectedAsset && isAllocated && !conflictHolder && (
         <div className="flex items-start gap-3 bg-status-allocated-bg border border-status-allocated rounded-lg px-4 py-3 text-sm">
           <AlertCircle className="h-4 w-4 text-status-allocated mt-0.5 flex-shrink-0" />
-          <div className="text-[#c9d1d9]">
+          <div className="text-ink-muted">
             <p className="font-medium">This asset is currently allocated.</p>
             <p className="text-ink-subtle mt-0.5">To move it, click "Try Allocate" — a conflict will be detected and you'll be prompted to submit a transfer request.</p>
           </div>
@@ -762,8 +762,8 @@ export default function AllocationTransferPage() {
         {errorMsg && <ErrorAlert message={errorMsg} />}
 
         {/* Tab bar container */}
-        <div style={{ backgroundColor: 'var(--color-surface-1)', border: '1px solid #23252a', borderRadius: 12, overflow: 'visible' }}>
-          <div style={{ display: 'flex', borderBottom: '1px solid #23252a' }} role="tablist">
+        <div style={{ backgroundColor: 'var(--color-surface-1)', border: '1px solid var(--color-hairline)', borderRadius: 12, overflow: 'visible' }}>
+          <div style={{ display: 'flex', borderBottom: '1px solid var(--color-hairline)' }} role="tablist">
             {tabs.map(tab => {
               const isActive = activeTab === tab.key;
               return (
@@ -775,7 +775,7 @@ export default function AllocationTransferPage() {
                   style={{
                     display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', fontSize: 14, fontWeight: 500,
                     backgroundColor: 'transparent', border: 'none', cursor: 'pointer',
-                    borderBottom: isActive ? '2px solid #5e6ad2' : '2px solid transparent',
+                    borderBottom: isActive ? '2px solid var(--color-primary)' : '2px solid transparent',
                     color: isActive ? 'var(--color-ink)' : 'var(--color-ink-subtle)',
                     transition: 'all 0.2s ease',
                   }}
@@ -783,7 +783,7 @@ export default function AllocationTransferPage() {
                   <tab.icon size={16} aria-hidden="true" />
                   {tab.label}
                   {tab.count > 0 && (
-                    <span style={{ fontSize: 11, fontWeight: 600, borderRadius: 9999, padding: '2px 6px', backgroundColor: isActive ? 'rgba(94,106,210,0.15)' : 'var(--color-hairline)', color: isActive ? 'var(--color-primary)' : 'var(--color-ink-subtle)' }}>
+                    <span style={{ fontSize: 11, fontWeight: 600, borderRadius: 9999, padding: '2px 6px', backgroundColor: isActive ? 'rgba(204,120,92,0.18)' : 'var(--color-hairline)', color: isActive ? 'var(--color-primary)' : 'var(--color-ink-subtle)' }}>
                       {tab.count}
                     </span>
                   )}

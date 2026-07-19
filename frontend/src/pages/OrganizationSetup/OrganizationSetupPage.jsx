@@ -29,12 +29,12 @@ function Modal({ isOpen, onClose, title, children }) {
   return (
     <>
       <div
-        style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.70)', backdropFilter: 'blur(4px)', zIndex: 40 }}
+        style={{ position: 'fixed', inset: 0, backgroundColor: 'var(--color-semantic-overlay)', backdropFilter: 'blur(4px)', zIndex: 40 }}
         onClick={onClose}
       />
       <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-        <div style={{ backgroundColor: 'var(--color-surface-3)', border: '1px solid #34343a', borderRadius: 12, boxShadow: '0 24px 64px rgba(0,0,0,0.60)', width: '100%', maxWidth: 440, maxHeight: '90vh', overflowY: 'auto' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #23252a' }}>
+        <div style={{ backgroundColor: 'var(--color-surface-3)', border: '1px solid var(--color-hairline-strong)', borderRadius: 12, boxShadow: '0 24px 64px rgba(0,0,0,0.60)', width: '100%', maxWidth: 440, maxHeight: '90vh', overflowY: 'auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid var(--color-hairline)' }}>
             <h2 style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-ink)', margin: 0 }}>{title}</h2>
             <button onClick={onClose} className="btn-icon-row" aria-label="Close"><X size={16} /></button>
           </div>
@@ -135,7 +135,7 @@ function DepartmentsTab() {
           <InputField label="Department Name *" value={form.name} onChange={(v) => setForm({ ...form, name: v })} required />
           <InputField label="Head User ID" value={form.headId} onChange={(v) => setForm({ ...form, headId: v })} placeholder="UUID (optional)" />
           <InputField label="Parent Dept ID" value={form.parentDepartmentId} onChange={(v) => setForm({ ...form, parentDepartmentId: v })} placeholder="UUID (optional)" />
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 8, borderTop: '1px solid #23252a' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 8, borderTop: '1px solid var(--color-hairline)' }}>
             <button type="button" onClick={() => setShowModal(false)} className="btn-secondary">Cancel</button>
             <button type="submit" disabled={submitting} className="btn-primary">
               {submitting ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : 'Create'}
@@ -238,7 +238,7 @@ function CategoriesTab() {
               placeholder="Optional description…"
             />
           </div>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 8, borderTop: '1px solid #23252a' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 8, borderTop: '1px solid var(--color-hairline)' }}>
             <button type="button" onClick={() => setShowModal(false)} className="btn-secondary">Cancel</button>
             <button type="submit" disabled={submitting} className="btn-primary">
               {submitting ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : 'Create'}
@@ -397,7 +397,7 @@ function EmployeesTab() {
                 <option value="INACTIVE">Inactive</option>
               </select>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 8, borderTop: '1px solid #23252a' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 8, borderTop: '1px solid var(--color-hairline)' }}>
               <button type="button" onClick={() => setShowEditModal(false)} className="btn-secondary">Cancel</button>
               <button type="submit" disabled={isUpdating || (editForm.role === selectedUser.role && editForm.status === selectedUser.status)} className="btn-primary">
                 {isUpdating ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> : 'Save Changes'}
@@ -444,7 +444,7 @@ function StatusBadge({ status }) {
 
 function RoleBadge({ role }) {
   const map = {
-    ADMIN:           { bg: 'rgba(248,81,73,0.14)',    color: 'var(--color-semantic-error)' },
+    ADMIN:           { bg: 'var(--color-semantic-error-bg)',    color: 'var(--color-semantic-error)' },
     ASSET_MANAGER:   { bg: 'var(--color-status-allocated-bg)',   color: 'var(--color-status-allocated)' },
     DEPARTMENT_HEAD: { bg: 'var(--color-status-maintenance-bg)',   color: 'var(--color-status-maintenance)' },
     EMPLOYEE:        { bg: 'var(--color-status-available-bg)',    color: 'var(--color-status-available)' },
@@ -483,7 +483,7 @@ export default function OrganizationSetupPage() {
       </div>
 
       {/* Tab bar */}
-      <div style={{ borderBottom: '1px solid #23252a', marginBottom: 24 }}>
+      <div style={{ borderBottom: '1px solid var(--color-hairline)', marginBottom: 24 }}>
         <nav style={{ display: 'flex', gap: 0 }}>
           {TABS.map(({ id, label, icon: Icon }) => (
             <button

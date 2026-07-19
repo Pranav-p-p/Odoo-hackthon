@@ -21,6 +21,8 @@ import {
 } from '../../api/audit.api';
 import apiClient from '../../api/authApi';
 import AuditItemRow from '../../components/audit/AuditItemRow';
+import ConfirmModal from '../../components/Modal/ConfirmModal';
+import { useToast } from '../../components/Toast/ToastProvider';
 
 export default function AuditPage() {
   const [cycles, setCycles] = useState([]);
@@ -42,6 +44,8 @@ export default function AuditPage() {
   const [departments, setDepartments] = useState([]);
   const [users, setUsers] = useState([]);
   const [formError, setFormError] = useState('');
+  const { success: toastSuccess, error: toastError } = useToast();
+  const [closingCycle, setClosingCycle] = useState(false);
 
   // Fetch cycles list
   const fetchCycles = async () => {
@@ -135,10 +139,7 @@ export default function AuditPage() {
   // Close audit cycle
   const handleCloseCycle = async () => {
     if (!selectedCycle) return;
-    if (!window.confirm('Are you sure you want to CLOSE this audit cycle? This will lock item statuses and flag missing assets as LOST in the system.')) {
-      return;
-    }
-
+    setClosingCycle(true);
     try {
       const res = await closeAudit(selectedCycle.id);
       if (res.success) {
@@ -146,9 +147,13 @@ export default function AuditPage() {
         setChecklist(res.data.items);
         setFilterDiscrepancies(false);
         fetchCycles(); // Refresh cycles table
+        toastSuccess('Audit cycle closed');
       }
     } catch (err) {
-      console.error('[AuditPage] Error closing audit cycle:', err);
+      const msg = err.response?.data?.error?.message ?? 'Failed to close audit cycle.';
+      toastError(msg);
+    } finally {
+      setClosingCycle(false);
     }
   };
 
@@ -218,7 +223,7 @@ export default function AuditPage() {
 
         {/* Left: Cycle list */}
         <div className="feature-card" style={{ alignSelf: 'start' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 14, borderBottom: '1px solid #23252a', marginBottom: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 14, borderBottom: '1px solid var(--color-hairline)', marginBottom: 14 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <FolderOpen size={15} color='var(--color-ink-subtle)' />
               <h2 className="type-card-title" style={{ margin: 0, color: 'var(--color-ink)' }}>Active Cycles</h2>
@@ -240,7 +245,7 @@ export default function AuditPage() {
                 <button
                   key={cycle.id}
                   onClick={() => handleSelectCycle(cycle.id)}
-                  style={{ width: '100%', textAlign: 'left', padding: '12px 0 12px 10px', borderLeft: `3px solid ${selectedCycle?.id === cycle.id ? 'var(--color-primary)' : 'transparent'}`, borderTop: 'none', borderRight: 'none', borderBottom: '1px solid #23252a', background: selectedCycle?.id === cycle.id ? 'rgba(94,106,210,0.06)' : 'transparent', cursor: 'pointer', transition: 'background-color var(--duration-fast) var(--ease-standard)' }}
+                  style={{ width: '100%', textAlign: 'left', padding: '12px 0 12px 10px', borderLeft: `3px solid ${selectedCycle?.id === cycle.id ? 'var(--color-primary)' : 'transparent'}`, borderTop: 'none', borderRight: 'none', borderBottom: '1px solid var(--color-hairline)', background: selectedCycle?.id === cycle.id ? 'rgba(204,120,92,0.18)' : 'transparent', cursor: 'pointer', transition: 'background-color var(--duration-fast) var(--ease-standard)' }}
                   onMouseEnter={e => { if (selectedCycle?.id !== cycle.id) e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)'; }}
                   onMouseLeave={e => { if (selectedCycle?.id !== cycle.id) e.currentTarget.style.backgroundColor = 'transparent'; }}
                 >
@@ -265,7 +270,7 @@ export default function AuditPage() {
         {/* Right: checklist details */}
         <div>
           {!selectedCycle ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 16px', backgroundColor: 'var(--color-surface-1)', border: '1px solid #23252a', borderRadius: 12, textAlign: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 16px', backgroundColor: 'var(--color-surface-1)', border: '1px solid var(--color-hairline)', borderRadius: 12, textAlign: 'center' }}>
               <ClipboardCheck size={40} color='var(--color-hairline-tertiary)' style={{ marginBottom: 16 }} />
               <h3 style={{ fontSize: 16, fontWeight: 600, color: 'var(--color-ink)', margin: 0 }}>No Cycle Selected</h3>
               <p className="type-body-sm" style={{ color: 'var(--color-ink-subtle)', marginTop: 6 }}>Select an audit cycle from the panel on the left to verify items.</p>
@@ -273,7 +278,7 @@ export default function AuditPage() {
           ) : (
             <div className="feature-card">
               {/* Cycle detail header */}
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, paddingBottom: 16, borderBottom: '1px solid #23252a', marginBottom: 16, flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, paddingBottom: 16, borderBottom: '1px solid var(--color-hairline)', marginBottom: 16, flexWrap: 'wrap' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--color-ink)', margin: 0 }}>{selectedCycle.name}</h2>
@@ -289,7 +294,7 @@ export default function AuditPage() {
                   </div>
                 </div>
                 {selectedCycle.status !== 'CLOSED' && (
-                  <button onClick={handleCloseCycle} className="btn-danger">
+                  <button onClick={() => setClosingCycle(true)} disabled={closingCycle} className="btn-danger" aria-busy={closingCycle}>
                     <CheckCircle size={13} /> Close Audit Cycle
                   </button>
                 )}
@@ -302,7 +307,7 @@ export default function AuditPage() {
                 </h3>
                 <button
                   onClick={handleToggleDiscrepancies}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 12px', borderRadius: 8, fontSize: 12, fontWeight: 500, cursor: 'pointer', border: '1px solid', transition: 'background-color var(--duration-fast) var(--ease-standard)', ...(filterDiscrepancies ? { backgroundColor: 'rgba(210,153,34,0.12)', borderColor: 'rgba(210,153,34,0.30)', color: 'var(--color-status-maintenance)' } : { backgroundColor: 'transparent', borderColor: 'var(--color-hairline)', color: 'var(--color-ink-subtle)' }) }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 12px', borderRadius: 8, fontSize: 12, fontWeight: 500, cursor: 'pointer', border: '1px solid', transition: 'background-color var(--duration-fast) var(--ease-standard)', ...(filterDiscrepancies ? { backgroundColor: 'var(--color-status-maintenance-bg)', borderColor: 'var(--color-status-maintenance)', color: 'var(--color-status-maintenance)' } : { backgroundColor: 'transparent', borderColor: 'var(--color-hairline)', color: 'var(--color-ink-subtle)' }) }}
                 >
                   <Filter size={11} />
                   {filterDiscrepancies ? 'Show Full Checklist' : 'Show Discrepancies Only'}
@@ -340,8 +345,8 @@ export default function AuditPage() {
       {showCreateModal && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.70)', backdropFilter: 'blur(4px)', padding: 16 }}>
           <div style={{ position: 'absolute', inset: 0 }} onClick={() => setShowCreateModal(false)} aria-hidden="true" />
-          <div style={{ position: 'relative', backgroundColor: 'var(--color-surface-3)', border: '1px solid #34343a', borderRadius: 12, boxShadow: '0 24px 64px rgba(0,0,0,0.60)', width: '100%', maxWidth: 480, maxHeight: '90vh', overflowY: 'auto' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #23252a' }}>
+          <div style={{ position: 'relative', backgroundColor: 'var(--color-surface-3)', border: '1px solid var(--color-hairline-strong)', borderRadius: 12, boxShadow: '0 24px 64px rgba(0,0,0,0.60)', width: '100%', maxWidth: 480, maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid var(--color-hairline)' }}>
               <h3 style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-ink)', margin: 0 }}>Initiate Audit Cycle</h3>
               <button onClick={() => setShowCreateModal(false)} className="btn-icon-row" aria-label="Close"><X size={16} /></button>
             </div>
@@ -390,7 +395,7 @@ export default function AuditPage() {
                       onChange={e => setFormData({ ...formData, endDate: e.target.value })} className="input-field" />
                   </div>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 8, borderTop: '1px solid #23252a' }}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 8, borderTop: '1px solid var(--color-hairline)' }}>
                   <button type="button" onClick={() => setShowCreateModal(false)} className="btn-secondary">Cancel</button>
                   <button type="submit" className="btn-primary">Create Cycle</button>
                 </div>
@@ -400,6 +405,16 @@ export default function AuditPage() {
         </div>
       )}
       <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+
+      <ConfirmModal
+        open={closingCycle}
+        title="Close this audit cycle?"
+        message="This locks item statuses and flags missing assets as LOST in the system. This action cannot be undone."
+        confirmLabel="Close cycle"
+        busy={closingCycle}
+        onCancel={() => setClosingCycle(false)}
+        onConfirm={handleCloseCycle}
+      />
     </div>
   );
 }

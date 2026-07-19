@@ -37,7 +37,7 @@ const ROLE_REDIRECT = {
  * LoginPage — dark canvas design per DESIGN.md
  * - Canvas (#010102) background
  * - Surface-1 form card with hairline border (no shadow)
- * - Lavender (#5e6ad2) primary CTA — btn-primary class
+ * - Coral (#cc785c) primary CTA — btn-primary class
  * - Inter font, negative letter-spacing on headings
  */
 export default function LoginPage() {
@@ -107,7 +107,7 @@ export default function LoginPage() {
         inset: 0,
         pointerEvents: 'none',
         zIndex: 0,
-        background: 'radial-gradient(circle at 50% -20%, rgba(94, 106, 210, 0.15), transparent 70%)',
+        background: 'radial-gradient(circle at 50% -20%, rgba(204,120,92,0.18), transparent 70%)',
       }} />
       <div style={{
         position: 'absolute',
@@ -115,7 +115,7 @@ export default function LoginPage() {
         pointerEvents: 'none',
         zIndex: 0,
         opacity: 0.04,
-        backgroundImage: 'linear-gradient(#c9d1d9 1px, transparent 1px), linear-gradient(90deg, #c9d1d9 1px, transparent 1px)',
+        backgroundImage: 'linear-gradient(var(--color-ink-muted) 1px, transparent 1px), linear-gradient(90deg, var(--color-ink-muted) 1px, transparent 1px)',
         backgroundSize: '40px 40px',
         maskImage: 'radial-gradient(ellipse at 50% 30%, black 20%, transparent 70%)',
         WebkitMaskImage: 'radial-gradient(ellipse at 50% 30%, black 20%, transparent 70%)'
@@ -154,7 +154,7 @@ export default function LoginPage() {
         {/* ── Form card — surface-1 lift, hairline border ──────────────────── */}
         <div style={{
           backgroundColor: 'var(--color-surface-1)',    /* surface-1 */
-          border:          '1px solid #23252a',
+          border:          '1px solid var(--color-hairline)',
           borderRadius:    12,
           padding:         '32px 28px',
         }}>
@@ -239,7 +239,7 @@ export default function LoginPage() {
                         width: 16,
                         height: 16,
                         backgroundColor: rememberMe ? 'var(--color-primary)' : 'var(--color-surface-2)',
-                        border: rememberMe ? '1px solid #5e6ad2' : '1px solid #30363d',
+                        border: rememberMe ? '1px solid var(--color-primary)' : '1px solid var(--color-hairline-strong)',
                         borderRadius: 4,
                         margin: 0,
                         cursor: 'pointer',
@@ -266,7 +266,7 @@ export default function LoginPage() {
                     alignItems:      'flex-start',
                     gap:             8,
                     backgroundColor: 'var(--color-semantic-error-bg)',
-                    border:          '1px solid rgba(248,81,73,0.30)',
+                    border:          '1px solid var(--color-semantic-error)',
                     borderRadius:    8,
                     padding:         '10px 12px',
                     color:           'var(--color-semantic-error)',

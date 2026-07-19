@@ -3,6 +3,22 @@
 
 /* ── JetBrains Mono (asset IDs, audit codes, timestamps) ────────────────── */
 @import '@fontsource/jetbrains-mono/400.css';
+/* ── Fraunces — editorial serif display (Copernicus / Tiempos Headline substitute per DESIGN.md) ── */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap');
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BASE TOKENS — font stack + motion (referenced by inline styles across app)
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root {
+  --font-display: 'Fraunces', 'Tiempos Headline', Georgia, 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --duration-instant: 80ms;
+  --duration-fast: 140ms;
+  --duration-base: 220ms;
+  --duration-slow: 360ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-entrance: cubic-bezier(0, 0, 0.2, 1);
+}
 
 /* ── Tailwind v3 ─────────────────────────────────────────────────────────── */
 @tailwind base;
@@ -14,89 +30,101 @@
    THEME VARIABLES
    ═══════════════════════════════════════════════════════════════════════════ */
 [data-theme="dark"] {
-  --color-primary: #5e6ad2;
-  --color-primary-hover: #828fff;
-  --color-primary-focus: #5e69d1;
+  /* ── Cream/Coral editorial system — DARK mode = navy product surfaces (DESIGN.md §Colors) ── */
+  --color-primary: #cc785c;
+  --color-primary-hover: #d98a6f;
+  --color-primary-active: #a9583e;
+  --color-primary-focus: #cc785c;
   --color-on-primary: #ffffff;
-  --color-brand-secure: #7a7fad;
-  --color-canvas: #010102;
-  --color-surface-1: #0f1011;
-  --color-surface-2: #141516;
-  --color-surface-3: #18191a;
-  --color-surface-4: #191a1b;
-  --color-hairline: #23252a;
-  --color-hairline-strong: #34343a;
-  --color-hairline-tertiary: #3e3e44;
-  --color-ink: #f7f8f8;
-  --color-ink-muted: #d0d6e0;
-  --color-ink-subtle: #8a8f98;
-  --color-ink-tertiary: #62666d;
-  --color-semantic-success: #3fb950;
-  --color-semantic-info: #58a6ff;
-  --color-semantic-warning: #d29922;
-  --color-semantic-error: #f85149;
-  --color-semantic-error-hover: #ff6b63;
-  --color-semantic-error-bg: rgba(248, 81, 73, 0.14);
-  --color-semantic-overlay: #000000;
-  --color-status-disposed: #8b949e;
-  
+  --color-brand-secure: #b07d63;
+
+  --color-canvas: #181715;
+  --color-surface-1: #1f1e1b;
+  --color-surface-2: #252320;
+  --color-surface-3: #2d2a26;
+  --color-surface-4: #34302b;
+
+  --color-hairline: #2e2b27;
+  --color-hairline-strong: #3d3933;
+  --color-hairline-tertiary: #4a463f;
+
+  --color-ink: #faf9f5;
+  --color-ink-muted: #d8d3c9;
+  --color-ink-subtle: #a09d96;
+  --color-ink-tertiary: #6f6b62;
+
+  --color-semantic-success: #5db872;
+  --color-semantic-info: #6fa8c9;
+  --color-semantic-warning: #e0a94e;
+  --color-semantic-error: #e06767;
+  --color-semantic-error-hover: #ef8a8a;
+  --color-semantic-error-bg: rgba(224, 103, 103, 0.16);
+  --color-semantic-overlay: rgba(0, 0, 0, 0.55);
+  --color-status-disposed: #8a8278;
+
   --color-status-available: var(--color-semantic-success);
   --color-status-allocated: var(--color-semantic-info);
   --color-status-maintenance: var(--color-semantic-warning);
 
-  --color-status-available-bg: rgba(63, 185, 80, 0.14);
-  --color-status-allocated-bg: rgba(88, 166, 255, 0.14);
-  --color-status-maintenance-bg: rgba(210, 153, 34, 0.16);
-  --color-status-disposed-bg: rgba(139, 148, 158, 0.16);
-  --color-badge-brand-bg: rgba(94, 106, 210, 0.16);
-  --color-badge-brand-text: #828fff;
+  --color-status-available-bg: rgba(93, 184, 114, 0.16);
+  --color-status-allocated-bg: rgba(111, 168, 201, 0.16);
+  --color-status-maintenance-bg: rgba(224, 169, 78, 0.18);
+  --color-status-disposed-bg: rgba(138, 130, 120, 0.18);
+  --color-badge-brand-bg: rgba(204, 120, 92, 0.18);
+  --color-badge-brand-text: #e0977d;
 
-  --shadow-modal: 0 16px 48px rgba(0, 0, 0, 0.44);
+  --shadow-modal: 0 16px 48px rgba(0, 0, 0, 0.50);
   --shadow-palette: 0 24px 64px rgba(0, 0, 0, 0.56);
-  --bg-sticky-filter: rgba(15, 16, 17, 0.80);
+  --bg-sticky-filter: rgba(24, 23, 21, 0.82);
 }
 
 :root, [data-theme="light"] {
-  --color-primary: #5e6ad2;
-  --color-primary-hover: #4c56b8;
-  --color-primary-focus: #5e69d1;
+  /* ── Cream/Coral editorial system — LIGHT mode = warm cream canvas (DESIGN.md §Colors) ── */
+  --color-primary: #cc785c;
+  --color-primary-hover: #d98a6f;
+  --color-primary-active: #a9583e;
+  --color-primary-focus: #cc785c;
   --color-on-primary: #ffffff;
-  --color-brand-secure: #5f6491;
-  --color-canvas: #fafbfc;
-  --color-surface-1: #f4f5f7;
-  --color-surface-2: #eef0f3;
-  --color-surface-3: #e8eaee;
-  --color-surface-4: #e3e5ea;
-  --color-hairline: #e2e4e8;
-  --color-hairline-strong: #d1d4da;
-  --color-hairline-tertiary: #c2c6ce;
-  --color-ink: #14151a;
-  --color-ink-muted: #3d4048;
-  --color-ink-subtle: #6b6f78;
-  --color-ink-tertiary: #8a8e97;
-  --color-semantic-success: #1a7f37;
-  --color-semantic-info: #0969da;
-  --color-semantic-warning: #9a6700;
-  --color-semantic-error: #cf222e;
-  --color-semantic-error-hover: #a41722; /* Custom hover for light */
-  --color-semantic-error-bg: rgba(207, 34, 46, 0.14);
-  --color-semantic-overlay: #000000;
-  --color-status-disposed: #6e7781;
+  --color-brand-secure: #a9583e;
+
+  --color-canvas: #faf9f5;
+  --color-surface-1: #f5f0e8;
+  --color-surface-2: #efe9de;
+  --color-surface-3: #e8e0d2;
+  --color-surface-4: #ddd3c1;
+
+  --color-hairline: #e6dfd8;
+  --color-hairline-strong: #d8cfc0;
+  --color-hairline-tertiary: #cabfac;
+
+  --color-ink: #141413;
+  --color-ink-muted: #3d3d3a;
+  --color-ink-subtle: #6c6a64;
+  --color-ink-tertiary: #8e8b82;
+
+  --color-semantic-success: #4ea06a;
+  --color-semantic-info: #4a7ba6;
+  --color-semantic-warning: #c08a2e;
+  --color-semantic-error: #c64545;
+  --color-semantic-error-hover: #a8392f;
+  --color-semantic-error-bg: rgba(198, 69, 69, 0.14);
+  --color-semantic-overlay: rgba(20, 20, 19, 0.40);
+  --color-status-disposed: #8a8278;
 
   --color-status-available: var(--color-semantic-success);
   --color-status-allocated: var(--color-semantic-info);
   --color-status-maintenance: var(--color-semantic-warning);
 
-  --color-status-available-bg: rgba(26, 127, 55, 0.14);
-  --color-status-allocated-bg: rgba(9, 105, 218, 0.14);
-  --color-status-maintenance-bg: rgba(154, 103, 0, 0.16);
-  --color-status-disposed-bg: rgba(110, 119, 129, 0.16);
-  --color-badge-brand-bg: rgba(94, 106, 210, 0.16);
-  --color-badge-brand-text: #4c56b8;
+  --color-status-available-bg: rgba(78, 160, 106, 0.14);
+  --color-status-allocated-bg: rgba(74, 123, 166, 0.14);
+  --color-status-maintenance-bg: rgba(192, 138, 46, 0.16);
+  --color-status-disposed-bg: rgba(138, 130, 120, 0.16);
+  --color-badge-brand-bg: rgba(204, 120, 92, 0.16);
+  --color-badge-brand-text: #a9583e;
 
-  --shadow-modal: 0 16px 48px rgba(0, 0, 0, 0.12);
-  --shadow-palette: 0 24px 64px rgba(0, 0, 0, 0.16);
-  --bg-sticky-filter: rgba(244, 245, 247, 0.80);
+  --shadow-modal: 0 16px 48px rgba(20, 20, 19, 0.18);
+  --shadow-palette: 0 24px 64px rgba(20, 20, 19, 0.22);
+  --bg-sticky-filter: rgba(245, 240, 232, 0.82);
 }
 
 
@@ -151,22 +179,54 @@ input[type="password"]::-ms-clear {
 ::-webkit-scrollbar-thumb { background: var(--color-hairline-strong); border-radius: 9999px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-hairline-tertiary); }
 
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-hairline-strong) transparent;
+}
+
+/* Text selection — coral, the single accent */
+::selection {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+/* ── Global native <select> — consistent trigger + custom chevron ──────────
+   Overlays any inline background-color (does not reset it); adds appearance-none
+   + a chevron so every native dropdown reads as one system. ────────────────── */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238e8b82' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+select option {
+  background-color: var(--color-surface-2);
+  color: var(--color-ink);
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    TYPOGRAPHY UTILITIES
    ═══════════════════════════════════════════════════════════════════════════ */
 .type-hero {
+  font-family: var(--font-display);
   font-size: 56px;
   font-weight: 600;
   line-height: 1.08;
   letter-spacing: -1.8px;
 }
 .type-display-lg {
+  font-family: var(--font-display);
   font-size: 40px;
   font-weight: 600;
   line-height: 1.12;
   letter-spacing: -1.0px;
 }
 .type-display-md {
+  font-family: var(--font-display);
   font-size: 28px;
   font-weight: 600;
   line-height: 1.20;
@@ -264,10 +324,10 @@ input[type="password"]::-ms-clear {
   transition: background-color var(--duration-fast) var(--ease-standard);
   white-space: nowrap;
 }
-.btn-primary:hover { background-color: var(--color-badge-brand-text); }
-.btn-primary:active { background-color: var(--color-primary-focus); }
+.btn-primary:hover { background-color: var(--color-primary-hover); }
+.btn-primary:active { background-color: var(--color-primary-active); }
 .btn-primary:focus-visible {
-  outline: 2px solid rgba(94, 105, 209, 0.5);
+  outline: 2px solid rgba(204, 120, 92, 0.5);
   outline-offset: 2px;
 }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -293,7 +353,7 @@ input[type="password"]::-ms-clear {
 }
 .btn-secondary:hover { background-color: var(--color-surface-2); border-color: var(--color-hairline-strong); }
 .btn-secondary:focus-visible {
-  outline: 2px solid rgba(94, 105, 209, 0.5);
+  outline: 2px solid rgba(204, 120, 92, 0.5);
   outline-offset: 2px;
 }
 .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -319,7 +379,7 @@ input[type="password"]::-ms-clear {
 }
 .btn-tertiary:hover { background-color: var(--color-surface-2); color: var(--color-ink); }
 .btn-tertiary:focus-visible {
-  outline: 2px solid rgba(94, 105, 209, 0.5);
+  outline: 2px solid rgba(204, 120, 92, 0.5);
   outline-offset: 2px;
 }
 .btn-tertiary:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -367,7 +427,7 @@ input[type="password"]::-ms-clear {
 }
 .btn-icon-row:hover { background-color: var(--color-surface-2); color: var(--color-ink); }
 .btn-icon-row:focus-visible {
-  outline: 2px solid rgba(94, 105, 209, 0.5);
+  outline: 2px solid rgba(204, 120, 92, 0.5);
   outline-offset: 2px;
 }
 
@@ -388,7 +448,7 @@ input[type="password"]::-ms-clear {
 }
 .btn-icon-circular:hover { background-color: var(--color-surface-3); }
 .btn-icon-circular:focus-visible {
-  outline: 2px solid rgba(94, 105, 209, 0.5);
+  outline: 2px solid rgba(204, 120, 92, 0.5);
   outline-offset: 2px;
 }
 
@@ -422,7 +482,7 @@ input[type="password"]::-ms-clear {
 .input-field::placeholder { color: var(--color-ink-tertiary); /* ink-tertiary */ }
 .input-field:focus {
   border-color: var(--color-primary-focus);      /* primary-focus */
-  box-shadow: 0 0 0 3px rgba(94, 105, 209, 0.15);
+  box-shadow: 0 0 0 3px rgba(204, 120, 92, 0.18);
 }
 .input-field.error { border-color: var(--color-semantic-error); }
 .input-field.error:focus { box-shadow: 0 0 0 3px rgba(248, 81, 73, 0.15); }
@@ -644,6 +704,87 @@ input[type="password"]::-ms-clear {
   max-width: 400px;
 }
 
+/* Toast viewport — fixed bottom-right stack */
+.toast-viewport {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 60;
+  pointer-events: none;
+}
+.toast-viewport .toast {
+  pointer-events: auto;
+  box-shadow: var(--shadow-modal);
+  animation: toast-in var(--duration-base) var(--ease-entrance);
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Command palette items */
+.cp-input {
+  width: 100%;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid var(--color-hairline);
+  background-color: var(--color-surface-2);
+  color: var(--color-ink);
+  font-size: 14px;
+  outline: none;
+}
+.cp-input:focus {
+  border-color: var(--color-primary-focus);
+  box-shadow: 0 0 0 3px rgba(204, 120, 92, 0.18);
+}
+.cp-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: var(--color-ink-muted);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+.cp-item .cp-hint {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--color-ink-tertiary);
+  font-family: var(--font-mono);
+}
+.cp-item.active,
+.cp-item:hover {
+  background-color: var(--color-surface-2);
+  color: var(--color-ink);
+}
+.cp-empty {
+  padding: 16px 10px;
+  color: var(--color-ink-subtle);
+  font-size: 13px;
+  text-align: center;
+}
+
+/* Dropdown / menu surfaces (custom select lists, asset picker) */
+.menu-surface {
+  background-color: var(--color-surface-2);
+  border: 1px solid var(--color-hairline-strong);
+  border-radius: 8px;
+  box-shadow: var(--shadow-modal);
+}
+.menu-item {
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+.menu-item:hover {
+  background-color: var(--color-surface-3);
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    NAVIGATION COMPONENTS  (DESIGN.md §Components → Navigation)
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -801,3 +942,44 @@ input[type="password"]::-ms-clear {
   .btn-icon-row { width: 44px; height: 44px; }
   .input-field  { height: 44px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LEGACY PALETTE NORMALIZATION
+   A few components still use raw Tailwind default palette classes
+   (slate / gray / blue / red / emerald / amber / indigo + white). Remap them
+   to the design tokens so they respect light/dark. Placed last in the file so
+   these single-class rules win over the utility defaults by source order.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.text-slate-200, .text-slate-300 { color: var(--color-ink-tertiary); }
+.text-slate-400, .text-gray-400 { color: var(--color-ink-tertiary); }
+.text-slate-500, .text-gray-500 { color: var(--color-ink-subtle); }
+.text-slate-600, .text-gray-600 { color: var(--color-ink-muted); }
+.text-slate-700, .text-gray-700 { color: var(--color-ink-muted); }
+.text-slate-800, .text-gray-800, .text-slate-900, .text-gray-900 { color: var(--color-ink); }
+.text-red-500, .text-red-600 { color: var(--color-semantic-error); }
+.text-emerald-500, .text-emerald-600 { color: var(--color-status-available); }
+.text-amber-500 { color: var(--color-status-maintenance); }
+.text-indigo-600 { color: var(--color-primary); }
+
+.bg-slate-50, .bg-slate-100, .bg-gray-50, .bg-gray-100 { background-color: var(--color-surface-3); }
+.bg-slate-200, .bg-gray-200 { background-color: var(--color-hairline); }
+.bg-white { background-color: var(--color-surface-2); }
+.bg-blue-600, .bg-indigo-600 { background-color: var(--color-primary); }
+.bg-blue-700, .hover\:bg-blue-700:hover { background-color: var(--color-primary-hover); }
+.bg-blue-300, .disabled\:bg-blue-300:disabled { background-color: var(--color-hairline-strong); }
+.bg-red-500 { background-color: var(--color-semantic-error); }
+.bg-emerald-500 { background-color: var(--color-status-available); }
+
+.border-gray-200 { border-color: var(--color-hairline); }
+.border-gray-300 { border-color: var(--color-hairline-strong); }
+.border-indigo-600 { border-color: var(--color-primary); }
+
+.ring-indigo-500 { --tw-ring-color: var(--color-primary); }
+.focus\:ring-indigo-500:focus { --tw-ring-color: var(--color-primary); }
+.ring-slate-200, .ring-gray-500\/10 { --tw-ring-color: var(--color-hairline-strong); }
+.ring-white { --tw-ring-color: var(--color-surface-2); }
+
+.hover\:bg-gray-50:hover, .hover\:bg-gray-100:hover, .hover\:bg-gray-50\/50:hover { background-color: var(--color-surface-3); }
+.hover\:text-gray-700:hover { color: var(--color-ink-muted); }
+.hover\:text-emerald-700:hover { color: var(--color-status-available); }
+.disabled\:bg-gray-50:disabled { background-color: var(--color-surface-3); }

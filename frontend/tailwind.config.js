@@ -9,6 +9,7 @@ export default {
       // ── Font Families ──────────────────────────────────────────────────────
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Fraunces', 'Tiempos Headline', 'Georgia', 'Times New Roman', 'serif'],
         mono: ['JetBrains Mono', 'ui-monospace', 'SF Mono', 'Menlo', 'monospace'],
       },
 

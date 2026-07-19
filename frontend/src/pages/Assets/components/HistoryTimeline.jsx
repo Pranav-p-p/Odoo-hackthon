@@ -9,39 +9,49 @@ export default function HistoryTimeline({ items = [] }) {
 
   return (
     <div className="relative">
-      <div className="absolute left-5 top-0 bottom-0 w-px bg-slate-200" aria-hidden="true" />
+      <div className="absolute left-5 top-0 bottom-0 w-px" style={{ backgroundColor: 'var(--color-hairline)' }} aria-hidden="true" />
       <ul className="space-y-6 py-4">
-        {items.map((item, idx) => (
-          <li key={idx} className="relative pl-12">
-            <div
-              className={`absolute left-3.5 top-1 h-3 w-3 rounded-full border-2 border-white ring-2 ${
-                item.status === 'ACTIVE' || item.status === 'IN_PROGRESS' ? 'bg-blue-500 ring-blue-300' :
-                item.status === 'OVERDUE' || item.status === 'REJECTED' ? 'bg-red-500 ring-red-300' :
-                item.status === 'RETURNED' || item.status === 'RESOLVED' ? 'bg-emerald-500 ring-emerald-300' :
-                'bg-slate-400 ring-slate-200'
-              }`}
-              aria-hidden="true"
-            />
-            <div className="bg-white border border-slate-200 rounded-lg px-4 py-3 shadow-sm">
-              <div className="flex items-center justify-between gap-3 flex-wrap">
-                <span className="text-sm font-semibold text-slate-800">{item.label}</span>
-                {item.status && (
-                  <span className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium bg-slate-100 text-slate-600 uppercase tracking-wide">
-                    {item.status.replace('_', ' ')}
-                  </span>
+        {items.map((item, idx) => {
+          const dot = (
+            item.status === 'ACTIVE' || item.status === 'IN_PROGRESS' ? 'var(--color-status-allocated)' :
+            item.status === 'OVERDUE' || item.status === 'REJECTED' ? 'var(--color-semantic-error)' :
+            item.status === 'RETURNED' || item.status === 'RESOLVED' ? 'var(--color-status-available)' :
+            'var(--color-ink-tertiary)'
+          );
+          return (
+            <li key={idx} className="relative pl-12">
+              <div
+                className="absolute left-3.5 top-1 h-3 w-3 rounded-full border-2"
+                style={{ backgroundColor: dot, borderColor: 'var(--color-surface-2)', boxShadow: `0 0 0 2px var(--color-hairline)` }}
+                aria-hidden="true"
+              />
+              <div
+                className="rounded-lg px-4 py-3 shadow-sm"
+                style={{ backgroundColor: 'var(--color-surface-2)', border: '1px solid var(--color-hairline)' }}
+              >
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <span className="text-sm font-semibold" style={{ color: 'var(--color-ink)' }}>{item.label}</span>
+                  {item.status && (
+                    <span
+                      className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide"
+                      style={{ backgroundColor: 'var(--color-surface-3)', color: 'var(--color-ink-subtle)' }}
+                    >
+                      {item.status.replace('_', ' ')}
+                    </span>
+                  )}
+                </div>
+                {item.timestamp && (
+                  <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-subtle)' }}>{item.timestamp}</p>
+                )}
+                {item.detail && (
+                  <div className="mt-2.5 pt-2.5 text-xs" style={{ borderTop: '1px solid var(--color-hairline)', color: 'var(--color-ink-muted)' }}>
+                    {item.detail}
+                  </div>
                 )}
               </div>
-              {item.timestamp && (
-                <p className="mt-1 text-xs text-slate-500">{item.timestamp}</p>
-              )}
-              {item.detail && (
-                <div className="mt-2.5 pt-2.5 border-t border-slate-100 text-xs text-slate-600">
-                  {item.detail}
-                </div>
-              )}
-            </div>
-          </li>
-        ))}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

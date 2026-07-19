@@ -16,18 +16,18 @@ import HistoryTimeline from './components/HistoryTimeline';
 const PRIORITY_STYLES = {
   LOW:      { bg: 'var(--color-status-disposed-bg)', color: 'var(--color-status-disposed)' },
   MEDIUM:   { bg: 'var(--color-status-maintenance-bg)', color: 'var(--color-status-maintenance)' },
-  HIGH:     { bg: 'rgba(255,123,114,0.16)', color: '#ff7b72' },
-  CRITICAL: { bg: 'rgba(248,81,73,0.14)', color: 'var(--color-semantic-error)' },
+  HIGH:     { bg: 'var(--color-semantic-error-bg)', color: 'var(--color-semantic-error)' },
+  CRITICAL: { bg: 'var(--color-semantic-error-bg)', color: 'var(--color-semantic-error)' },
 };
 
 // ─── Maintenance status styles ────────────────────────────────────────────────
 const MAINT_STATUS = {
   PENDING_APPROVAL:    { label: 'Pending Approval',    cls: { bg: 'var(--color-status-disposed-bg)', color: 'var(--color-status-disposed)' } },
   APPROVED:            { label: 'Approved',            cls: { bg: 'var(--color-status-allocated-bg)', color: 'var(--color-status-allocated)' } },
-  TECHNICIAN_ASSIGNED: { label: 'Technician Assigned', cls: { bg: 'rgba(163,113,247,0.16)', color: '#a371f7' } },
+  TECHNICIAN_ASSIGNED: { label: 'Technician Assigned', cls: { bg: 'var(--color-badge-brand-bg)', color: 'var(--color-badge-brand-text)' } },
   IN_PROGRESS:         { label: 'In Progress',         cls: { bg: 'var(--color-status-maintenance-bg)', color: 'var(--color-status-maintenance)' } },
   RESOLVED:            { label: 'Resolved',            cls: { bg: 'var(--color-status-available-bg)', color: 'var(--color-status-available)' } },
-  REJECTED:            { label: 'Rejected',            cls: { bg: 'rgba(248,81,73,0.14)', color: 'var(--color-semantic-error)' } },
+  REJECTED:            { label: 'Rejected',            cls: { bg: 'var(--color-semantic-error-bg)', color: 'var(--color-semantic-error)' } },
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -49,7 +49,7 @@ function Pill({ label, cls }) {
 
 function InfoRow({ icon: Icon, label, value }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '10px 0', borderBottom: '1px solid #23252a' }}>
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '10px 0', borderBottom: '1px solid var(--color-hairline)' }}>
       <Icon size={16} color='var(--color-ink-subtle)' style={{ marginTop: 2, flexShrink: 0 }} aria-hidden="true" />
       <div style={{ flex: 1, minWidth: 0 }}>
         <span style={{ fontSize: 12, color: 'var(--color-ink-subtle)', display: 'block' }}>{label}</span>
@@ -71,10 +71,10 @@ function AllocationHistory({ allocations }) {
     const detailEl = (a.returnCondition || a.returnNotes) ? (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 4 }}>
         {a.returnCondition && (
-          <p style={{ margin: 0, fontSize: 13, color: '#c9d1d9' }}><span style={{ fontWeight: 500, color: 'var(--color-ink-subtle)' }}>Condition at return:</span> {a.returnCondition}</p>
+          <p style={{ margin: 0, fontSize: 13, color: 'var(--color-ink-muted)' }}><span style={{ fontWeight: 500, color: 'var(--color-ink-subtle)' }}>Condition at return:</span> {a.returnCondition}</p>
         )}
         {a.returnNotes && (
-          <p style={{ margin: 0, fontSize: 13, color: '#c9d1d9' }}><span style={{ fontWeight: 500, color: 'var(--color-ink-subtle)' }}>Notes:</span> {a.returnNotes}</p>
+          <p style={{ margin: 0, fontSize: 13, color: 'var(--color-ink-muted)' }}><span style={{ fontWeight: 500, color: 'var(--color-ink-subtle)' }}>Notes:</span> {a.returnNotes}</p>
         )}
       </div>
     ) : null;
@@ -103,10 +103,10 @@ function MaintenanceHistory({ requests }) {
   }
 
   return (
-    <div style={{ overflowX: 'auto', border: '1px solid #23252a', borderRadius: 8 }}>
+    <div style={{ overflowX: 'auto', border: '1px solid var(--color-hairline)', borderRadius: 8 }}>
       <table style={{ minWidth: '100%', borderCollapse: 'collapse', fontSize: 13 }} aria-label="Maintenance history">
         <thead>
-          <tr style={{ backgroundColor: 'var(--color-surface-2)', textAlign: 'left', fontSize: 11, fontWeight: 600, color: 'var(--color-ink-subtle)', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid #23252a' }}>
+          <tr style={{ backgroundColor: 'var(--color-surface-2)', textAlign: 'left', fontSize: 11, fontWeight: 600, color: 'var(--color-ink-subtle)', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid var(--color-hairline)' }}>
             <th style={{ padding: '12px 16px' }}>Issue</th>
             <th style={{ padding: '12px 16px' }}>Priority</th>
             <th style={{ padding: '12px 16px' }}>Status</th>
@@ -119,7 +119,7 @@ function MaintenanceHistory({ requests }) {
             const statusInfo = MAINT_STATUS[m.status] ?? { label: m.status, cls: { bg: 'var(--color-status-disposed-bg)', color: 'var(--color-status-disposed)' } };
             const priorityCls = PRIORITY_STYLES[m.priority] ?? { bg: 'var(--color-status-disposed-bg)', color: 'var(--color-status-disposed)' };
             return (
-              <tr key={m.id} style={{ borderBottom: '1px solid #23252a' }}>
+              <tr key={m.id} style={{ borderBottom: '1px solid var(--color-hairline)' }}>
                 <td style={{ padding: '12px 16px' }}>
                   <p style={{ fontWeight: 500, color: 'var(--color-ink)', margin: 0 }}>{m.issueDescription}</p>
                   {m.resolvedNotes && (
@@ -135,7 +135,7 @@ function MaintenanceHistory({ requests }) {
                 <td style={{ padding: '12px 16px', color: 'var(--color-ink-subtle)', whiteSpace: 'nowrap' }}>
                   {formatDate(m.createdAt)}
                 </td>
-                <td style={{ padding: '12px 16px', color: '#c9d1d9' }}>
+                <td style={{ padding: '12px 16px', color: 'var(--color-ink-muted)' }}>
                   {m.technician?.name ? (
                     <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                       <User size={14} color='var(--color-ink-subtle)' />
@@ -232,9 +232,9 @@ export default function AssetDetail() {
   const maintenanceReqs = asset.maintenanceReqs ?? asset.maintenanceRequests ?? [];
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-canvas)', color: '#c9d1d9' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-canvas)', color: 'var(--color-ink-muted)' }}>
       {/* ── Page header ─────────────────────────────────────────────────────── */}
-      <div style={{ backgroundColor: 'var(--color-surface-1)', borderBottom: '1px solid #23252a', padding: '16px 24px' }}>
+      <div style={{ backgroundColor: 'var(--color-surface-1)', borderBottom: '1px solid var(--color-hairline)', padding: '16px 24px' }}>
         <div style={{ maxWidth: 1024, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 12 }}>
           <button
             onClick={() => navigate('/assets')}
@@ -269,7 +269,7 @@ export default function AssetDetail() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 16 }}>
 
           {/* Identity card */}
-          <div style={{ backgroundColor: 'var(--color-surface-1)', border: '1px solid #23252a', borderRadius: 8, padding: '16px 20px' }}>
+          <div style={{ backgroundColor: 'var(--color-surface-1)', border: '1px solid var(--color-hairline)', borderRadius: 8, padding: '16px 20px' }}>
             <h2 style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-ink-subtle)', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 4px' }}>Identity</h2>
             <InfoRow icon={Tag}      label="Asset Tag"     value={asset.assetTag} />
             <InfoRow icon={Hash}     label="Serial Number" value={asset.serialNumber} />
@@ -277,7 +277,7 @@ export default function AssetDetail() {
           </div>
 
           {/* Location & Condition card */}
-          <div style={{ backgroundColor: 'var(--color-surface-1)', border: '1px solid #23252a', borderRadius: 8, padding: '16px 20px' }}>
+          <div style={{ backgroundColor: 'var(--color-surface-1)', border: '1px solid var(--color-hairline)', borderRadius: 8, padding: '16px 20px' }}>
             <h2 style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-ink-subtle)', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 4px' }}>Location</h2>
             <InfoRow icon={MapPin}   label="Location"    value={asset.location} />
             <InfoRow icon={Package}  label="Condition"   value={asset.condition} />
@@ -285,7 +285,7 @@ export default function AssetDetail() {
           </div>
 
           {/* Acquisition card */}
-          <div style={{ backgroundColor: 'var(--color-surface-1)', border: '1px solid #23252a', borderRadius: 8, padding: '16px 20px' }}>
+          <div style={{ backgroundColor: 'var(--color-surface-1)', border: '1px solid var(--color-hairline)', borderRadius: 8, padding: '16px 20px' }}>
             <h2 style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-ink-subtle)', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 4px' }}>Acquisition</h2>
             <InfoRow icon={Calendar}    label="Acquired"  value={formatDate(asset.acquisitionDate)} />
             <InfoRow icon={DollarSign}  label="Cost"      value={asset.acquisitionCost != null ? `₹${Number(asset.acquisitionCost).toLocaleString('en-IN')}` : null} />
@@ -309,21 +309,21 @@ export default function AssetDetail() {
 
         {/* ── Photo (if present) ───────────────────────────────────────────── */}
         {asset.photoUrl && (
-          <div style={{ backgroundColor: 'var(--color-surface-1)', border: '1px solid #23252a', borderRadius: 8, padding: 16 }}>
+          <div style={{ backgroundColor: 'var(--color-surface-1)', border: '1px solid var(--color-hairline)', borderRadius: 8, padding: 16 }}>
             <h2 style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-ink-subtle)', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 12px' }}>Photo</h2>
             <img
               src={asset.photoUrl}
               alt={`Photo of ${asset.name}`}
-              style={{ maxHeight: 192, borderRadius: 6, objectFit: 'contain', border: '1px solid #23252a' }}
+              style={{ maxHeight: 192, borderRadius: 6, objectFit: 'contain', border: '1px solid var(--color-hairline)' }}
               onError={(e) => { e.currentTarget.style.display = 'none'; }}
             />
           </div>
         )}
 
         {/* ── Tabs ─────────────────────────────────────────────────────────── */}
-        <div style={{ backgroundColor: 'var(--color-surface-1)', border: '1px solid #23252a', borderRadius: 12, overflow: 'hidden' }}>
+        <div style={{ backgroundColor: 'var(--color-surface-1)', border: '1px solid var(--color-hairline)', borderRadius: 12, overflow: 'hidden' }}>
           {/* Tab bar */}
-          <div style={{ display: 'flex', borderBottom: '1px solid #23252a' }} role="tablist">
+          <div style={{ display: 'flex', borderBottom: '1px solid var(--color-hairline)' }} role="tablist">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.key;
               return (
@@ -337,7 +337,7 @@ export default function AssetDetail() {
                   style={{
                     display: 'flex', alignItems: 'center', gap: 8, padding: '12px 20px', fontSize: 14, fontWeight: 500,
                     backgroundColor: 'transparent', border: 'none', cursor: 'pointer',
-                    borderBottom: isActive ? '2px solid #5e6ad2' : '2px solid transparent',
+                    borderBottom: isActive ? '2px solid var(--color-primary)' : '2px solid transparent',
                     color: isActive ? 'var(--color-ink)' : 'var(--color-ink-subtle)',
                     transition: 'all 0.2s ease',
                   }}
@@ -345,7 +345,7 @@ export default function AssetDetail() {
                   <tab.icon size={16} aria-hidden="true" />
                   {tab.label}
                   {tab.count > 0 && (
-                    <span style={{ fontSize: 11, fontWeight: 600, borderRadius: 9999, padding: '2px 6px', backgroundColor: isActive ? 'rgba(94,106,210,0.15)' : 'var(--color-hairline)', color: isActive ? 'var(--color-primary)' : 'var(--color-ink-subtle)' }}>
+                    <span style={{ fontSize: 11, fontWeight: 600, borderRadius: 9999, padding: '2px 6px', backgroundColor: isActive ? 'rgba(204,120,92,0.18)' : 'var(--color-hairline)', color: isActive ? 'var(--color-primary)' : 'var(--color-ink-subtle)' }}>
                       {tab.count}
                     </span>
                   )}

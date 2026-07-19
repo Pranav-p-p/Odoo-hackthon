@@ -69,7 +69,7 @@ export default function RecentActivityPanel({ logs = [] }) {
         alignItems:    'center',
         justifyContent:'space-between',
         paddingBottom: 16,
-        borderBottom:  '1px solid #23252a',
+        borderBottom:  '1px solid var(--color-hairline)',
         marginBottom:  20,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

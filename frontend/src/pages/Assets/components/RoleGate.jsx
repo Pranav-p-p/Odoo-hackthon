@@ -4,7 +4,7 @@
  * Exact role strings (SHARED_ENUMS.md):
  * ADMIN, ASSET_MANAGER, DEPARTMENT_HEAD, EMPLOYEE
  */
-import useAuth from '../../hooks/useAuth';
+import useAuth from '../../../hooks/useAuth';
 
 export default function RoleGate({ allow = [], children }) {
   const { currentUser: user } = useAuth();

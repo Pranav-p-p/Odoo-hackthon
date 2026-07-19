@@ -27,7 +27,7 @@ const KANBAN_COLUMNS = [
 
 // Priority pill styles — semantic spectrum fills
 const PRIORITY_STYLES = {
-  CRITICAL: { bg: 'rgba(248,81,73,0.16)',   color: 'var(--color-semantic-error)' },
+  CRITICAL: { bg: 'var(--color-semantic-error-bg)',   color: 'var(--color-semantic-error)' },
   HIGH:     { bg: 'var(--color-status-maintenance-bg)',  color: 'var(--color-status-maintenance)' },
   MEDIUM:   { bg: 'var(--color-status-allocated-bg)', color: 'var(--color-status-allocated)' },
   LOW:      { bg: 'var(--color-status-disposed-bg)', color: 'var(--color-status-disposed)' },
@@ -47,14 +47,14 @@ function ModalOverlay({ onClose, title, icon, children }) {
       <div style={{
         position: 'relative',
         backgroundColor: 'var(--color-surface-3)',           /* surface-3 — modal-panel level */
-        border:          '1px solid #34343a',
+        border:          '1px solid var(--color-hairline-strong)',
         borderRadius:    12,
         boxShadow:       '0 24px 64px rgba(0,0,0,0.60)',
         width:           '100%',
         maxWidth:        440,
       }}>
         {/* Modal header */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #23252a' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid var(--color-hairline)' }}>
           <h3 style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-ink)', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
             {icon}{title}
           </h3>
@@ -72,7 +72,7 @@ function ModalOverlay({ onClose, title, icon, children }) {
 const MODAL_INPUT = {
   width:           '100%',
   backgroundColor: 'var(--color-surface-1)',
-  border:          '1px solid #23252a',
+  border:          '1px solid var(--color-hairline)',
   borderRadius:    8,
   padding:         '8px 12px',
   fontSize:        13,
@@ -182,7 +182,7 @@ function AssignTechnicianModal({ request, users, onClose, onSuccess }) {
 
   return (
     <ModalOverlay onClose={onClose} title="Assign Technician" icon={<User size={16} color='var(--color-primary-hover)' />}>
-      <div style={{ backgroundColor: 'var(--color-surface-2)', border: '1px solid #23252a', borderRadius: 8, padding: '10px 12px', marginBottom: 16, fontSize: 13, color: 'var(--color-ink-muted)' }}>
+      <div style={{ backgroundColor: 'var(--color-surface-2)', border: '1px solid var(--color-hairline)', borderRadius: 8, padding: '10px 12px', marginBottom: 16, fontSize: 13, color: 'var(--color-ink-muted)' }}>
         <strong style={{ color: 'var(--color-ink)' }}>{request.asset?.assetTag}</strong> — {request.asset?.name}
         <br /><span style={{ color: 'var(--color-ink-subtle)' }}>{request.issueDescription}</span>
       </div>
@@ -227,7 +227,7 @@ function ResolveModal({ request, onClose, onSuccess }) {
 
   return (
     <ModalOverlay onClose={onClose} title="Resolve Maintenance Request" icon={<Check size={16} color='var(--color-status-available)' />}>
-      <div style={{ backgroundColor: 'var(--color-surface-2)', border: '1px solid #23252a', borderRadius: 8, padding: '10px 12px', marginBottom: 16, fontSize: 13, color: 'var(--color-ink-muted)' }}>
+      <div style={{ backgroundColor: 'var(--color-surface-2)', border: '1px solid var(--color-hairline)', borderRadius: 8, padding: '10px 12px', marginBottom: 16, fontSize: 13, color: 'var(--color-ink-muted)' }}>
         <strong style={{ color: 'var(--color-ink)' }}>{request.asset?.assetTag}</strong> — {request.asset?.name}
         <br /><span style={{ color: 'var(--color-ink-subtle)' }}>{request.issueDescription}</span>
       </div>
@@ -273,7 +273,7 @@ function RejectModal({ request, onClose, onSuccess }) {
 
   return (
     <ModalOverlay onClose={onClose} title="Reject Request" icon={<XCircle size={16} color='var(--color-semantic-error)' />}>
-      <div style={{ backgroundColor: 'var(--color-surface-2)', border: '1px solid #23252a', borderRadius: 8, padding: '10px 12px', marginBottom: 16, fontSize: 13, color: 'var(--color-ink-muted)' }}>
+      <div style={{ backgroundColor: 'var(--color-surface-2)', border: '1px solid var(--color-hairline)', borderRadius: 8, padding: '10px 12px', marginBottom: 16, fontSize: 13, color: 'var(--color-ink-muted)' }}>
         <strong style={{ color: 'var(--color-ink)' }}>{request.asset?.assetTag}</strong> — {request.issueDescription}
       </div>
       <form onSubmit={handleSubmit} id="reject-form">
@@ -306,7 +306,7 @@ function MaintenanceCard({ request, onApprove, onReject, onAssign, onStart, onRe
   return (
     <div style={{
       backgroundColor: 'var(--color-surface-2)',    /* surface-2 */
-      border:          '1px solid #23252a',
+      border:          '1px solid var(--color-hairline)',
       borderRadius:    10,
       padding:         '14px',
       display:         'flex',
@@ -355,16 +355,16 @@ function MaintenanceCard({ request, onApprove, onReject, onAssign, onStart, onRe
         {request.status === 'PENDING_APPROVAL' && (
           <div style={{ display: 'flex', gap: 6 }}>
             <button onClick={() => onApprove(request.id)} disabled={isLoading}
-              style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, fontSize: 11, fontWeight: 600, padding: '6px', borderRadius: 6, border: 'none', cursor: 'pointer', backgroundColor: 'rgba(63,185,80,0.16)', color: 'var(--color-status-available)', transition: 'background-color var(--duration-fast) var(--ease-standard)' }}
-              onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(63,185,80,0.24)'}
-              onMouseLeave={e => e.currentTarget.style.backgroundColor = 'rgba(63,185,80,0.16)'}
+              style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, fontSize: 11, fontWeight: 600, padding: '6px', borderRadius: 6, border: 'none', cursor: 'pointer', backgroundColor: 'var(--color-status-available-bg)', color: 'var(--color-status-available)', transition: 'background-color var(--duration-fast) var(--ease-standard)' }}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--color-status-available-bg)'}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--color-status-available-bg)'}
             >
               <CheckCircle size={12} /> Approve
             </button>
             <button onClick={() => onReject(request)} disabled={isLoading}
-              style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, fontSize: 11, fontWeight: 600, padding: '6px', borderRadius: 6, border: '1px solid rgba(248,81,73,0.30)', cursor: 'pointer', backgroundColor: 'rgba(248,81,73,0.08)', color: 'var(--color-semantic-error)', transition: 'background-color var(--duration-fast) var(--ease-standard)' }}
-              onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(248,81,73,0.16)'}
-              onMouseLeave={e => e.currentTarget.style.backgroundColor = 'rgba(248,81,73,0.08)'}
+              style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, fontSize: 11, fontWeight: 600, padding: '6px', borderRadius: 6, border: '1px solid var(--color-semantic-error)', cursor: 'pointer', backgroundColor: 'var(--color-semantic-error-bg)', color: 'var(--color-semantic-error)', transition: 'background-color var(--duration-fast) var(--ease-standard)' }}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--color-semantic-error-bg)'}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--color-semantic-error-bg)'}
             >
               <XCircle size={12} /> Reject
             </button>
@@ -374,7 +374,7 @@ function MaintenanceCard({ request, onApprove, onReject, onAssign, onStart, onRe
         {request.status === 'APPROVED' && (
           <button onClick={() => onAssign(request)} disabled={isLoading}
             style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, fontSize: 11, fontWeight: 600, padding: '7px', borderRadius: 6, border: 'none', cursor: 'pointer', backgroundColor: 'var(--color-badge-brand-bg)', color: 'var(--color-primary-hover)', transition: 'background-color var(--duration-fast) var(--ease-standard)' }}
-            onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(94,106,210,0.24)'}
+            onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(204,120,92,0.18)'}
             onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--color-badge-brand-bg)'}
           >
             <User size={12} /> Assign Technician
@@ -384,7 +384,7 @@ function MaintenanceCard({ request, onApprove, onReject, onAssign, onStart, onRe
         {request.status === 'TECHNICIAN_ASSIGNED' && (
           <button onClick={() => onStart(request.id)} disabled={isLoading}
             style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, fontSize: 11, fontWeight: 600, padding: '7px', borderRadius: 6, border: 'none', cursor: 'pointer', backgroundColor: 'var(--color-status-maintenance-bg)', color: 'var(--color-status-maintenance)', transition: 'background-color var(--duration-fast) var(--ease-standard)' }}
-            onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(210,153,34,0.24)'}
+            onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--color-status-maintenance-bg)'}
             onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--color-status-maintenance-bg)'}
           >
             <Play size={12} /> Start Work
@@ -393,9 +393,9 @@ function MaintenanceCard({ request, onApprove, onReject, onAssign, onStart, onRe
 
         {request.status === 'IN_PROGRESS' && (
           <button onClick={() => onResolve(request)} disabled={isLoading}
-            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, fontSize: 11, fontWeight: 600, padding: '7px', borderRadius: 6, border: 'none', cursor: 'pointer', backgroundColor: 'rgba(63,185,80,0.16)', color: 'var(--color-status-available)', transition: 'background-color var(--duration-fast) var(--ease-standard)' }}
-            onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(63,185,80,0.24)'}
-            onMouseLeave={e => e.currentTarget.style.backgroundColor = 'rgba(63,185,80,0.16)'}
+            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, fontSize: 11, fontWeight: 600, padding: '7px', borderRadius: 6, border: 'none', cursor: 'pointer', backgroundColor: 'var(--color-status-available-bg)', color: 'var(--color-status-available)', transition: 'background-color var(--duration-fast) var(--ease-standard)' }}
+            onMouseEnter={e => e.currentTarget.style.backgroundColor = 'var(--color-status-available-bg)'}
+            onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--color-status-available-bg)'}
           >
             <Check size={12} /> Mark Resolved
           </button>
@@ -425,7 +425,7 @@ function MaintenanceCard({ request, onApprove, onReject, onAssign, onStart, onRe
 // ─── Card Skeleton ─────────────────────────────────────────────────────────────
 function CardSkeleton() {
   return (
-    <div style={{ backgroundColor: 'var(--color-surface-2)', border: '1px solid #23252a', borderRadius: 10, padding: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
+    <div style={{ backgroundColor: 'var(--color-surface-2)', border: '1px solid var(--color-hairline)', borderRadius: 10, padding: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
         <div style={{ flex: 1 }}>
           <div style={{ height: 13, backgroundColor: 'var(--color-hairline)', borderRadius: 4, width: '40%', marginBottom: 6 }} />
@@ -450,14 +450,14 @@ function KanbanColumn({ column, requests, onApprove, onReject, onAssign, onStart
       flexDirection:   'column',
       minWidth:        220,
       flex:            1,
-      backgroundColor: '#0a0a0b',    /* slightly darker than canvas */
-      border:          '1px solid #23252a',
+      backgroundColor: 'var(--color-surface-1)',    /* slightly darker than canvas */
+      border:          '1px solid var(--color-hairline)',
       borderTop:       `3px solid ${column.topColor}`,
       borderRadius:    10,
       overflow:        'hidden',
     }}>
       {/* Column header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', borderBottom: '1px solid #23252a' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', borderBottom: '1px solid var(--color-hairline)' }}>
         <h3 style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-ink)', margin: 0, letterSpacing: '0.4px', textTransform: 'uppercase' }}>
           {column.label}
         </h3>

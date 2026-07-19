@@ -47,7 +47,7 @@ export default function AssetSelector({ value, onChange, filterBookable = false 
   return (
     <div className="relative" ref={containerRef}>
       <div className="relative">
-        <Package className="absolute left-3 top-2.5 h-4 w-4 text-slate-400 pointer-events-none" />
+        <Package className="absolute left-3 top-2.5 h-4 w-4 pointer-events-none" style={{ color: 'var(--color-ink-tertiary)' }} />
         <input
           type="text"
           value={search}
@@ -59,17 +59,17 @@ export default function AssetSelector({ value, onChange, filterBookable = false 
           onFocus={() => setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 150)}
           placeholder="Search by name or asset tag…"
-          className="w-full border border-slate-300 rounded-md pl-9 pr-9 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="input-field text-sm" style={{ paddingLeft: 36, paddingRight: 36 }}
         />
         {loading ? (
-          <Loader2 className="absolute right-3 top-2.5 h-4 w-4 text-slate-400 animate-spin pointer-events-none" />
+          <Loader2 className="absolute right-3 top-2.5 h-4 w-4 animate-spin pointer-events-none" style={{ color: 'var(--color-ink-tertiary)' }} />
         ) : (
-          <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 text-slate-400 pointer-events-none" />
+          <ChevronDown className="absolute right-3 top-2.5 h-4 w-4 pointer-events-none" style={{ color: 'var(--color-ink-tertiary)' }} />
         )}
       </div>
 
       {open && filteredAssets.length > 0 && (
-        <ul className="absolute z-20 mt-1 w-full bg-white border border-slate-200 rounded-md shadow-lg max-h-52 overflow-y-auto text-sm">
+        <ul className="menu-surface absolute z-20 mt-1 w-full rounded-md shadow-lg max-h-52 overflow-y-auto text-sm">
           {filteredAssets.slice(0, 50).map(a => (
             <li
               key={a.id}
@@ -78,11 +78,11 @@ export default function AssetSelector({ value, onChange, filterBookable = false 
                 setSearch(a.name);
                 setOpen(false);
               }}
-              className="flex items-center justify-between gap-2 px-3 py-2 hover:bg-slate-50 cursor-pointer transition-colors"
+              className="menu-item flex items-center justify-between gap-2 px-3 py-2 cursor-pointer transition-colors"
             >
               <div>
-                <span className="font-medium text-slate-800">{a.name}</span>
-                <span className="ml-2 font-mono text-xs text-slate-400">{a.assetTag}</span>
+                <span className="font-medium" style={{ color: 'var(--color-ink)' }}>{a.name}</span>
+                <span className="ml-2 font-mono text-xs" style={{ color: 'var(--color-ink-tertiary)' }}>{a.assetTag}</span>
               </div>
               <StatusBadge type="asset" status={a.status} />
             </li>
@@ -91,7 +91,7 @@ export default function AssetSelector({ value, onChange, filterBookable = false 
       )}
       
       {open && filteredAssets.length === 0 && !loading && (
-        <div className="absolute z-20 mt-1 w-full bg-white border border-slate-200 rounded-md shadow-lg p-3 text-sm text-center text-slate-500">
+        <div className="menu-surface absolute z-20 mt-1 w-full rounded-md shadow-lg p-3 text-sm text-center" style={{ color: 'var(--color-ink-subtle)' }}>
           No assets found.
         </div>
       )}

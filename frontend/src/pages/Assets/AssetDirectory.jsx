@@ -34,7 +34,7 @@ function SelectFilter({ id, label, value, onChange, children }) {
         onChange={(e) => onChange(e.target.value)}
         style={{
           borderRadius:    8,
-          border:          '1px solid #23252a',
+          border:          '1px solid var(--color-hairline)',
           backgroundColor: 'var(--color-surface-1)',
           color:           'var(--color-ink)',
           padding:         '6px 12px',
@@ -381,7 +381,7 @@ export default function AssetDirectory() {
 
           {/* ── Pagination ─────────────────────────────────────────────────── */}
           {!loading && assets.length > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #23252a', padding: '10px 16px', backgroundColor: 'var(--color-surface-1)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--color-hairline)', padding: '10px 16px', backgroundColor: 'var(--color-surface-1)' }}>
               <span className="type-caption" style={{ color: 'var(--color-ink-subtle)' }}>
                 Showing {(pagination.page - 1) * pagination.limit + 1}–{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}
               </span>

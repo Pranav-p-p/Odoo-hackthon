@@ -256,7 +256,7 @@ export default function DashboardPage() {
                     width:           '100%',
                     padding:         '10px 12px',
                     borderRadius:    8,
-                    border:          '1px solid #23252a',
+                    border:          '1px solid var(--color-hairline)',
                     backgroundColor: 'transparent',
                     cursor:          'pointer',
                     textAlign:       'left',
